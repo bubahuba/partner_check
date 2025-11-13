@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
@@ -25,54 +27,54 @@ class ContactsPage extends StatefulWidget {
   _ContactsPageState createState() => _ContactsPageState();
 }
 
+class StoredContact {
+  final String name;
+  final int color;
+
+  StoredContact({required this.name, required this.color});
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'color': color,
+      };
+
+  factory StoredContact.fromJson(Map<String, dynamic> json) => StoredContact(
+        name: json['name'],
+        color: json['color'],
+      );
+}
+
 class _ContactsPageState extends State<ContactsPage> {
-  List<Contact> _contacts = [];
+  List<StoredContact> _contacts = [];
   late final ScrollController _scrollController1;
   late final ScrollController _scrollController2;
   bool _isHudVisible = false;
   double _overlayHeight = 0.2; // Initial height: 20%
 
   static const Color _fallbackTileColor = Color(0xFFE0E0E0);
+  static const String _storageKey = 'stored_contacts';
 
   @override
   void initState() {
     super.initState();
     _scrollController1 = ScrollController();
     _scrollController2 = ScrollController();
-    _fetchContacts();
+    _loadContacts();
   }
 
-  Color _colorFromPhone(String phone) {
-    final digits = phone.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) {
-      return _fallbackTileColor;
-    }
-    final hexDigits = digits.length >= 6
-        ? digits.substring(digits.length - 6)
-        : digits.padLeft(6, '0');
-    final value = int.tryParse(hexDigits, radix: 16);
-    if (value == null) {
-      return _fallbackTileColor;
-    }
-    return Color(0xFF000000 | value);
+  Color _colorFromValue(int colorValue) {
+    return Color(0xFF000000 | colorValue);
   }
 
-  Color _overlayColorFromPhone(String phone) {
-    final digits = phone.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) {
-      return const Color(0x80000000); // Semi-transparent black fallback
-    }
-    final lastSix = digits.length >= 6
-        ? digits.substring(digits.length - 6)
-        : digits.padLeft(6, '0');
-    // Reverse the digits
-    final reversedDigits = lastSix.split('').reversed.join();
-    final value = int.tryParse(reversedDigits, radix: 16);
-    if (value == null) {
-      return const Color(0x80000000); // Semi-transparent black fallback
-    }
+  Color _overlayColorFromValue(int colorValue) {
+    // Reverse the color value by reversing the RGB bytes
+    final r = (colorValue >> 16) & 0xFF;
+    final g = (colorValue >> 8) & 0xFF;
+    final b = colorValue & 0xFF;
+    // Reverse: swap R and B, keep G
+    final reversed = (b << 16) | (g << 8) | r;
     // Apply with some transparency (0x80 = ~50% opacity)
-    return Color(0x80000000 | value);
+    return Color(0x80000000 | reversed);
   }
 
   @override
@@ -82,6 +84,31 @@ class _ContactsPageState extends State<ContactsPage> {
     super.dispose();
   }
 
+  Future<void> _loadContacts() async {
+    // Try to load from storage first
+    final prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString(_storageKey);
+    
+    if (storedData != null) {
+      // Load from storage
+      final List<dynamic> jsonList = json.decode(storedData);
+      setState(() {
+        _contacts = jsonList
+            .map((json) => StoredContact.fromJson(json))
+            .toList();
+      });
+    } else {
+      // No stored data, fetch from contacts
+      await _fetchContacts();
+    }
+  }
+
+  Future<void> _saveContacts(List<StoredContact> contacts) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = contacts.map((contact) => contact.toJson()).toList();
+    await prefs.setString(_storageKey, json.encode(jsonList));
+  }
+
   Future<void> _fetchContacts() async {
     // Request permission
     final status = Permission.contacts.request();
@@ -89,11 +116,32 @@ class _ContactsPageState extends State<ContactsPage> {
       // Load contacts
       Iterable<Contact> contacts =
           await ContactsService.getContacts(withThumbnails: false);
+      
+      // Convert to StoredContact and calculate colors
+      final List<StoredContact> storedContacts = contacts
+          .where((contact) =>
+              contact.phones != null && contact.phones!.isNotEmpty)
+          .map((contact) {
+        final phone = contact.phones!.first.value ?? '';
+        final digits = phone.replaceAll(RegExp(r'\D'), '');
+        int colorValue = 0;
+        if (digits.isNotEmpty) {
+          final hexDigits = digits.length >= 6
+              ? digits.substring(digits.length - 6)
+              : digits.padLeft(6, '0');
+          colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
+        }
+        return StoredContact(
+          name: contact.displayName ?? 'No Name',
+          color: colorValue,
+        );
+      }).toList();
+      
+      // Save to storage
+      await _saveContacts(storedContacts);
+      
       setState(() {
-        _contacts = contacts
-            .where((contact) =>
-                contact.phones != null && contact.phones!.isNotEmpty)
-            .toList();
+        _contacts = storedContacts;
       });
     } else {
       // Handle permission denied
@@ -133,8 +181,6 @@ class _ContactsPageState extends State<ContactsPage> {
       itemCount: _contacts.length,
       itemBuilder: (context, index) {
         final contact = _contacts[index];
-        final name = contact.displayName ?? 'No Name';
-        final phone = contact.phones?.first.value ?? 'No Phone';
         return GestureDetector(
           onTap: _toggleHudVisibility,
           onVerticalDragUpdate: (details) {
@@ -143,7 +189,7 @@ class _ContactsPageState extends State<ContactsPage> {
           child: SizedBox(
             height: height,
             child: Card(
-              color: _colorFromPhone(phone),
+              color: _colorFromValue(contact.color),
               margin: EdgeInsets.zero,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
@@ -156,35 +202,20 @@ class _ContactsPageState extends State<ContactsPage> {
                     bottom: 0,
                     height: height * _overlayHeight,
                     child: Container(
-                      color: _overlayColorFromPhone(phone),
+                      color: _overlayColorFromValue(contact.color),
                     ),
                   ),
                   SizedBox.expand(
                     child: _isHudVisible
                         ? Center(
                             child: Text(
-                              name,
+                              contact.name,
                               style: const TextStyle(color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
                           )
                         : const SizedBox.shrink(),
                   ),
-                  if (_isHudVisible)
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.settings,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {},
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ),
@@ -199,14 +230,33 @@ class _ContactsPageState extends State<ContactsPage> {
     return Scaffold(
         body: LayoutBuilder(builder: (context, constraints) {
           final halfWidth = constraints.maxWidth / 2;
-          return Row(
+          return Stack(
             children: [
-              Expanded(
-                child: _buildListView(_scrollController1, constraints.maxHeight, halfWidth),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildListView(_scrollController1, constraints.maxHeight, halfWidth),
+                  ),
+                  Expanded(
+                    child: _buildListView(_scrollController2, constraints.maxHeight, halfWidth),
+                  ),
+                ],
               ),
-              Expanded(
-                child: _buildListView(_scrollController2, constraints.maxHeight, halfWidth),
-              ),
+              if (_isHudVisible)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.settings,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {},
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                    ),
+                  ),
+                ),
             ],
           );
         }));
