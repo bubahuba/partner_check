@@ -176,10 +176,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             // Content
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(48.0),
-              child: Row(
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(48.0),
+                child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -328,6 +328,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ],
               ),
+            ),
             ),
           ],
         ),

@@ -4,19 +4,17 @@
 echo "Cleaning Flutter build..."
 flutter clean
 
-echo "Removing iOS build artifacts..."
+echo "Cleaning iOS Pods..."
 cd ios
 rm -rf Pods
 rm -rf Podfile.lock
 rm -rf .symlinks
-rm -rf Flutter/Flutter.framework
-rm -rf Flutter/Flutter.podspec
 rm -rf build
 rm -rf ~/Library/Developer/Xcode/DerivedData/*
 
-echo "Running pod install..."
-pod deintegrate || true
-pod install --repo-update
+echo "Reinstalling Pods..."
+pod deintegrate
+pod install
 
 cd ..
 
