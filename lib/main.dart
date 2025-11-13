@@ -29,7 +29,7 @@ class _ContactsPageState extends State<ContactsPage> {
   List<Contact> _contacts = [];
   late final ScrollController _scrollController1;
   late final ScrollController _scrollController2;
-  bool _isTextVisible = false;
+  bool _isHudVisible = false;
   double _overlayHeight = 0.2; // Initial height: 20%
 
   static const Color _fallbackTileColor = Color(0xFFE0E0E0);
@@ -109,9 +109,9 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
-  void _toggleTextVisibility() {
+  void _toggleHudVisibility() {
     setState(() {
-      _isTextVisible = !_isTextVisible;
+      _isHudVisible = !_isHudVisible;
     });
   }
 
@@ -136,7 +136,7 @@ class _ContactsPageState extends State<ContactsPage> {
         final name = contact.displayName ?? 'No Name';
         final phone = contact.phones?.first.value ?? 'No Phone';
         return GestureDetector(
-          onTap: _toggleTextVisibility,
+          onTap: _toggleHudVisibility,
           onVerticalDragUpdate: (details) {
             _updateOverlayHeight(details.delta.dy, height);
           },
@@ -160,7 +160,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     ),
                   ),
                   SizedBox.expand(
-                    child: _isTextVisible
+                    child: _isHudVisible
                         ? Center(
                             child: Text(
                               name,
@@ -170,6 +170,21 @@ class _ContactsPageState extends State<ContactsPage> {
                           )
                         : const SizedBox.shrink(),
                   ),
+                  if (_isHudVisible)
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.settings,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {},
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
