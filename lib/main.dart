@@ -29,7 +29,8 @@ class _ContactsPageState extends State<ContactsPage> {
   List<Contact> _contacts = [];
   late final ScrollController _scrollController1;
   late final ScrollController _scrollController2;
-  final Set<int> _hiddenTextIndices = {};
+  bool _isTextVisible = false;
+  double _overlayHeight = 0.2; // Initial height: 20%
 
   static const Color _fallbackTileColor = Color(0xFFE0E0E0);
 
@@ -54,6 +55,24 @@ class _ContactsPageState extends State<ContactsPage> {
       return _fallbackTileColor;
     }
     return Color(0xFF000000 | value);
+  }
+
+  Color _overlayColorFromPhone(String phone) {
+    final digits = phone.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) {
+      return const Color(0x80000000); // Semi-transparent black fallback
+    }
+    final lastSix = digits.length >= 6
+        ? digits.substring(digits.length - 6)
+        : digits.padLeft(6, '0');
+    // Reverse the digits
+    final reversedDigits = lastSix.split('').reversed.join();
+    final value = int.tryParse(reversedDigits, radix: 16);
+    if (value == null) {
+      return const Color(0x80000000); // Semi-transparent black fallback
+    }
+    // Apply with some transparency (0x80 = ~50% opacity)
+    return Color(0x80000000 | value);
   }
 
   @override
@@ -90,31 +109,37 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
-  void _toggleTextVisibility(int index) {
+  void _toggleTextVisibility() {
     setState(() {
-      if (_hiddenTextIndices.contains(index)) {
-        _hiddenTextIndices.remove(index);
-      } else {
-        _hiddenTextIndices.add(index);
-      }
+      _isTextVisible = !_isTextVisible;
     });
   }
 
-  Widget _buildListView(ScrollController controller, double height) {
-    final itemWidth = MediaQuery.of(context).size.width / 2;
+  void _updateOverlayHeight(double delta, double cardHeight) {
+    setState(() {
+      // delta is negative when dragging up, positive when dragging down
+      // We want dragging up to increase overlay height, down to decrease
+      final heightChange = -delta / cardHeight;
+      _overlayHeight = (_overlayHeight + heightChange).clamp(0.0, 1.0);
+    });
+  }
+
+  Widget _buildListView(ScrollController controller, double height, double width) {
     return ListView.builder(
       controller: controller,
       scrollDirection: Axis.horizontal,
       physics: const PageScrollPhysics(),
-      itemExtent: itemWidth,
+      itemExtent: width,
       itemCount: _contacts.length,
       itemBuilder: (context, index) {
         final contact = _contacts[index];
         final name = contact.displayName ?? 'No Name';
         final phone = contact.phones?.first.value ?? 'No Phone';
-        final isTextVisible = !_hiddenTextIndices.contains(index);
         return GestureDetector(
-          onTap: () => _toggleTextVisibility(index),
+          onTap: _toggleTextVisibility,
+          onVerticalDragUpdate: (details) {
+            _updateOverlayHeight(details.delta.dy, height);
+          },
           child: SizedBox(
             height: height,
             child: Card(
@@ -123,20 +148,29 @@ class _ContactsPageState extends State<ContactsPage> {
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.zero,
               ),
-              child: SizedBox.expand(
-                child: isTextVisible
-                    ? ListTile(
-                        title: Text(
-                          name,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        subtitle: Text(
-                          phone,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        contentPadding: const EdgeInsets.all(24),
-                      )
-                    : const SizedBox.shrink(),
+              child: Stack(
+                children: [
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: height * _overlayHeight,
+                    child: Container(
+                      color: _overlayColorFromPhone(phone),
+                    ),
+                  ),
+                  SizedBox.expand(
+                    child: _isTextVisible
+                        ? ListTile(
+                            title: Text(
+                              name,
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            contentPadding: const EdgeInsets.all(24),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
               ),
             ),
           ),
@@ -149,14 +183,14 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: LayoutBuilder(builder: (context, constraints) {
-          final halfHeight = constraints.maxHeight / 2;
-          return Column(
+          final halfWidth = constraints.maxWidth / 2;
+          return Row(
             children: [
               Expanded(
-                child: _buildListView(_scrollController1, halfHeight),
+                child: _buildListView(_scrollController1, constraints.maxHeight, halfWidth),
               ),
               Expanded(
-                child: _buildListView(_scrollController2, halfHeight),
+                child: _buildListView(_scrollController2, constraints.maxHeight, halfWidth),
               ),
             ],
           );
