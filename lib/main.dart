@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:contacts_service/contacts_service.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'settings_screen.dart';
+import 'models.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +13,53 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Contacts Phone Numbers',
-      home: ContactsPage(),
+      home: const InitialScreen(),
     );
+  }
+}
+
+class InitialScreen extends StatefulWidget {
+  const InitialScreen({super.key});
+
+  @override
+  _InitialScreenState createState() => _InitialScreenState();
+}
+
+class _InitialScreenState extends State<InitialScreen> {
+  static const String _storageKey = 'stored_contacts';
+  bool _isLoading = true;
+  bool _hasStorage = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkStorage();
+  }
+
+  Future<void> _checkStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString(_storageKey);
+    setState(() {
+      _hasStorage = storedData != null;
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_hasStorage) {
+      return const ContactsPage();
+    } else {
+      return const SettingsScreen();
+    }
   }
 }
 
@@ -25,23 +68,6 @@ class ContactsPage extends StatefulWidget {
 
   @override
   _ContactsPageState createState() => _ContactsPageState();
-}
-
-class StoredContact {
-  final String name;
-  final int color;
-
-  StoredContact({required this.name, required this.color});
-
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'color': color,
-      };
-
-  factory StoredContact.fromJson(Map<String, dynamic> json) => StoredContact(
-        name: json['name'],
-        color: json['color'],
-      );
 }
 
 class _ContactsPageState extends State<ContactsPage> {
@@ -85,21 +111,17 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   Future<void> _loadContacts() async {
-    // Try to load from storage first
+    // Load from storage
     final prefs = await SharedPreferences.getInstance();
     final storedData = prefs.getString(_storageKey);
     
     if (storedData != null) {
-      // Load from storage
       final List<dynamic> jsonList = json.decode(storedData);
       setState(() {
         _contacts = jsonList
             .map((json) => StoredContact.fromJson(json))
             .toList();
       });
-    } else {
-      // No stored data, fetch from contacts
-      await _fetchContacts();
     }
   }
 
