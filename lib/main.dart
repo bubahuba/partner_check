@@ -161,12 +161,12 @@ class _ContactsPageState extends State<ContactsPage> {
                   ),
                   SizedBox.expand(
                     child: _isTextVisible
-                        ? ListTile(
-                            title: Text(
+                        ? Center(
+                            child: Text(
                               name,
                               style: const TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
                             ),
-                            contentPadding: const EdgeInsets.all(24),
                           )
                         : const SizedBox.shrink(),
                   ),
