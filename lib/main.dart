@@ -125,60 +125,6 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
-  Future<void> _saveContacts(List<StoredContact> contacts) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonList = contacts.map((contact) => contact.toJson()).toList();
-    await prefs.setString(_storageKey, json.encode(jsonList));
-  }
-
-  Future<void> _fetchContacts() async {
-    // Request permission
-    final status = Permission.contacts.request();
-    if (await status.isGranted) {
-      // Load contacts
-      Iterable<Contact> contacts =
-          await ContactsService.getContacts(withThumbnails: false);
-      
-      // Convert to StoredContact and calculate colors
-      final List<StoredContact> storedContacts = contacts
-          .where((contact) =>
-              contact.phones != null && contact.phones!.isNotEmpty)
-          .map((contact) {
-        final phone = contact.phones!.first.value ?? '';
-        final digits = phone.replaceAll(RegExp(r'\D'), '');
-        int colorValue = 0;
-        if (digits.isNotEmpty) {
-          final hexDigits = digits.length >= 6
-              ? digits.substring(digits.length - 6)
-              : digits.padLeft(6, '0');
-          colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
-        }
-        return StoredContact(
-          name: contact.displayName ?? 'No Name',
-          color: colorValue,
-        );
-      }).toList();
-      
-      // Save to storage
-      await _saveContacts(storedContacts);
-      
-      setState(() {
-        _contacts = storedContacts;
-      });
-    } else {
-      // Handle permission denied
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Contacts permission denied'),
-          action: SnackBarAction(
-            label: 'Retry',
-            onPressed: _fetchContacts,
-          ),
-        ),
-      );
-    }
-  }
-
   void _toggleHudVisibility() {
     setState(() {
       _isHudVisible = !_isHudVisible;

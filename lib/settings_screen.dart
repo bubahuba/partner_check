@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:contacts_service/contacts_service.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -46,53 +46,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       final status = await Permission.contacts.request();
       if (status.isGranted) {
-        // Load contacts on background thread
-        final contacts = await ContactsService.getContacts(withThumbnails: false);
-        
-        // Convert to serializable format for isolate
-        final contactsData = contacts.map((contact) => {
-          'displayName': contact.displayName,
-          'phones': contact.phones?.map((phone) => {'value': phone.value}).toList(),
-        }).toList();
-
-        // Process contacts in background isolate
-        final processedData = await compute(_processContacts, contactsData);
-
-        // Convert to StoredContact
-        final storedContacts = processedData
-            .map((data) => StoredContact(
-                  name: data['name'] as String,
-                  color: data['color'] as int,
-                ))
-            .toList();
-
-        // Save to storage
-        final prefs = await SharedPreferences.getInstance();
-        final jsonList = storedContacts.map((contact) => contact.toJson()).toList();
-        await prefs.setString('stored_contacts', json.encode(jsonList));
-
-        // Navigate to contacts page
-        if (mounted) {
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const ContactsPage(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.ease;
-
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
-              },
-            ),
+        // Request permission for flutter_contacts
+        if (await FlutterContacts.requestPermission()) {
+          // Load contacts on background thread
+          final contacts = await FlutterContacts.getContacts(
+            withProperties: true,
+            withThumbnail: false,
           );
+          
+          // Convert to serializable format for isolate
+          final contactsData = contacts.map((contact) => {
+            'displayName': contact.displayName,
+            'phones': contact.phones.map((phone) => {'value': phone.number}).toList(),
+          }).toList();
+
+          // Process contacts in background isolate
+          final processedData = await compute(_processContacts, contactsData);
+
+          // Convert to StoredContact
+          final storedContacts = processedData
+              .map((data) => StoredContact(
+                    name: data['name'] as String,
+                    color: data['color'] as int,
+                  ))
+              .toList();
+
+          // Save to storage
+          final prefs = await SharedPreferences.getInstance();
+          final jsonList = storedContacts.map((contact) => contact.toJson()).toList();
+          await prefs.setString('stored_contacts', json.encode(jsonList));
+
+          // Navigate to contacts page
+          if (mounted) {
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const ContactsPage(),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(1.0, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.ease;
+
+                  var tween = Tween(begin: begin, end: end).chain(
+                    CurveTween(curve: curve),
+                  );
+
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+              ),
+            );
+          }
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Contacts permission denied'),
+              ),
+            );
+          }
         }
       } else {
         setState(() {
