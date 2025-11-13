@@ -27,14 +27,17 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   List<Contact> _contacts = [];
-  late final ScrollController _scrollController;
+  late final ScrollController _scrollController1;
+  late final ScrollController _scrollController2;
+  final Set<int> _hiddenTextIndices = {};
 
   static const Color _fallbackTileColor = Color(0xFFE0E0E0);
 
   @override
   void initState() {
     super.initState();
-    _scrollController = ScrollController();
+    _scrollController1 = ScrollController();
+    _scrollController2 = ScrollController();
     _fetchContacts();
   }
 
@@ -55,7 +58,8 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController1.dispose();
+    _scrollController2.dispose();
     super.dispose();
   }
 
@@ -86,37 +90,75 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
+  void _toggleTextVisibility(int index) {
+    setState(() {
+      if (_hiddenTextIndices.contains(index)) {
+        _hiddenTextIndices.remove(index);
+      } else {
+        _hiddenTextIndices.add(index);
+      }
+    });
+  }
+
+  Widget _buildListView(ScrollController controller, double height) {
+    final itemWidth = MediaQuery.of(context).size.width / 2;
+    return ListView.builder(
+      controller: controller,
+      scrollDirection: Axis.horizontal,
+      physics: const PageScrollPhysics(),
+      itemExtent: itemWidth,
+      itemCount: _contacts.length,
+      itemBuilder: (context, index) {
+        final contact = _contacts[index];
+        final name = contact.displayName ?? 'No Name';
+        final phone = contact.phones?.first.value ?? 'No Phone';
+        final isTextVisible = !_hiddenTextIndices.contains(index);
+        return GestureDetector(
+          onTap: () => _toggleTextVisibility(index),
+          child: SizedBox(
+            height: height,
+            child: Card(
+              color: _colorFromPhone(phone),
+              margin: EdgeInsets.zero,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+              child: SizedBox.expand(
+                child: isTextVisible
+                    ? ListTile(
+                        title: Text(
+                          name,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          phone,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        contentPadding: const EdgeInsets.all(24),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Contacts Phone Numbers')),
         body: LayoutBuilder(builder: (context, constraints) {
-          final itemWidth = MediaQuery.of(context).size.width / 2;
-          return ListView.builder(
-            controller: _scrollController,
-            scrollDirection: Axis.horizontal,
-            physics: const PageScrollPhysics(),
-            itemExtent: itemWidth,
-            itemCount: _contacts.length,
-            itemBuilder: (context, index) {
-              final contact = _contacts[index];
-              final name = contact.displayName ?? 'No Name';
-              final phone = contact.phones?.first.value ?? 'No Phone';
-              return SizedBox(
-                height: constraints.maxHeight,
-                child: Card(
-                  color: _colorFromPhone(phone),
-                  margin: EdgeInsets.zero,
-                  child: SizedBox.expand(
-                    child: ListTile(
-                      title: Text(name),
-                      subtitle: Text(phone),
-                      contentPadding: const EdgeInsets.all(24),
-                    ),
-                  ),
-                ),
-              );
-            },
+          final halfHeight = constraints.maxHeight / 2;
+          return Column(
+            children: [
+              Expanded(
+                child: _buildListView(_scrollController1, halfHeight),
+              ),
+              Expanded(
+                child: _buildListView(_scrollController2, halfHeight),
+              ),
+            ],
           );
         }));
   }
