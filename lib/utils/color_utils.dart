@@ -70,7 +70,7 @@ class ColorUtils {
     if (minDiff <= 30) {
       return true;
     }
-
+/*
     // Complementary hue (opposite on color wheel, within 30 degrees)
     final complementaryHue1 = (hue1 + 180) % 360;
     final complementaryDiff = (complementaryHue1 - hue2).abs();
@@ -79,7 +79,7 @@ class ColorUtils {
     if (minComplementaryDiff <= 30) {
       return true;
     }
-
+*/
     return false;
   }
 }

@@ -7,10 +7,10 @@ class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
 
   @override
-  _InitialScreenState createState() => _InitialScreenState();
+  InitialScreenState createState() => InitialScreenState();
 }
 
-class _InitialScreenState extends State<InitialScreen> {
+class InitialScreenState extends State<InitialScreen> {
   static const String _storageKey = 'stored_contacts';
   bool _isLoading = true;
   bool _hasStorage = false;
@@ -45,4 +45,3 @@ class _InitialScreenState extends State<InitialScreen> {
     }
   }
 }
-

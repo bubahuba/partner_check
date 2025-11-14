@@ -194,8 +194,22 @@ class ContactsPageState extends State<ContactsPage>
       _flashAnimationController2.forward().then((_) {
         _flashAnimationController2.reverse();
       });
-      // Haptic feedback - call immediately
-      HapticFeedback.vibrate();
+      // Count number of matches
+      int matchCount = 0;
+      if (baseMatch) matchCount++;
+      if (overlayMatch) matchCount++;
+      if (crossMatch1) matchCount++;
+      if (crossMatch2) matchCount++;
+      
+      // Haptic feedback - vibrate twice if multiple matches
+      if (matchCount >= 2) {
+        HapticFeedback.vibrate();
+        Future.delayed(const Duration(milliseconds: 150), () {
+          HapticFeedback.vibrate();
+        });
+      } else {
+        HapticFeedback.vibrate();
+      }
     } else {
       // Reset flash animations
       _flashAnimationController1.reset();
