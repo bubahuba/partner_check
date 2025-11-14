@@ -210,6 +210,16 @@ class ContactsPageState extends State<ContactsPage>
           Future.delayed(const Duration(milliseconds: 600), () {
             HapticFeedback.vibrate();
           });
+          if (matchCount == 3) {
+            Future.delayed(const Duration(milliseconds: 1200), () {
+              HapticFeedback.vibrate();
+            });
+          }
+          if (matchCount == 4) {
+            Future.delayed(const Duration(milliseconds: 1800), () {
+              HapticFeedback.vibrate();
+            });
+          }
         } else {
           HapticFeedback.vibrate();
         }
@@ -250,7 +260,7 @@ class ContactsPageState extends State<ContactsPage>
         _checkForMatch();
       });
     }
-    
+
     // Load vibrations setting
     setState(() {
       _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;

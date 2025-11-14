@@ -301,16 +301,16 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                   // Responsive sizing based on screen dimensions
                   final padding = isPortrait
                       ? (minDimension * 0.04).clamp(16.0, 24.0)
-                      : (minDimension * 0.06).clamp(24.0, 48.0);
+                      : (minDimension * 0.04).clamp(16.0, 24.0);
                   final iconSize = isPortrait
                       ? (minDimension * 0.3).clamp(100.0, 150.0)
-                      : (minDimension * 0.25).clamp(120.0, 200.0);
+                      : (minDimension * 0.2).clamp(80.0, 120.0);
                   final fontSize = isPortrait
                       ? (screenWidth * 0.08).clamp(20.0, 32.0)
-                      : (screenHeight * 0.06).clamp(22.0, 30.0);
+                      : (screenHeight * 0.05).clamp(18.0, 24.0);
                   final spacing = isPortrait
                       ? (screenHeight * 0.04).clamp(16.0, 32.0)
-                      : (screenWidth * 0.08).clamp(32.0, 64.0);
+                      : (screenWidth * 0.04).clamp(16.0, 32.0);
                   final buttonPadding = isPortrait
                       ? EdgeInsets.symmetric(
                           horizontal: (screenWidth * 0.08).clamp(24.0, 32.0),
@@ -365,7 +365,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           ],
                         ),
                       ),
-                      SizedBox(height: isPortrait ? 32 : 48),
+                      SizedBox(height: isPortrait ? 32 : 24),
                       ElevatedButton.icon(
                         onPressed: _isLoading ? null : _loadContacts,
                         icon: _isLoading
@@ -394,7 +394,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           shadowColor: Colors.black.withValues(alpha: 0.3),
                         ),
                       ),
-                      SizedBox(height: isPortrait ? 24 : 32),
+                      SizedBox(height: isPortrait ? 24 : 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -422,7 +422,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           ),
                         ],
                       ),
-                      SizedBox(height: isPortrait ? 24 : 32),
+                      SizedBox(height: isPortrait ? 24 : 16),
                       TextButton(
                         onPressed: () {
                           if (widget.onClose != null) {
@@ -500,7 +500,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           Expanded(
                             child: Center(child: iconWidget),
                           ),
-                          SizedBox(width: spacing),
+                          SizedBox(width: isPortrait ? spacing : spacing * 0.5),
                           Expanded(
                             child: textAndButton,
                           ),
