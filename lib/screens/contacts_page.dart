@@ -39,6 +39,8 @@ class ContactsPageState extends State<ContactsPage>
 
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
+  static const String _vibrationsKey = 'vibrations_enabled';
+  bool _vibrationsEnabled = true;
 
   @override
   void initState() {
@@ -137,7 +139,7 @@ class ContactsPageState extends State<ContactsPage>
     bool overlayMatch = false;
     bool crossMatch1 = false;
     bool crossMatch2 = false;
-    
+
     if (contact1.color == contact2.color) {
       newMatch = false;
     } else {
@@ -156,7 +158,7 @@ class ContactsPageState extends State<ContactsPage>
 
       newMatch = baseMatch || overlayMatch || crossMatch1 || crossMatch2;
     }
-    
+
     // Determine which areas to highlight for each card
     // Card 1: base matches if baseMatch or crossMatch2, overlay matches if overlayMatch or crossMatch1
     final baseMatch1 = baseMatch || crossMatch2;
@@ -164,7 +166,7 @@ class ContactsPageState extends State<ContactsPage>
     // Card 2: base matches if baseMatch or crossMatch1, overlay matches if overlayMatch or crossMatch2
     final baseMatch2 = baseMatch || crossMatch1;
     final overlayMatch2 = overlayMatch || crossMatch2;
-    
+
     // Stop any existing animations
     if (_heartAnimationController1.isAnimating) {
       _heartAnimationController1.stop();
@@ -200,15 +202,17 @@ class ContactsPageState extends State<ContactsPage>
       if (overlayMatch) matchCount++;
       if (crossMatch1) matchCount++;
       if (crossMatch2) matchCount++;
-      
-      // Haptic feedback - vibrate twice if multiple matches
-      if (matchCount >= 2) {
-        HapticFeedback.vibrate();
-        Future.delayed(const Duration(milliseconds: 150), () {
+
+      // Haptic feedback - vibrate twice if multiple matches (only if enabled)
+      if (_vibrationsEnabled) {
+        if (matchCount >= 2) {
           HapticFeedback.vibrate();
-        });
-      } else {
-        HapticFeedback.vibrate();
+          Future.delayed(const Duration(milliseconds: 600), () {
+            HapticFeedback.vibrate();
+          });
+        } else {
+          HapticFeedback.vibrate();
+        }
       }
     } else {
       // Reset flash animations
@@ -246,6 +250,11 @@ class ContactsPageState extends State<ContactsPage>
         _checkForMatch();
       });
     }
+    
+    // Load vibrations setting
+    setState(() {
+      _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
+    });
   }
 
   Future<void> _loadFavorites() async {
@@ -256,6 +265,13 @@ class ContactsPageState extends State<ContactsPage>
         _favoriteNames = favoritesList.toSet();
       });
     }
+  }
+
+  Future<void> _loadVibrationsSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
+    });
   }
 
   Future<void> _saveFavorites() async {
@@ -372,7 +388,8 @@ class ContactsPageState extends State<ContactsPage>
                             ),
                             if (flashOpacity > 0)
                               Container(
-                                color: Colors.white.withValues(alpha: flashOpacity),
+                                color: Colors.white
+                                    .withValues(alpha: flashOpacity),
                               ),
                           ],
                         );
@@ -394,11 +411,13 @@ class ContactsPageState extends State<ContactsPage>
                         return Stack(
                           children: [
                             Container(
-                              color: ColorUtils.overlayColorFromValue(contact.color),
+                              color: ColorUtils.overlayColorFromValue(
+                                  contact.color),
                             ),
                             if (flashOpacity > 0)
                               Container(
-                                color: Colors.white.withValues(alpha: flashOpacity),
+                                color: Colors.white
+                                    .withValues(alpha: flashOpacity),
                               ),
                           ],
                         );
@@ -617,6 +636,8 @@ class ContactsPageState extends State<ContactsPage>
                       });
                       // Reload contacts in case they were loaded from settings
                       _loadContacts();
+                      // Also reload vibrations setting
+                      _loadVibrationsSetting();
                     },
                   ),
                 ),
@@ -625,4 +646,3 @@ class ContactsPageState extends State<ContactsPage>
         }));
   }
 }
-

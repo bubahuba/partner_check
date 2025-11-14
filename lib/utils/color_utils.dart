@@ -52,9 +52,9 @@ class ColorUtils {
 
   /// Get hue from color
   static double getHue(Color color) {
-    final r = color.red;
-    final g = color.green;
-    final b = color.blue;
+    final r = (color.r * 255.0).round().clamp(0, 255);
+    final g = (color.g * 255.0).round().clamp(0, 255);
+    final b = (color.b * 255.0).round().clamp(0, 255);
     final hsv = rgbToHsv(r, g, b);
     return hsv[0];
   }

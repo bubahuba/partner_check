@@ -18,8 +18,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
+  bool _vibrationsEnabled = true;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
+  static const String _vibrationsKey = 'vibrations_enabled';
 
   @override
   void initState() {
@@ -33,6 +35,22 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
     );
     // Animate in from the right when first shown
     _slideController.forward();
+    _loadVibrationsSetting();
+  }
+
+  Future<void> _loadVibrationsSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
+    });
+  }
+
+  Future<void> _toggleVibrations(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_vibrationsKey, value);
+    setState(() {
+      _vibrationsEnabled = value;
+    });
   }
 
   @override
@@ -375,6 +393,34 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           elevation: 8,
                           shadowColor: Colors.black.withValues(alpha: 0.3),
                         ),
+                      ),
+                      SizedBox(height: isPortrait ? 24 : 32),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Vibrations',
+                            style: TextStyle(
+                              fontSize: buttonFontSize * 0.9,
+                              color: Colors.white,
+                              shadows: const [
+                                Shadow(
+                                  color: Colors.black26,
+                                  blurRadius: 8,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Switch(
+                            value: _vibrationsEnabled,
+                            onChanged: _toggleVibrations,
+                            activeColor: Colors.white,
+                            activeTrackColor: Colors.white.withValues(alpha: 0.7),
+                            inactiveThumbColor: Colors.white.withValues(alpha: 0.5),
+                            inactiveTrackColor: Colors.white.withValues(alpha: 0.3),
+                          ),
+                        ],
                       ),
                       SizedBox(height: isPortrait ? 24 : 32),
                       TextButton(
