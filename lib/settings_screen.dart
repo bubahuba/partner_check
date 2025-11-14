@@ -8,19 +8,53 @@ import 'models.dart';
 import 'main.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final VoidCallback? onClose;
+  
+  const SettingsScreen({super.key, this.onClose});
 
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
+  late AnimationController _slideController;
+  late Animation<double> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _slideController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _slideAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.ease),
+    );
+    // Animate in from the right when first shown
+    _slideController.forward();
+  }
+
+  @override
+  void dispose() {
+    _slideController.dispose();
+    super.dispose();
+  }
+
+  void _handleClose() {
+    _slideController.reverse().then((_) {
+      if (widget.onClose != null) {
+        widget.onClose!();
+      }
+    });
+  }
 
   // Process contacts in background isolate
-  static List<Map<String, dynamic>> _processContacts(List<Map<String, dynamic>> contactsData) {
+  static List<Map<String, dynamic>> _processContacts(
+      List<Map<String, dynamic>> contactsData) {
     return contactsData
-        .where((data) => data['phones'] != null && (data['phones'] as List).isNotEmpty)
+        .where((data) =>
+            data['phones'] != null && (data['phones'] as List).isNotEmpty)
         .map((data) {
       final phone = (data['phones'] as List).first['value'] ?? '';
       final digits = phone.replaceAll(RegExp(r'\D'), '');
@@ -44,21 +78,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
 
     try {
-      final status = await Permission.contacts.request();
+      // Check current permission status first
+      PermissionStatus status = await Permission.contacts.status;
+
+      // If permanently denied, open app settings
+      if (status.isPermanentlyDenied) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          final shouldOpen = await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Permission Required'),
+              content: const Text(
+                'Contacts permission is permanently denied. Please enable it in Settings.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: const Text('Open Settings'),
+                ),
+              ],
+            ),
+          );
+
+          if (shouldOpen == true) {
+            await openAppSettings();
+          }
+        }
+        return;
+      }
+
+      // Request permission if not granted
+      if (!status.isGranted) {
+        status = await Permission.contacts.request();
+      }
+
       if (status.isGranted) {
-        // Request permission for flutter_contacts
-        if (await FlutterContacts.requestPermission()) {
+        // Request permission for flutter_contacts (this should be granted now)
+        if (await FlutterContacts.requestPermission(readonly: true)) {
           // Load contacts on background thread
           final contacts = await FlutterContacts.getContacts(
             withProperties: true,
             withThumbnail: false,
           );
-          
+
           // Convert to serializable format for isolate
-          final contactsData = contacts.map((contact) => {
-            'displayName': contact.displayName,
-            'phones': contact.phones.map((phone) => {'value': phone.number}).toList(),
-          }).toList();
+          final contactsData = contacts
+              .map((contact) => {
+                    'displayName': contact.displayName,
+                    'phones': contact.phones
+                        .map((phone) => {'value': phone.number})
+                        .toList(),
+                  })
+              .toList();
 
           // Process contacts in background isolate
           final processedData = await compute(_processContacts, contactsData);
@@ -73,31 +151,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // Save to storage
           final prefs = await SharedPreferences.getInstance();
-          final jsonList = storedContacts.map((contact) => contact.toJson()).toList();
+          final jsonList =
+              storedContacts.map((contact) => contact.toJson()).toList();
           await prefs.setString('stored_contacts', json.encode(jsonList));
 
-          // Navigate to contacts page
+          // Close settings screen and reload contacts in ContactsPage
           if (mounted) {
-            Navigator.of(context).pushReplacement(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    const ContactsPage(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  const begin = Offset(1.0, 0.0);
-                  const end = Offset.zero;
-                  const curve = Curves.ease;
+            if (widget.onClose != null) {
+              _handleClose();
+            } else {
+              // Fallback to navigation if onClose is not provided (for InitialScreen)
+              Navigator.of(context).pushReplacement(
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const ContactsPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
+                    const begin = Offset(1.0, 0.0);
+                    const end = Offset.zero;
+                    const curve = Curves.ease;
 
-                  var tween = Tween(begin: begin, end: end).chain(
-                    CurveTween(curve: curve),
-                  );
+                    var tween = Tween(begin: begin, end: end).chain(
+                      CurveTween(curve: curve),
+                    );
 
-                  return SlideTransition(
-                    position: animation.drive(tween),
-                    child: child,
-                  );
-                },
-              ),
-            );
+                    return SlideTransition(
+                      position: animation.drive(tween),
+                      child: child,
+                    );
+                  },
+                ),
+              );
+            }
           }
         } else {
           setState(() {
@@ -117,10 +202,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Contacts permission denied'),
+            SnackBar(
+              content: Text('Permission denied: ${status.toString()}'),
             ),
           );
+          openAppSettings();
         }
       }
     } catch (e) {
@@ -144,7 +230,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     const Color pink = Color(0xFFEC4899);
     const Color blue = Color(0xFF3B82F6);
 
-    return Scaffold(
+    return AnimatedBuilder(
+      animation: _slideAnimation,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(_slideAnimation.value * MediaQuery.of(context).size.width, 0),
+          child: child,
+        );
+      },
+      child: Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -177,113 +271,148 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             // Content
             SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(48.0),
-                child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Left side - App icon
-                  Expanded(
-                    child: Center(
-                      child: Container(
-                        width: 200,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 30,
-                              spreadRadius: 10,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isPortrait =
+                      constraints.maxHeight > constraints.maxWidth;
+                  final screenWidth = constraints.maxWidth;
+                  final screenHeight = constraints.maxHeight;
+                  final minDimension =
+                      screenWidth < screenHeight ? screenWidth : screenHeight;
+
+                  // Responsive sizing based on screen dimensions
+                  final padding = isPortrait
+                      ? (minDimension * 0.04).clamp(16.0, 24.0)
+                      : (minDimension * 0.06).clamp(24.0, 48.0);
+                  final iconSize = isPortrait
+                      ? (minDimension * 0.3).clamp(100.0, 150.0)
+                      : (minDimension * 0.25).clamp(120.0, 200.0);
+                  final fontSize = isPortrait
+                      ? (screenWidth * 0.08).clamp(20.0, 32.0)
+                      : (screenHeight * 0.06).clamp(22.0, 30.0);
+                  final spacing = isPortrait
+                      ? (screenHeight * 0.04).clamp(16.0, 32.0)
+                      : (screenWidth * 0.08).clamp(32.0, 64.0);
+                  final buttonPadding = isPortrait
+                      ? EdgeInsets.symmetric(
+                          horizontal: (screenWidth * 0.08).clamp(24.0, 32.0),
+                          vertical: (screenHeight * 0.02).clamp(12.0, 16.0),
+                        )
+                      : const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10);
+                  final buttonFontSize = isPortrait
+                      ? (screenWidth * 0.035).clamp(14.0, 16.0)
+                      : (screenHeight * 0.025).clamp(16.0, 18.0);
+
+                  Widget iconWidget = Container(
+                    width: iconSize,
+                    height: iconSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.3),
+                          blurRadius: 30,
+                          spreadRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/app_icon.png',
+                        width: iconSize,
+                        height: iconSize,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+
+                  Widget textAndButton = Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Partner Check',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          height: 1.2,
+                          shadows: const [
+                            Shadow(
+                              color: Colors.black26,
+                              blurRadius: 10,
                             ),
                           ],
                         ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [indigo, pink, blue],
-                            ),
+                      ),
+                      SizedBox(height: isPortrait ? 32 : 48),
+                      ElevatedButton.icon(
+                        onPressed: _isLoading ? null : _loadContacts,
+                        icon: _isLoading
+                            ? SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              )
+                            : const Icon(Icons.contacts, size: 24),
+                        label: Text(
+                          _isLoading ? 'Loading...' : 'Load Contacts',
+                          style: TextStyle(fontSize: buttonFontSize),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: indigo,
+                          padding: buttonPadding,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                          child: Stack(
-                            children: [
-                              // Two overlapping circles (partners)
-                              Positioned(
-                                left: 40,
-                                top: 40,
-                                child: Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: pink,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                right: 40,
-                                top: 40,
-                                child: Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: blue,
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 3,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // Checkmark
-                              const Center(
-                                child: Icon(
-                                  Icons.check,
-                                  size: 60,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
+                          elevation: 8,
+                          shadowColor: Colors.black.withOpacity(0.3),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 64),
-                  // Right side - Text and button
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Welcome to\nPartner Check',
-                          style: TextStyle(
-                            fontSize: 48,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            height: 1.2,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black26,
-                                blurRadius: 10,
+                      SizedBox(height: isPortrait ? 24 : 32),
+                      TextButton(
+                        onPressed: () {
+                          if (widget.onClose != null) {
+                            _handleClose();
+                          } else {
+                            // Fallback to navigation if onClose is not provided (for InitialScreen)
+                            Navigator.of(context).pushReplacement(
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        const ContactsPage(),
+                                transitionsBuilder: (context, animation,
+                                    secondaryAnimation, child) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.ease;
+
+                                  var tween = Tween(begin: begin, end: end).chain(
+                                    CurveTween(curve: curve),
+                                  );
+
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'Load your contacts to get started',
+                            );
+                          }
+                        },
+                        child: Text(
+                          'close',
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: buttonFontSize * 0.9,
                             color: Colors.white.withOpacity(0.9),
+                            decoration: TextDecoration.underline,
                             shadows: const [
                               Shadow(
                                 color: Colors.black26,
@@ -292,48 +421,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 48),
-                        ElevatedButton.icon(
-                          onPressed: _isLoading ? null : _loadContacts,
-                          icon: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                                  ),
-                                )
-                              : const Icon(Icons.contacts, size: 24),
-                          label: Text(
-                            _isLoading ? 'Loading...' : 'Load Contacts',
-                            style: const TextStyle(fontSize: 18),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: indigo,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 40,
-                              vertical: 20,
+                      ),
+                    ],
+                  );
+
+                  if (isPortrait) {
+                    // Portrait layout: Column
+                    return Padding(
+                      padding: EdgeInsets.all(padding),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          iconWidget,
+                          SizedBox(height: spacing),
+                          Expanded(
+                            child: Center(
+                              child: textAndButton,
                             ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            elevation: 8,
-                            shadowColor: Colors.black.withOpacity(0.3),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                        ],
+                      ),
+                    );
+                  } else {
+                    // Landscape layout: Row
+                    return Padding(
+                      padding: EdgeInsets.all(padding),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Center(child: iconWidget),
+                          ),
+                          SizedBox(width: spacing),
+                          Expanded(
+                            child: textAndButton,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
               ),
-            ),
             ),
           ],
         ),
       ),
+      ),
     );
   }
 }
-

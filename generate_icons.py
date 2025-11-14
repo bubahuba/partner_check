@@ -45,9 +45,10 @@ def create_icon(size, output_path):
     check_size = int(size * 0.2)
     check_thickness = max(4, size // 20)
     
-    # Checkmark coordinates (centered, slightly below center)
+    # Checkmark coordinates (centered, aligned with circle white line)
+    # Move slightly up to align with the circle's white outline
     check_x = center
-    check_y = center + int(size * 0.08)
+    check_y = center + int(size * 0.02)  # Moved up from 0.08 to 0.02 to align with circle
     
     # Calculate checkmark points
     check_left = check_x - check_size // 3
