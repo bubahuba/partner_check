@@ -20,7 +20,7 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
   static const String _vibrationsKey = 'vibrations_enabled';
-  static const int _maxContacts = 5;
+  static const int _maxContacts = 10;
 
   @override
   void initState() {
@@ -93,7 +93,7 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
             builder: (context) => AlertDialog(
               title: const Text('Contact Limit Reached'),
               content: const Text(
-                'You have reached the maximum of 5 contacts in the free version.\n\n'
+                'You have reached the maximum of 10 contacts in the free version.\n\n'
                 'Upgrade to PartnerCheck Pro to add unlimited contacts.',
               ),
               actions: [

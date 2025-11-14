@@ -41,7 +41,7 @@ class ContactsPageState extends State<ContactsPage>
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
   static const String _vibrationsKey = 'vibrations_enabled';
-  static const int _maxContacts = 5;
+  static const int _maxContacts = 10;
   bool _vibrationsEnabled = true;
 
   @override
@@ -373,7 +373,7 @@ class ContactsPageState extends State<ContactsPage>
             builder: (context) => AlertDialog(
               title: const Text('Contact Limit Reached'),
               content: const Text(
-                'You have reached the maximum of 5 contacts in the free version.\n\n'
+                'You have reached the maximum of 10 contacts in the free version.\n\n'
                 'Upgrade to PartnerCheck Pro to add unlimited contacts.',
               ),
               actions: [
@@ -556,6 +556,33 @@ class ContactsPageState extends State<ContactsPage>
       _updateFavoritesFromContacts();
       _saveFavorites();
     });
+  }
+
+  Future<void> _confirmDeleteContact(String contactName) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Contact'),
+        content: Text('Are you sure you want to delete $contactName?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _deleteContact(contactName);
+    }
   }
 
   Future<void> _deleteContact(String contactName) async {
@@ -857,7 +884,7 @@ class ContactsPageState extends State<ContactsPage>
                                       size: 32,
                                     ),
                                     onPressed: () {
-                                      _deleteContact(contact.name);
+                                      _confirmDeleteContact(contact.name);
                                     },
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
