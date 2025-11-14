@@ -288,9 +288,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                   contact.isFavorite
                                       ? Icons.favorite
                                       : Icons.favorite_border,
-                                  color: contact.isFavorite
-                                      ? Colors.red
-                                      : Colors.white,
+                                  color: Colors.white,
                                   size: 32,
                                 ),
                                 onPressed: () {
@@ -316,6 +314,7 @@ class _ContactsPageState extends State<ContactsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.black,
         body: LayoutBuilder(builder: (context, constraints) {
           final halfWidth = constraints.maxWidth / 2;
           
@@ -397,20 +396,6 @@ class _ContactsPageState extends State<ContactsPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(
-                          _favoritesMode
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: _favoritesMode
-                              ? Colors.red
-                              : Colors.white,
-                        ),
-                        onPressed: _toggleFavoritesMode,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                      IconButton(
                         icon: const Icon(
                           Icons.settings,
                           color: Colors.white,
@@ -420,6 +405,18 @@ class _ContactsPageState extends State<ContactsPage> {
                             _showSettings = true;
                           });
                         },
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          _favoritesMode
+                              ? Icons.favorite
+                              : Icons.favorite_border,
+                          color: Colors.white,
+                        ),
+                        onPressed: _toggleFavoritesMode,
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.transparent,
                         ),
