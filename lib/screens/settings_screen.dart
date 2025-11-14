@@ -4,8 +4,8 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'models.dart';
-import 'main.dart';
+import '../models.dart';
+import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onClose;
@@ -261,9 +261,9 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.1),
+                    Colors.white.withValues(alpha: 0.1),
                     Colors.transparent,
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withValues(alpha: 0.05),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -311,7 +311,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 30,
                           spreadRadius: 10,
                         ),
@@ -373,7 +373,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                             borderRadius: BorderRadius.circular(30),
                           ),
                           elevation: 8,
-                          shadowColor: Colors.black.withOpacity(0.3),
+                          shadowColor: Colors.black.withValues(alpha: 0.3),
                         ),
                       ),
                       SizedBox(height: isPortrait ? 24 : 32),
@@ -411,7 +411,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           'close',
                           style: TextStyle(
                             fontSize: buttonFontSize * 0.9,
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             decoration: TextDecoration.underline,
                             shadows: const [
                               Shadow(
