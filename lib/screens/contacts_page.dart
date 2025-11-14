@@ -64,8 +64,7 @@ class ContactsPageState extends State<ContactsPage>
       vsync: this,
     );
     _addScrollListeners();
-    _loadContacts();
-    _loadFavorites();
+    _initializeData();
     // Check for initial match after everything is loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForMatch();
@@ -240,6 +239,12 @@ class ContactsPageState extends State<ContactsPage>
     _flashAnimationController1.dispose();
     _flashAnimationController2.dispose();
     super.dispose();
+  }
+
+  Future<void> _initializeData() async {
+    // Load favorites first, then contacts (so contacts can be updated with favorite status)
+    await _loadFavorites();
+    await _loadContacts();
   }
 
   Future<void> _loadContacts() async {

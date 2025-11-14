@@ -67,7 +67,7 @@ class ColorUtils {
     // Similar hue (within 30 degrees)
     final hueDiff = (hue1 - hue2).abs();
     final minDiff = math.min(hueDiff, 360 - hueDiff);
-    if (minDiff <= 30) {
+    if (minDiff <= 36) {
       return true;
     }
 /*
