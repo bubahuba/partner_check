@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'dart:convert';
 import '../models.dart';
 import '../utils/color_utils.dart';
@@ -40,6 +41,7 @@ class ContactsPageState extends State<ContactsPage>
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
   static const String _vibrationsKey = 'vibrations_enabled';
+  static const int _maxContacts = 5;
   bool _vibrationsEnabled = true;
 
   @override
@@ -77,14 +79,19 @@ class ContactsPageState extends State<ContactsPage>
         final width = _scrollController1.position.viewportDimension;
         if (width > 0) {
           final displayedContacts = _displayedContacts;
+          final totalItems = displayedContacts.length + 2; // +2 for plus buttons at start and end
           final page = (_scrollController1.offset / width)
               .round()
-              .clamp(0, displayedContacts.length - 1);
-          if (page != _currentPage1) {
-            setState(() {
-              _currentPage1 = page;
-            });
-            _checkForMatch();
+              .clamp(0, totalItems - 1);
+          // Skip plus button at index 0, convert to contact index
+          if (page > 0 && page <= displayedContacts.length) {
+            final contactIndex = page - 1;
+            if (contactIndex != _currentPage1) {
+              setState(() {
+                _currentPage1 = contactIndex;
+              });
+              _checkForMatch();
+            }
           }
         }
       }
@@ -95,23 +102,55 @@ class ContactsPageState extends State<ContactsPage>
         final width = _scrollController2.position.viewportDimension;
         if (width > 0) {
           final displayedContacts = _displayedContacts;
+          final totalItems = displayedContacts.length + 2; // +2 for plus buttons at start and end
           final page = (_scrollController2.offset / width)
               .round()
-              .clamp(0, displayedContacts.length - 1);
-          if (page != _currentPage2) {
-            setState(() {
-              _currentPage2 = page;
-            });
-            _checkForMatch();
+              .clamp(0, totalItems - 1);
+          // Skip plus button at index 0, convert to contact index
+          if (page > 0 && page <= displayedContacts.length) {
+            final contactIndex = page - 1;
+            if (contactIndex != _currentPage2) {
+              setState(() {
+                _currentPage2 = contactIndex;
+              });
+              _checkForMatch();
+            }
           }
         }
       }
     });
   }
 
+  // Check if a scroll controller is currently on a plus button card
+  bool _isOnPlusButton(ScrollController controller, List<StoredContact> displayedContacts) {
+    if (!controller.hasClients) return false;
+    final width = controller.position.viewportDimension;
+    if (width <= 0) return false;
+    final page = (controller.offset / width).round();
+    final totalItems = displayedContacts.length + 2; // +2 for plus buttons at start and end
+    // Plus buttons are at index 0 (start) and index displayedContacts.length + 1 (end)
+    return page == 0 || page == displayedContacts.length + 1;
+  }
+
   // Check for match between current pair and trigger animation
   void _checkForMatch() {
     final displayedContacts = _displayedContacts;
+    
+    // Check if either ListView is on a plus button card
+    if (_isOnPlusButton(_scrollController1, displayedContacts) ||
+        _isOnPlusButton(_scrollController2, displayedContacts)) {
+      if (_isMatch) {
+        setState(() {
+          _isMatch = false;
+        });
+        _heartAnimationController1.stop();
+        _heartAnimationController2.stop();
+        _heartAnimationController1.reset();
+        _heartAnimationController2.reset();
+      }
+      return;
+    }
+    
     if (displayedContacts.isEmpty ||
         _currentPage1 >= displayedContacts.length ||
         _currentPage2 >= displayedContacts.length) {
@@ -260,12 +299,34 @@ class ContactsPageState extends State<ContactsPage>
         // Update favorites from loaded contacts
         _updateFavoritesFromContacts();
       });
-      // Check for match after loading contacts
+      // Scroll to first contact (index 1, since index 0 is the plus button)
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        final displayedContacts = _displayedContacts;
+        if (displayedContacts.isNotEmpty) {
+          // Scroll to index 1 (first contact, since index 0 is plus button)
+          if (_scrollController1.hasClients) {
+            final width = _scrollController1.position.viewportDimension;
+            if (width > 0) {
+              _scrollController1.jumpTo(width); // Index 1 = 1 * width
+              setState(() {
+                _currentPage1 = 0; // Contact index 0 (first contact)
+              });
+            }
+          }
+          if (_scrollController2.hasClients) {
+            final width = _scrollController2.position.viewportDimension;
+            if (width > 0) {
+              _scrollController2.jumpTo(width); // Index 1 = 1 * width
+              setState(() {
+                _currentPage2 = 0; // Contact index 0 (first contact)
+              });
+            }
+          }
+        }
         _checkForMatch();
       });
     }
-
+    
     // Load vibrations setting
     setState(() {
       _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
@@ -302,6 +363,189 @@ class ContactsPageState extends State<ContactsPage>
     }).toList();
   }
 
+  Future<void> _pickAndAddContact({required ScrollController targetController}) async {
+    try {
+      // Check contact limit
+      if (_contacts.length >= _maxContacts) {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Contact Limit Reached'),
+              content: const Text(
+                'You have reached the maximum of 5 contacts in the free version.\n\n'
+                'Upgrade to PartnerCheck Pro to add unlimited contacts.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
+      // Request permission if needed
+      if (!await FlutterContacts.requestPermission(readonly: true)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Contacts permission is required'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Open native contact picker
+      final Contact? contact = await FlutterContacts.openExternalPick();
+      
+      if (contact == null) {
+        // User cancelled
+        return;
+      }
+
+      // Get the contact name
+      final contactName = contact.displayName;
+      
+      if (contactName.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Selected contact has no name'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+      
+      // Check for duplicates
+      if (_contacts.any((c) => c.name == contactName)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('$contactName is already in the list'),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Get phone number (use first available)
+      String phoneNumber = '';
+      if (contact.phones.isNotEmpty) {
+        phoneNumber = contact.phones.first.number;
+      }
+
+      // Check if contact has a phone number
+      if (contact.phones.isEmpty || phoneNumber.isEmpty) {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('No Phone Number'),
+              content: Text('$contactName does not have a phone number. Please select a contact with a phone number.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
+      // Calculate color from phone number
+      final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
+      int colorValue = 0;
+      if (digits.isNotEmpty) {
+        final hexDigits = digits.length >= 6
+            ? digits.substring(digits.length - 6)
+            : digits.padLeft(6, '0');
+        colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
+      }
+
+      // Create new contact
+      final newContact = StoredContact(
+        name: contactName,
+        color: colorValue,
+        isFavorite: _favoriteNames.contains(contactName),
+      );
+
+      // Add to contacts list
+      setState(() {
+        _contacts.add(newContact);
+        _updateFavoritesFromContacts();
+      });
+
+      // Save to storage
+      await _saveContacts();
+
+      // Scroll to the new contact only in the target ListView
+      final displayedContacts = _displayedContacts;
+      // New contact is at index: displayedContacts.length (last contact index + 1, accounting for plus button at index 0)
+      final newIndex = displayedContacts.length;
+      
+      if (targetController == _scrollController1) {
+        if (_scrollController1.hasClients && newIndex >= 0) {
+          final width = _scrollController1.position.viewportDimension;
+          if (width > 0) {
+            _scrollController1.animateTo(
+              newIndex * width,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.ease,
+            );
+            setState(() {
+              _currentPage1 = newIndex;
+            });
+          }
+        }
+      } else if (targetController == _scrollController2) {
+        if (_scrollController2.hasClients && newIndex >= 0) {
+          final width = _scrollController2.position.viewportDimension;
+          if (width > 0) {
+            _scrollController2.animateTo(
+              newIndex * width,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.ease,
+            );
+            setState(() {
+              _currentPage2 = newIndex;
+            });
+          }
+        }
+      }
+
+      // Check for match after adding
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _checkForMatch();
+      });
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking contact: $e'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _saveContacts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = _contacts.map((contact) => contact.toJson()).toList();
+    await prefs.setString(_storageKey, json.encode(jsonList));
+  }
+
   void _toggleFavorite(String contactName) {
     setState(() {
       if (_favoriteNames.contains(contactName)) {
@@ -314,17 +558,84 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
+  Future<void> _deleteContact(String contactName) async {
+    // Remove from favorites if it's favorited
+    if (_favoriteNames.contains(contactName)) {
+      _favoriteNames.remove(contactName);
+      await _saveFavorites();
+    }
+
+    // Remove from contacts list
+    setState(() {
+      _contacts.removeWhere((contact) => contact.name == contactName);
+      _updateFavoritesFromContacts();
+    });
+
+    // Save updated contacts
+    await _saveContacts();
+
+    // Update scroll positions if needed
+    final displayedContacts = _displayedContacts;
+    if (_currentPage1 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+      setState(() {
+        _currentPage1 = displayedContacts.length - 1;
+      });
+      if (_scrollController1.hasClients) {
+        final width = _scrollController1.position.viewportDimension;
+        if (width > 0) {
+          // Scroll to first contact (index 1, accounting for plus button at index 0)
+          _scrollController1.jumpTo(width);
+        }
+      }
+    }
+    if (_currentPage2 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+      setState(() {
+        _currentPage2 = displayedContacts.length - 1;
+      });
+      if (_scrollController2.hasClients) {
+        final width = _scrollController2.position.viewportDimension;
+        if (width > 0) {
+          // Scroll to first contact (index 1, accounting for plus button at index 0)
+          _scrollController2.jumpTo(width);
+        }
+      }
+    }
+
+    // Check for match after deletion
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForMatch();
+    });
+  }
+
   void _toggleFavoritesMode() {
     setState(() {
       _favoritesMode = !_favoritesMode;
       // Reset scroll positions when toggling mode
       _currentPage1 = 0;
       _currentPage2 = 0;
-      if (_scrollController1.hasClients) {
-        _scrollController1.jumpTo(0);
-      }
-      if (_scrollController2.hasClients) {
-        _scrollController2.jumpTo(0);
+      final displayedContacts = _displayedContacts;
+      if (displayedContacts.isNotEmpty) {
+        // Scroll to index 1 (first contact, since index 0 is plus button)
+        if (_scrollController1.hasClients) {
+          final width = _scrollController1.position.viewportDimension;
+          if (width > 0) {
+            _scrollController1.jumpTo(width); // Index 1 = 1 * width
+          }
+        }
+        if (_scrollController2.hasClients) {
+          final width = _scrollController2.position.viewportDimension;
+          if (width > 0) {
+            _scrollController2.jumpTo(width); // Index 1 = 1 * width
+          }
+        }
+      } else {
+        // No contacts, scroll to plus button (index 0)
+        if (_scrollController1.hasClients) {
+          _scrollController1.jumpTo(0);
+        }
+        if (_scrollController2.hasClients) {
+          _scrollController2.jumpTo(0);
+        }
       }
     });
     _checkForMatch();
@@ -352,6 +663,35 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
+  Widget _buildAddContactCard(double height, ScrollController controller) {
+    return GestureDetector(
+      onTap: () => _pickAndAddContact(targetController: controller),
+      child: SizedBox(
+        height: height,
+        child: Card(
+          margin: EdgeInsets.zero,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+          ),
+          color: Colors.black,
+          child: Center(
+            child: IconButton(
+              icon: Icon(
+                Icons.add,
+                color: Colors.white.withValues(alpha: 0.5),
+                size: 48,
+              ),
+              onPressed: () => _pickAndAddContact(targetController: controller),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.transparent,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildListView(
       ScrollController controller,
       double height,
@@ -368,12 +708,24 @@ class ContactsPageState extends State<ContactsPage>
       scrollDirection: Axis.horizontal,
       physics: const PageScrollPhysics(),
       itemExtent: width,
-      itemCount: displayedContacts.length,
+      itemCount: displayedContacts.length + 2, // +2 for add contact cards (first and last)
       itemBuilder: (context, index) {
-        final contact = displayedContacts[index];
+        // First item is the add contact card
+        if (index == 0) {
+          return _buildAddContactCard(height, controller);
+        }
+        
+        // Last item is also the add contact card
+        if (index == displayedContacts.length + 1) {
+          return _buildAddContactCard(height, controller);
+        }
+        
+        // Adjust index for displayed contacts (subtract 1 because first item is plus button)
+        final contactIndex = index - 1;
+        final contact = displayedContacts[contactIndex];
         final isCurrentPage =
-            (controller == _scrollController1 && index == _currentPage1) ||
-                (controller == _scrollController2 && index == _currentPage2);
+            (controller == _scrollController1 && contactIndex == _currentPage1) ||
+                (controller == _scrollController2 && contactIndex == _currentPage2);
         return GestureDetector(
           onTap: _toggleHudVisibility,
           onVerticalDragUpdate: (details) {
@@ -450,50 +802,69 @@ class ContactsPageState extends State<ContactsPage>
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 16),
-                              isCurrentPage && _isMatch
-                                  ? AnimatedBuilder(
-                                      animation: heartAnimationController,
-                                      builder: (context, child) {
-                                        // Scale from 1.0 to 1.2 when there's a match
-                                        final scale = 1.0 +
-                                            (heartAnimationController.value *
-                                                0.2);
-                                        return Transform.scale(
-                                          scale: scale,
-                                          child: IconButton(
-                                            icon: Icon(
-                                              contact.isFavorite
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: Colors.white,
-                                              size: 32,
-                                            ),
-                                            onPressed: () {
-                                              _toggleFavorite(contact.name);
-                                            },
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            visualDensity:
-                                                VisualDensity.compact,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  isCurrentPage && _isMatch
+                                      ? AnimatedBuilder(
+                                          animation: heartAnimationController,
+                                          builder: (context, child) {
+                                            // Scale from 1.0 to 1.2 when there's a match
+                                            final scale = 1.0 +
+                                                (heartAnimationController.value *
+                                                    0.2);
+                                            return Transform.scale(
+                                              scale: scale,
+                                              child: IconButton(
+                                                icon: Icon(
+                                                  contact.isFavorite
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border,
+                                                  color: Colors.white,
+                                                  size: 32,
+                                                ),
+                                                onPressed: () {
+                                                  _toggleFavorite(contact.name);
+                                                },
+                                                padding: EdgeInsets.zero,
+                                                constraints: const BoxConstraints(),
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : IconButton(
+                                          icon: Icon(
+                                            contact.isFavorite
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 32,
                                           ),
-                                        );
-                                      },
-                                    )
-                                  : IconButton(
-                                      icon: Icon(
-                                        contact.isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                      onPressed: () {
-                                        _toggleFavorite(contact.name);
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      visualDensity: VisualDensity.compact,
+                                          onPressed: () {
+                                            _toggleFavorite(contact.name);
+                                          },
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                          visualDensity: VisualDensity.compact,
+                                        ),
+                                  const SizedBox(width: 16),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.white,
+                                      size: 32,
                                     ),
+                                    onPressed: () {
+                                      _deleteContact(contact.name);
+                                    },
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ],
+                              ),
                             ],
                           )
                         : const SizedBox.shrink(),
@@ -526,9 +897,13 @@ class ContactsPageState extends State<ContactsPage>
             if (_scrollController1.hasClients) {
               final oldWidth = _scrollController1.position.viewportDimension;
               if (oldWidth > 0) {
-                savedPage1 = (_scrollController1.offset / oldWidth)
-                    .round()
-                    .clamp(0, displayedContacts.length - 1);
+                final page = (_scrollController1.offset / oldWidth).round();
+                // Convert page index to contact index (accounting for plus button at index 0)
+                if (page > 0 && page <= displayedContacts.length) {
+                  savedPage1 = page - 1;
+                } else {
+                  savedPage1 = 0;
+                }
                 _currentPage1 = savedPage1;
               }
             }
@@ -543,9 +918,13 @@ class ContactsPageState extends State<ContactsPage>
             if (_scrollController2.hasClients) {
               final oldWidth = _scrollController2.position.viewportDimension;
               if (oldWidth > 0) {
-                savedPage2 = (_scrollController2.offset / oldWidth)
-                    .round()
-                    .clamp(0, displayedContacts.length - 1);
+                final page = (_scrollController2.offset / oldWidth).round();
+                // Convert page index to contact index (accounting for plus button at index 0)
+                if (page > 0 && page <= displayedContacts.length) {
+                  savedPage2 = page - 1;
+                } else {
+                  savedPage2 = 0;
+                }
                 _currentPage2 = savedPage2;
               }
             }
@@ -559,7 +938,9 @@ class ContactsPageState extends State<ContactsPage>
           if (widthChanged1) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_scrollController1.hasClients && halfWidth > 0) {
-                final targetOffset = savedPage1 * halfWidth;
+                // Convert contact index back to page index (add 1 for plus button at index 0)
+                final targetPage = savedPage1 + 1;
+                final targetOffset = targetPage * halfWidth;
                 _scrollController1.jumpTo(targetOffset);
                 _currentPage1 = savedPage1;
               }
@@ -569,7 +950,9 @@ class ContactsPageState extends State<ContactsPage>
           if (widthChanged2) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_scrollController2.hasClients && halfWidth > 0) {
-                final targetOffset = savedPage2 * halfWidth;
+                // Convert contact index back to page index (add 1 for plus button at index 0)
+                final targetPage = savedPage2 + 1;
+                final targetOffset = targetPage * halfWidth;
                 _scrollController2.jumpTo(targetOffset);
                 _currentPage2 = savedPage2;
               }

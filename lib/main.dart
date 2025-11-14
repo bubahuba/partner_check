@@ -11,7 +11,7 @@ class PartnerCheck extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Contacts Phone Numbers',
+      title: 'PartnerCheck Free',
       home: const InitialScreen(),
     );
   }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models.dart';
@@ -13,15 +11,16 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, this.onClose});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
+class SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   bool _vibrationsEnabled = true;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
   static const String _vibrationsKey = 'vibrations_enabled';
+  static const int _maxContacts = 5;
 
   @override
   void initState() {
@@ -67,15 +66,122 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
     });
   }
 
-  // Process contacts in background isolate
-  static List<Map<String, dynamic>> _processContacts(
-      List<Map<String, dynamic>> contactsData) {
-    return contactsData
-        .where((data) =>
-            data['phones'] != null && (data['phones'] as List).isNotEmpty)
-        .map((data) {
-      final phone = (data['phones'] as List).first['value'] ?? '';
-      final digits = phone.replaceAll(RegExp(r'\D'), '');
+  Future<void> _addContact() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Load existing contacts to check limit
+      final prefs = await SharedPreferences.getInstance();
+      final storedData = prefs.getString('stored_contacts');
+      List<StoredContact> existingContacts = [];
+      
+      if (storedData != null) {
+        final List<dynamic> jsonList = json.decode(storedData);
+        existingContacts = jsonList.map((json) => StoredContact.fromJson(json)).toList();
+      }
+
+      // Check contact limit
+      if (existingContacts.length >= _maxContacts) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Contact Limit Reached'),
+              content: const Text(
+                'You have reached the maximum of 5 contacts in the free version.\n\n'
+                'Upgrade to PartnerCheck Pro to add unlimited contacts.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
+      // Request permission if needed
+      if (!await FlutterContacts.requestPermission(readonly: true)) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Contacts permission is required'),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Open native contact picker
+      final Contact? contact = await FlutterContacts.openExternalPick();
+      
+      if (contact == null) {
+        // User cancelled
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Get the contact name
+      final contactName = contact.displayName;
+      
+      if (contactName.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Selected contact has no name'),
+            ),
+          );
+        }
+        return;
+      }
+
+      // Get phone number (use first available)
+      String phoneNumber = '';
+      if (contact.phones.isNotEmpty) {
+        phoneNumber = contact.phones.first.number;
+      }
+
+      // Check if contact has a phone number
+      if (contact.phones.isEmpty || phoneNumber.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('No Phone Number'),
+              content: Text('$contactName does not have a phone number. Please select a contact with a phone number.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
+      // Calculate color from phone number
+      final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
       int colorValue = 0;
       if (digits.isNotEmpty) {
         final hexDigits = digits.length >= 6
@@ -83,148 +189,69 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
             : digits.padLeft(6, '0');
         colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
       }
-      return {
-        'name': data['displayName'] ?? 'No Name',
-        'color': colorValue,
-      };
-    }).toList();
-  }
 
-  Future<void> _loadContacts() async {
-    setState(() {
-      _isLoading = true;
-    });
+      // Use existing contacts list (already loaded above)
+      List<StoredContact> storedContacts = existingContacts;
 
-    try {
-      // Check current permission status first
-      PermissionStatus status = await Permission.contacts.status;
-
-      // If permanently denied, open app settings
-      if (status.isPermanentlyDenied) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (mounted) {
-          final shouldOpen = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Permission Required'),
-              content: const Text(
-                'Contacts permission is permanently denied. Please enable it in Settings.',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Open Settings'),
-                ),
-              ],
-            ),
-          );
-
-          if (shouldOpen == true) {
-            await openAppSettings();
-          }
-        }
-        return;
-      }
-
-      // Request permission if not granted
-      if (!status.isGranted) {
-        status = await Permission.contacts.request();
-      }
-
-      if (status.isGranted) {
-        // Request permission for flutter_contacts (this should be granted now)
-        if (await FlutterContacts.requestPermission(readonly: true)) {
-          // Load contacts on background thread
-          final contacts = await FlutterContacts.getContacts(
-            withProperties: true,
-            withThumbnail: false,
-          );
-
-          // Convert to serializable format for isolate
-          final contactsData = contacts
-              .map((contact) => {
-                    'displayName': contact.displayName,
-                    'phones': contact.phones
-                        .map((phone) => {'value': phone.number})
-                        .toList(),
-                  })
-              .toList();
-
-          // Process contacts in background isolate
-          final processedData = await compute(_processContacts, contactsData);
-
-          // Convert to StoredContact
-          final storedContacts = processedData
-              .map((data) => StoredContact(
-                    name: data['name'] as String,
-                    color: data['color'] as int,
-                  ))
-              .toList();
-
-          // Save to storage
-          final prefs = await SharedPreferences.getInstance();
-          final jsonList =
-              storedContacts.map((contact) => contact.toJson()).toList();
-          await prefs.setString('stored_contacts', json.encode(jsonList));
-
-          // Close settings screen and reload contacts in ContactsPage
-          if (mounted) {
-            if (widget.onClose != null) {
-              _handleClose();
-            } else {
-              // Fallback to navigation if onClose is not provided (for InitialScreen)
-              Navigator.of(context).pushReplacement(
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      const ContactsPage(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset.zero;
-                    const curve = Curves.ease;
-
-                    var tween = Tween(begin: begin, end: end).chain(
-                      CurveTween(curve: curve),
-                    );
-
-                    return SlideTransition(
-                      position: animation.drive(tween),
-                      child: child,
-                    );
-                  },
-                ),
-              );
-            }
-          }
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Contacts permission denied'),
-              ),
-            );
-          }
-        }
-      } else {
+      // Check for duplicates
+      if (storedContacts.any((c) => c.name == contactName)) {
         setState(() {
           _isLoading = false;
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Permission denied: ${status.toString()}'),
+              content: Text('$contactName is already in the list'),
             ),
           );
-          openAppSettings();
+        }
+        return;
+      }
+
+      // Create new contact
+      final newContact = StoredContact(
+        name: contactName,
+        color: colorValue,
+      );
+
+      // Add to existing contacts
+      storedContacts.add(newContact);
+
+      // Save to storage
+      final jsonList = storedContacts.map((contact) => contact.toJson()).toList();
+      await prefs.setString('stored_contacts', json.encode(jsonList));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Close settings screen and reload contacts in ContactsPage
+      if (mounted) {
+        if (widget.onClose != null) {
+          _handleClose();
+        } else {
+          // Fallback to navigation if onClose is not provided (for InitialScreen)
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const ContactsPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(
+                  CurveTween(curve: curve),
+                );
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ),
+          );
         }
       }
     } catch (e) {
@@ -234,7 +261,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading contacts: $e'),
+            content: Text('Error adding contact: $e'),
           ),
         );
       }
@@ -350,7 +377,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Partner Check',
+                        'PartnerCheck Free',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: fontSize,
@@ -367,7 +394,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                       ),
                       SizedBox(height: isPortrait ? 32 : 24),
                       ElevatedButton.icon(
-                        onPressed: _isLoading ? null : _loadContacts,
+                        onPressed: _isLoading ? null : _addContact,
                         icon: _isLoading
                             ? SizedBox(
                                 width: 20,
@@ -378,9 +405,9 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                                       Colors.white),
                                 ),
                               )
-                            : const Icon(Icons.contacts, size: 24),
+                            : const Icon(Icons.person_add, size: 24),
                         label: Text(
-                          _isLoading ? 'Loading...' : 'Load Contacts',
+                          _isLoading ? 'Adding...' : 'Add Contact',
                           style: TextStyle(fontSize: buttonFontSize),
                         ),
                         style: ElevatedButton.styleFrom(
