@@ -98,15 +98,14 @@ class _ContactsPageState extends State<ContactsPage> {
     _loadFavorites();
   }
 
+
   void _addScrollListeners() {
     _scrollController1.addListener(() {
       if (_scrollController1.hasClients) {
         final width = _scrollController1.position.viewportDimension;
         if (width > 0) {
           final displayedContacts = _displayedContacts;
-          final page = (_scrollController1.offset / width)
-              .round()
-              .clamp(0, displayedContacts.length - 1);
+          final page = (_scrollController1.offset / width).round().clamp(0, displayedContacts.length - 1);
           if (page != _currentPage1) {
             _currentPage1 = page;
           }
@@ -119,9 +118,7 @@ class _ContactsPageState extends State<ContactsPage> {
         final width = _scrollController2.position.viewportDimension;
         if (width > 0) {
           final displayedContacts = _displayedContacts;
-          final page = (_scrollController2.offset / width)
-              .round()
-              .clamp(0, displayedContacts.length - 1);
+          final page = (_scrollController2.offset / width).round().clamp(0, displayedContacts.length - 1);
           if (page != _currentPage2) {
             _currentPage2 = page;
           }
@@ -129,6 +126,7 @@ class _ContactsPageState extends State<ContactsPage> {
       }
     });
   }
+
 
   Color _colorFromValue(int colorValue) {
     return Color(0xFF000000 | colorValue);
@@ -140,7 +138,7 @@ class _ContactsPageState extends State<ContactsPage> {
     final hexString = colorValue.toRadixString(16).padLeft(6, '0');
     final reversedHexString = hexString.split('').reversed.join('');
     final reversed = int.parse(reversedHexString, radix: 16);
-    return Color(reversed);
+    return Color(0xFF000000 | reversed);
   }
 
   @override
@@ -154,12 +152,13 @@ class _ContactsPageState extends State<ContactsPage> {
     // Load from storage
     final prefs = await SharedPreferences.getInstance();
     final storedData = prefs.getString(_storageKey);
-
+    
     if (storedData != null) {
       final List<dynamic> jsonList = json.decode(storedData);
       setState(() {
-        _contacts =
-            jsonList.map((json) => StoredContact.fromJson(json)).toList();
+        _contacts = jsonList
+            .map((json) => StoredContact.fromJson(json))
+            .toList();
         // Update favorites from loaded contacts
         _updateFavoritesFromContacts();
       });
@@ -184,8 +183,7 @@ class _ContactsPageState extends State<ContactsPage> {
   void _updateFavoritesFromContacts() {
     // Update contacts with favorite status
     _contacts = _contacts.map((contact) {
-      return contact.copyWith(
-          isFavorite: _favoriteNames.contains(contact.name));
+      return contact.copyWith(isFavorite: _favoriteNames.contains(contact.name));
     }).toList();
   }
 
@@ -238,8 +236,7 @@ class _ContactsPageState extends State<ContactsPage> {
     });
   }
 
-  Widget _buildListView(ScrollController controller, double height,
-      double width, int currentPage, bool needsRestore) {
+  Widget _buildListView(ScrollController controller, double height, double width, int currentPage, bool needsRestore) {
     final displayedContacts = _displayedContacts;
     return ListView.builder(
       controller: controller,
@@ -318,22 +315,20 @@ class _ContactsPageState extends State<ContactsPage> {
         backgroundColor: Colors.black,
         body: LayoutBuilder(builder: (context, constraints) {
           final halfWidth = constraints.maxWidth / 2;
-
+          
           // Check if width changed (orientation change)
           bool widthChanged1 = false;
           bool widthChanged2 = false;
           int savedPage1 = _currentPage1;
           int savedPage2 = _currentPage2;
-
+          
           final displayedContacts = _displayedContacts;
           if (_lastWidth1 != null && (_lastWidth1! - halfWidth).abs() > 1.0) {
             // Capture current page from scroll controller BEFORE width changes
             if (_scrollController1.hasClients) {
               final oldWidth = _scrollController1.position.viewportDimension;
               if (oldWidth > 0) {
-                savedPage1 = (_scrollController1.offset / oldWidth)
-                    .round()
-                    .clamp(0, displayedContacts.length - 1);
+                savedPage1 = (_scrollController1.offset / oldWidth).round().clamp(0, displayedContacts.length - 1);
                 _currentPage1 = savedPage1;
               }
             }
@@ -342,15 +337,13 @@ class _ContactsPageState extends State<ContactsPage> {
           } else if (_lastWidth1 == null) {
             _lastWidth1 = halfWidth;
           }
-
+          
           if (_lastWidth2 != null && (_lastWidth2! - halfWidth).abs() > 1.0) {
             // Capture current page from scroll controller BEFORE width changes
             if (_scrollController2.hasClients) {
               final oldWidth = _scrollController2.position.viewportDimension;
               if (oldWidth > 0) {
-                savedPage2 = (_scrollController2.offset / oldWidth)
-                    .round()
-                    .clamp(0, displayedContacts.length - 1);
+                savedPage2 = (_scrollController2.offset / oldWidth).round().clamp(0, displayedContacts.length - 1);
                 _currentPage2 = savedPage2;
               }
             }
@@ -359,7 +352,7 @@ class _ContactsPageState extends State<ContactsPage> {
           } else if (_lastWidth2 == null) {
             _lastWidth2 = halfWidth;
           }
-
+          
           // Restore scroll positions after orientation change
           if (widthChanged1) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -370,7 +363,7 @@ class _ContactsPageState extends State<ContactsPage> {
               }
             });
           }
-
+          
           if (widthChanged2) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (_scrollController2.hasClients && halfWidth > 0) {
@@ -380,18 +373,16 @@ class _ContactsPageState extends State<ContactsPage> {
               }
             });
           }
-
+          
           return Stack(
             children: [
               Row(
                 children: [
                   Expanded(
-                    child: _buildListView(_scrollController1,
-                        constraints.maxHeight, halfWidth, _currentPage1, false),
+                    child: _buildListView(_scrollController1, constraints.maxHeight, halfWidth, _currentPage1, false),
                   ),
                   Expanded(
-                    child: _buildListView(_scrollController2,
-                        constraints.maxHeight, halfWidth, _currentPage2, false),
+                    child: _buildListView(_scrollController2, constraints.maxHeight, halfWidth, _currentPage2, false),
                   ),
                 ],
               ),
