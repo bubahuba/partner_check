@@ -257,6 +257,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
         );
       },
       child: Scaffold(
+      backgroundColor: Colors.black,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
