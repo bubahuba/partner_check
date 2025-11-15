@@ -27,8 +27,7 @@ class ContactsPageState extends State<ContactsPage>
   bool _showSettings = false;
   bool _favoritesMode = false;
   Set<String> _favoriteNames = {};
-  late AnimationController _heartAnimationController1;
-  late AnimationController _heartAnimationController2;
+  late AnimationController _heartAnimationController;
   late AnimationController _flashAnimationController1;
   late AnimationController _flashAnimationController2;
   bool _isMatch = false;
@@ -47,11 +46,7 @@ class ContactsPageState extends State<ContactsPage>
     super.initState();
     _scrollController1 = ScrollController();
     _scrollController2 = ScrollController();
-    _heartAnimationController1 = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    _heartAnimationController2 = AnimationController(
+    _heartAnimationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
@@ -119,10 +114,8 @@ class ContactsPageState extends State<ContactsPage>
         setState(() {
           _isMatch = false;
         });
-        _heartAnimationController1.stop();
-        _heartAnimationController2.stop();
-        _heartAnimationController1.reset();
-        _heartAnimationController2.reset();
+        _heartAnimationController.stop();
+        _heartAnimationController.reset();
       }
       return;
     }
@@ -167,14 +160,10 @@ class ContactsPageState extends State<ContactsPage>
     final overlayMatch2 = overlayMatch || crossMatch2;
 
     // Stop any existing animations
-    if (_heartAnimationController1.isAnimating) {
-      _heartAnimationController1.stop();
+    if (_heartAnimationController.isAnimating) {
+      _heartAnimationController.stop();
     }
-    if (_heartAnimationController2.isAnimating) {
-      _heartAnimationController2.stop();
-    }
-    _heartAnimationController1.reset();
-    _heartAnimationController2.reset();
+    _heartAnimationController.reset();
 
     setState(() {
       _isMatch = newMatch;
@@ -186,8 +175,7 @@ class ContactsPageState extends State<ContactsPage>
 
     if (newMatch) {
       // Trigger animation and haptic feedback
-      _heartAnimationController1.repeat(reverse: true);
-      _heartAnimationController2.repeat(reverse: true);
+      _heartAnimationController.repeat(reverse: true);
       // Trigger flash animations
       _flashAnimationController1.forward().then((_) {
         _flashAnimationController1.reverse();
@@ -234,8 +222,7 @@ class ContactsPageState extends State<ContactsPage>
   void dispose() {
     _scrollController1.dispose();
     _scrollController2.dispose();
-    _heartAnimationController1.dispose();
-    _heartAnimationController2.dispose();
+    _heartAnimationController.dispose();
     _flashAnimationController1.dispose();
     _flashAnimationController2.dispose();
     super.dispose();
@@ -587,7 +574,7 @@ class ContactsPageState extends State<ContactsPage>
                         halfWidth,
                         _currentPage1,
                         false,
-                        _heartAnimationController1,
+                        _heartAnimationController,
                         _flashAnimationController1,
                         _baseMatch1,
                         _overlayMatch1),
@@ -599,7 +586,7 @@ class ContactsPageState extends State<ContactsPage>
                         halfWidth,
                         _currentPage2,
                         false,
-                        _heartAnimationController2,
+                        _heartAnimationController,
                         _flashAnimationController2,
                         _baseMatch2,
                         _overlayMatch2),
