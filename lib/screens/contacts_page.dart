@@ -281,6 +281,12 @@ class ContactsPageState extends State<ContactsPage>
     await prefs.setStringList(_favoritesKey, _favoriteNames.toList());
   }
 
+  Future<void> _saveContacts() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = _contacts.map((contact) => contact.toJson()).toList();
+    await prefs.setString(_storageKey, json.encode(jsonList));
+  }
+
   void _updateFavoritesFromContacts() {
     // Update contacts with favorite status
     _contacts = _contacts.map((contact) {
@@ -298,6 +304,80 @@ class ContactsPageState extends State<ContactsPage>
       }
       _updateFavoritesFromContacts();
       _saveFavorites();
+    });
+  }
+
+  Future<void> _confirmDeleteContact(String contactName) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Contact'),
+        content: Text('Are you sure you want to delete $contactName?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      await _deleteContact(contactName);
+    }
+  }
+
+  Future<void> _deleteContact(String contactName) async {
+    // Remove from favorites if it's favorited
+    if (_favoriteNames.contains(contactName)) {
+      _favoriteNames.remove(contactName);
+      await _saveFavorites();
+    }
+
+    // Remove from contacts list
+    setState(() {
+      _contacts.removeWhere((contact) => contact.name == contactName);
+      _updateFavoritesFromContacts();
+    });
+
+    // Save updated contacts
+    await _saveContacts();
+
+    // Update scroll positions if needed
+    final displayedContacts = _displayedContacts;
+    if (_currentPage1 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+      setState(() {
+        _currentPage1 = displayedContacts.length - 1;
+      });
+      if (_scrollController1.hasClients) {
+        final width = _scrollController1.position.viewportDimension;
+        if (width > 0) {
+          _scrollController1.jumpTo(_currentPage1 * width);
+        }
+      }
+    }
+    if (_currentPage2 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+      setState(() {
+        _currentPage2 = displayedContacts.length - 1;
+      });
+      if (_scrollController2.hasClients) {
+        final width = _scrollController2.position.viewportDimension;
+        if (width > 0) {
+          _scrollController2.jumpTo(_currentPage2 * width);
+        }
+      }
+    }
+
+    // Check for match after deletion
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForMatch();
     });
   }
 
@@ -437,50 +517,69 @@ class ContactsPageState extends State<ContactsPage>
                                 textAlign: TextAlign.center,
                               ),
                               const SizedBox(height: 16),
-                              isCurrentPage && _isMatch
-                                  ? AnimatedBuilder(
-                                      animation: heartAnimationController,
-                                      builder: (context, child) {
-                                        // Scale from 1.0 to 1.2 when there's a match
-                                        final scale = 1.0 +
-                                            (heartAnimationController.value *
-                                                0.2);
-                                        return Transform.scale(
-                                          scale: scale,
-                                          child: IconButton(
-                                            icon: Icon(
-                                              contact.isFavorite
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: Colors.white,
-                                              size: 32,
-                                            ),
-                                            onPressed: () {
-                                              _toggleFavorite(contact.name);
-                                            },
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            visualDensity:
-                                                VisualDensity.compact,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  isCurrentPage && _isMatch
+                                      ? AnimatedBuilder(
+                                          animation: heartAnimationController,
+                                          builder: (context, child) {
+                                            // Scale from 1.0 to 1.2 when there's a match
+                                            final scale = 1.0 +
+                                                (heartAnimationController.value *
+                                                    0.2);
+                                            return Transform.scale(
+                                              scale: scale,
+                                              child: IconButton(
+                                                icon: Icon(
+                                                  contact.isFavorite
+                                                      ? Icons.favorite
+                                                      : Icons.favorite_border,
+                                                  color: Colors.white,
+                                                  size: 32,
+                                                ),
+                                                onPressed: () {
+                                                  _toggleFavorite(contact.name);
+                                                },
+                                                padding: EdgeInsets.zero,
+                                                constraints: const BoxConstraints(),
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : IconButton(
+                                          icon: Icon(
+                                            contact.isFavorite
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 32,
                                           ),
-                                        );
-                                      },
-                                    )
-                                  : IconButton(
-                                      icon: Icon(
-                                        contact.isFavorite
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                      onPressed: () {
-                                        _toggleFavorite(contact.name);
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      visualDensity: VisualDensity.compact,
+                                          onPressed: () {
+                                            _toggleFavorite(contact.name);
+                                          },
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                          visualDensity: VisualDensity.compact,
+                                        ),
+                                  const SizedBox(width: 16),
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.white,
+                                      size: 32,
                                     ),
+                                    onPressed: () {
+                                      _confirmDeleteContact(contact.name);
+                                    },
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ],
+                              ),
                             ],
                           )
                         : const SizedBox.shrink(),
