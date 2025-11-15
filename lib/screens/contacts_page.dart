@@ -127,7 +127,6 @@ class ContactsPageState extends State<ContactsPage>
     final width = controller.position.viewportDimension;
     if (width <= 0) return false;
     final page = (controller.offset / width).round();
-    final totalItems = displayedContacts.length + 2; // +2 for plus buttons at start and end
     // Plus buttons are at index 0 (start) and index displayedContacts.length + 1 (end)
     return page == 0 || page == displayedContacts.length + 1;
   }

@@ -442,7 +442,7 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                           Switch(
                             value: _vibrationsEnabled,
                             onChanged: _toggleVibrations,
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                             activeTrackColor: Colors.white.withValues(alpha: 0.7),
                             inactiveThumbColor: Colors.white.withValues(alpha: 0.5),
                             inactiveTrackColor: Colors.white.withValues(alpha: 0.3),
