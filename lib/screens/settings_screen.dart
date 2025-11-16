@@ -94,7 +94,9 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
             context: context,
             builder: (context) => AlertDialog(
               title: Text(l10n.contactLimitReached),
-              content: Text(l10n.contactLimitMessage),
+              content: SingleChildScrollView(
+                child: Text(l10n.contactLimitMessage),
+              ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
