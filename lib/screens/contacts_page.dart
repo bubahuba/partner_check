@@ -48,6 +48,8 @@ class ContactsPageState extends State<ContactsPage>
   // Track if name should be shown for flash (when match detected)
   bool _showNameFlash1 = false;
   bool _showNameFlash2 = false;
+  // Track which pane was last scrolled
+  ScrollController? _lastScrolledController;
 
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
@@ -106,6 +108,8 @@ class ContactsPageState extends State<ContactsPage>
                 } else {
                   _currentPage1All = contactIndex;
                 }
+                // Track that this pane was scrolled
+                _lastScrolledController = _scrollController1;
               });
               _saveScrollPositions();
               _checkForMatch();
@@ -136,6 +140,8 @@ class ContactsPageState extends State<ContactsPage>
                 } else {
                   _currentPage2All = contactIndex;
                 }
+                // Track that this pane was scrolled
+                _lastScrolledController = _scrollController2;
               });
               _saveScrollPositions();
               _checkForMatch();
@@ -238,10 +244,20 @@ class ContactsPageState extends State<ContactsPage>
       _baseMatch2 = baseMatch2;
       _overlayMatch2 = overlayMatch2;
       
-      // Show name flash for both cards when match is detected
+      // Show name flash only in the pane that was last scrolled when match is detected
       if (newMatch) {
-        _showNameFlash1 = true;
-        _showNameFlash2 = true;
+        // Only flash in the pane that was last scrolled, or default to pane 1 if none tracked
+        if (_lastScrolledController == _scrollController1) {
+          _showNameFlash1 = true;
+          _showNameFlash2 = false;
+        } else if (_lastScrolledController == _scrollController2) {
+          _showNameFlash1 = false;
+          _showNameFlash2 = true;
+        } else {
+          // Default to pane 1 if no scroll has been tracked yet
+          _showNameFlash1 = true;
+          _showNameFlash2 = false;
+        }
         // Hide after 0.5 seconds
         Future.delayed(const Duration(milliseconds: 500), () {
           if (mounted) {
