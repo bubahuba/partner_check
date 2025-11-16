@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../models.dart';
 import '../utils/color_utils.dart';
 import 'settings_screen.dart';
+import 'about_screen.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -32,6 +33,7 @@ class ContactsPageState extends State<ContactsPage>
   double? _lastWidth1;
   double? _lastWidth2;
   bool _showSettings = false;
+  bool _showAbout = false;
   bool _favoritesMode = false;
   Set<String> _favoriteNames = {};
   late AnimationController _heartAnimationController;
@@ -1864,6 +1866,20 @@ class ContactsPageState extends State<ContactsPage>
                           backgroundColor: Colors.transparent,
                         ),
                       ),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.help_outline,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _showAbout = true;
+                          });
+                        },
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1878,6 +1894,16 @@ class ContactsPageState extends State<ContactsPage>
                         _loadContacts();
                         // Also reload vibrations setting
                         _loadVibrationsSetting();
+                      },
+                    ),
+                  ),
+                if (_showAbout)
+                  Positioned.fill(
+                    child: AboutScreen(
+                      onClose: () {
+                        setState(() {
+                          _showAbout = false;
+                        });
                       },
                     ),
                   ),
