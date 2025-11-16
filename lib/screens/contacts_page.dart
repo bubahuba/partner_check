@@ -42,6 +42,9 @@ class ContactsPageState extends State<ContactsPage>
   bool _overlayMatch1 = false;
   bool _baseMatch2 = false;
   bool _overlayMatch2 = false;
+  // Track which specific match type is currently flashing for each card
+  String? _activeFlashType1; // 'base', 'overlay', 'cross1', 'cross2', or null
+  String? _activeFlashType2;
 
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
@@ -234,48 +237,119 @@ class ContactsPageState extends State<ContactsPage>
     });
 
     if (newMatch) {
-      // Trigger animation and haptic feedback
+      // Trigger animation
       _heartAnimationController.repeat(reverse: true);
-      // Trigger flash animations
-      _flashAnimationController1.forward().then((_) {
-        _flashAnimationController1.reverse();
-      });
-      _flashAnimationController2.forward().then((_) {
-        _flashAnimationController2.reverse();
-      });
-      // Count number of matches
-      int matchCount = 0;
-      if (baseMatch) matchCount++;
-      if (overlayMatch) matchCount++;
-      if (crossMatch1) matchCount++;
-      if (crossMatch2) matchCount++;
+      
+      // Collect all match types
+      List<String> matchTypes = [];
+      if (baseMatch) matchTypes.add('base');
+      if (overlayMatch) matchTypes.add('overlay');
+      if (crossMatch1) matchTypes.add('cross1');
+      if (crossMatch2) matchTypes.add('cross2');
+      
+      int matchCount = matchTypes.length;
 
-      // Haptic feedback - vibrate twice if multiple matches (only if enabled)
-      if (_vibrationsEnabled) {
-        if (matchCount >= 2) {
+      // Flash matches in sequence with the same delays as vibrations
+      if (matchCount == 1) {
+        // Single match - flash immediately
+        _flashMatchType(matchTypes[0], 0);
+        if (_vibrationsEnabled) {
           HapticFeedback.vibrate();
+        }
+      } else if (matchCount >= 2) {
+        // Multiple matches - flash in sequence
+        _flashMatchType(matchTypes[0], 0);
+        if (_vibrationsEnabled) {
+          HapticFeedback.vibrate();
+        }
+        
+        _flashMatchType(matchTypes[1], 600);
+        if (_vibrationsEnabled) {
           Future.delayed(const Duration(milliseconds: 600), () {
             HapticFeedback.vibrate();
           });
-          if (matchCount == 3) {
+        }
+        
+        if (matchCount >= 3) {
+          _flashMatchType(matchTypes[2], 1200);
+          if (_vibrationsEnabled) {
             Future.delayed(const Duration(milliseconds: 1200), () {
               HapticFeedback.vibrate();
             });
           }
-          if (matchCount == 4) {
+        }
+        
+        if (matchCount >= 4) {
+          _flashMatchType(matchTypes[3], 1800);
+          if (_vibrationsEnabled) {
             Future.delayed(const Duration(milliseconds: 1800), () {
               HapticFeedback.vibrate();
             });
           }
-        } else {
-          HapticFeedback.vibrate();
         }
       }
     } else {
       // Reset flash animations
       _flashAnimationController1.reset();
       _flashAnimationController2.reset();
+      setState(() {
+        _activeFlashType1 = null;
+        _activeFlashType2 = null;
+      });
     }
+  }
+
+  // Flash a specific match type with delay
+  void _flashMatchType(String matchType, int delayMs) {
+    Future.delayed(Duration(milliseconds: delayMs), () {
+      if (!mounted) return;
+      
+      setState(() {
+        // Determine which areas to flash based on match type
+        switch (matchType) {
+          case 'base':
+            // Flash base areas of both cards
+            _activeFlashType1 = 'base';
+            _activeFlashType2 = 'base';
+            break;
+          case 'overlay':
+            // Flash overlay areas of both cards
+            _activeFlashType1 = 'overlay';
+            _activeFlashType2 = 'overlay';
+            break;
+          case 'cross1':
+            // Flash overlay of card1 and base of card2
+            _activeFlashType1 = 'overlay';
+            _activeFlashType2 = 'base';
+            break;
+          case 'cross2':
+            // Flash base of card1 and overlay of card2
+            _activeFlashType1 = 'base';
+            _activeFlashType2 = 'overlay';
+            break;
+        }
+      });
+      
+      // Trigger flash animations
+      _flashAnimationController1.forward().then((_) {
+        _flashAnimationController1.reverse().then((_) {
+          if (mounted) {
+            setState(() {
+              _activeFlashType1 = null;
+            });
+          }
+        });
+      });
+      _flashAnimationController2.forward().then((_) {
+        _flashAnimationController2.reverse().then((_) {
+          if (mounted) {
+            setState(() {
+              _activeFlashType2 = null;
+            });
+          }
+        });
+      });
+    });
   }
 
   @override
@@ -1158,7 +1232,11 @@ class ContactsPageState extends State<ContactsPage>
                     child: AnimatedBuilder(
                       animation: flashAnimationController,
                       builder: (context, child) {
-                        final flashOpacity = isCurrentPage && baseMatch
+                        // Check if this card should flash base area
+                        final shouldFlashBase = isCurrentPage && 
+                            ((controller == _scrollController1 && _activeFlashType1 == 'base') ||
+                             (controller == _scrollController2 && _activeFlashType2 == 'base'));
+                        final flashOpacity = shouldFlashBase
                             ? flashAnimationController.value * 0.6
                             : 0.0;
                         return Stack(
@@ -1185,7 +1263,11 @@ class ContactsPageState extends State<ContactsPage>
                     child: AnimatedBuilder(
                       animation: flashAnimationController,
                       builder: (context, child) {
-                        final flashOpacity = isCurrentPage && overlayMatch
+                        // Check if this card should flash overlay area
+                        final shouldFlashOverlay = isCurrentPage && 
+                            ((controller == _scrollController1 && _activeFlashType1 == 'overlay') ||
+                             (controller == _scrollController2 && _activeFlashType2 == 'overlay'));
+                        final flashOpacity = shouldFlashOverlay
                             ? flashAnimationController.value * 0.6
                             : 0.0;
                         return Stack(
