@@ -5,6 +5,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'dart:convert';
 import '../models.dart';
 import '../utils/color_utils.dart';
+import '../l10n/app_localizations.dart';
 import 'settings_screen.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -23,6 +24,11 @@ class ContactsPageState extends State<ContactsPage>
   double _overlayHeight = 0.2; // Initial height: 20%
   int _currentPage1 = 0;
   int _currentPage2 = 0;
+  // Separate scroll positions for each mode
+  int _currentPage1All = 0;
+  int _currentPage2All = 0;
+  int _currentPage1Favorites = 0;
+  int _currentPage2Favorites = 0;
   double? _lastWidth1;
   double? _lastWidth2;
   bool _showSettings = false;
@@ -40,6 +46,10 @@ class ContactsPageState extends State<ContactsPage>
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
   static const String _vibrationsKey = 'vibrations_enabled';
+  static const String _scrollPos1AllKey = 'scroll_pos_1_all';
+  static const String _scrollPos2AllKey = 'scroll_pos_2_all';
+  static const String _scrollPos1FavoritesKey = 'scroll_pos_1_favorites';
+  static const String _scrollPos2FavoritesKey = 'scroll_pos_2_favorites';
   static const int _maxContacts = 10;
   bool _vibrationsEnabled = true;
 
@@ -84,7 +94,14 @@ class ContactsPageState extends State<ContactsPage>
             if (contactIndex != _currentPage1) {
               setState(() {
                 _currentPage1 = contactIndex;
+                // Save to mode-specific position
+                if (_favoritesMode) {
+                  _currentPage1Favorites = contactIndex;
+                } else {
+                  _currentPage1All = contactIndex;
+                }
               });
+              _saveScrollPositions();
               _checkForMatch();
             }
           }
@@ -107,7 +124,14 @@ class ContactsPageState extends State<ContactsPage>
             if (contactIndex != _currentPage2) {
               setState(() {
                 _currentPage2 = contactIndex;
+                // Save to mode-specific position
+                if (_favoritesMode) {
+                  _currentPage2Favorites = contactIndex;
+                } else {
+                  _currentPage2All = contactIndex;
+                }
               });
+              _saveScrollPositions();
               _checkForMatch();
             }
           }
@@ -265,6 +289,8 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _initializeData() async {
+    // Load scroll positions first
+    await _loadScrollPositions();
     // Load favorites first, then contacts (so contacts can be updated with favorite status)
     await _loadFavorites();
     await _loadContacts();
@@ -283,26 +309,38 @@ class ContactsPageState extends State<ContactsPage>
         // Update favorites from loaded contacts
         _updateFavoritesFromContacts();
       });
-      // Scroll to first contact (index 1, since index 0 is the plus button)
+      // Restore scroll positions from storage
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final displayedContacts = _displayedContacts;
         if (displayedContacts.isNotEmpty) {
-          // Scroll to index 1 (first contact, since index 0 is plus button)
+          // Restore scroll positions based on current mode
+          final targetPage1 = _favoritesMode ? _currentPage1Favorites : _currentPage1All;
+          final targetPage2 = _favoritesMode ? _currentPage2Favorites : _currentPage2All;
+          
+          // Clamp to valid range
+          final maxIndex = displayedContacts.length - 1;
+          final clampedPage1 = targetPage1.clamp(0, maxIndex);
+          final clampedPage2 = targetPage2.clamp(0, maxIndex);
+          
           if (_scrollController1.hasClients) {
             final width = _scrollController1.position.viewportDimension;
             if (width > 0) {
-              _scrollController1.jumpTo(width); // Index 1 = 1 * width
+              // Convert contact index to page index (add 1 for plus button at index 0)
+              final targetPage = clampedPage1 + 1;
+              _scrollController1.jumpTo(targetPage * width);
               setState(() {
-                _currentPage1 = 0; // Contact index 0 (first contact)
+                _currentPage1 = clampedPage1;
               });
             }
           }
           if (_scrollController2.hasClients) {
             final width = _scrollController2.position.viewportDimension;
             if (width > 0) {
-              _scrollController2.jumpTo(width); // Index 1 = 1 * width
+              // Convert contact index to page index (add 1 for plus button at index 0)
+              final targetPage = clampedPage2 + 1;
+              _scrollController2.jumpTo(targetPage * width);
               setState(() {
-                _currentPage2 = 0; // Contact index 0 (first contact)
+                _currentPage2 = clampedPage2;
               });
             }
           }
@@ -352,18 +390,16 @@ class ContactsPageState extends State<ContactsPage>
       // Check contact limit
       if (_contacts.length >= _maxContacts) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Contact Limit Reached'),
-              content: const Text(
-                'You have reached the maximum of 10 contacts in the free version.\n\n'
-                'Upgrade to PartnerCheck Pro to add unlimited contacts.',
-              ),
+              title: Text(l10n.contactLimitReached),
+              content: Text(l10n.contactLimitMessage),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
@@ -375,10 +411,11 @@ class ContactsPageState extends State<ContactsPage>
       // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Contacts permission is required'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(l10n.contactsPermissionRequired),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -398,10 +435,11 @@ class ContactsPageState extends State<ContactsPage>
       
       if (contactName.isEmpty) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Selected contact has no name'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(l10n.selectedContactNoName),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -411,12 +449,53 @@ class ContactsPageState extends State<ContactsPage>
       // Check for duplicates
       if (_contacts.any((c) => c.name == contactName)) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('$contactName is already in the list'),
+              content: Text(l10n.contactAlreadyInList(contactName)),
               duration: const Duration(seconds: 2),
             ),
           );
+          
+          // Scroll to the duplicate contact in the target ListView
+          final displayedContacts = _displayedContacts;
+          final duplicateIndex = displayedContacts.indexWhere((c) => c.name == contactName);
+          if (duplicateIndex != -1 && targetController.hasClients) {
+            final width = targetController.position.viewportDimension;
+            if (width > 0) {
+              // Convert contact index to page index (add 1 for plus button at index 0)
+              final targetPage = duplicateIndex + 1;
+              targetController.animateTo(
+                targetPage * width,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.ease,
+              );
+              
+              // Update current page state
+              if (targetController == _scrollController1) {
+                setState(() {
+                  _currentPage1 = duplicateIndex;
+                  if (_favoritesMode) {
+                    _currentPage1Favorites = duplicateIndex;
+                  } else {
+                    _currentPage1All = duplicateIndex;
+                  }
+                });
+              } else if (targetController == _scrollController2) {
+                setState(() {
+                  _currentPage2 = duplicateIndex;
+                  if (_favoritesMode) {
+                    _currentPage2Favorites = duplicateIndex;
+                  } else {
+                    _currentPage2All = duplicateIndex;
+                  }
+                });
+              }
+              
+              // Save scroll positions
+              _saveScrollPositions();
+            }
+          }
         }
         return;
       }
@@ -430,15 +509,16 @@ class ContactsPageState extends State<ContactsPage>
       // Check if contact has a phone number
       if (contact.phones.isEmpty || phoneNumber.isEmpty) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('No Phone Number'),
-              content: Text('$contactName does not have a phone number. Please select a contact with a phone number.'),
+              title: Text(l10n.noPhoneNumber),
+              content: Text(l10n.noPhoneNumberMessage(contactName)),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
@@ -483,13 +563,20 @@ class ContactsPageState extends State<ContactsPage>
           final width = _scrollController1.position.viewportDimension;
           if (width > 0) {
             _scrollController1.animateTo(
-              newIndex * width,
+              (newIndex + 1) * width, // +1 because index 0 is plus button
               duration: const Duration(milliseconds: 300),
               curve: Curves.ease,
             );
             setState(() {
               _currentPage1 = newIndex;
+              // Update mode-specific position
+              if (_favoritesMode) {
+                _currentPage1Favorites = newIndex;
+              } else {
+                _currentPage1All = newIndex;
+              }
             });
+            _saveScrollPositions();
           }
         }
       } else if (targetController == _scrollController2) {
@@ -497,13 +584,20 @@ class ContactsPageState extends State<ContactsPage>
           final width = _scrollController2.position.viewportDimension;
           if (width > 0) {
             _scrollController2.animateTo(
-              newIndex * width,
+              (newIndex + 1) * width, // +1 because index 0 is plus button
               duration: const Duration(milliseconds: 300),
               curve: Curves.ease,
             );
             setState(() {
               _currentPage2 = newIndex;
+              // Update mode-specific position
+              if (_favoritesMode) {
+                _currentPage2Favorites = newIndex;
+              } else {
+                _currentPage2All = newIndex;
+              }
             });
+            _saveScrollPositions();
           }
         }
       }
@@ -514,9 +608,10 @@ class ContactsPageState extends State<ContactsPage>
       });
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking contact: $e'),
+            content: Text(l10n.errorPickingContact(e.toString())),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -528,6 +623,24 @@ class ContactsPageState extends State<ContactsPage>
     final prefs = await SharedPreferences.getInstance();
     final jsonList = _contacts.map((contact) => contact.toJson()).toList();
     await prefs.setString(_storageKey, json.encode(jsonList));
+  }
+
+  Future<void> _saveScrollPositions() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_scrollPos1AllKey, _currentPage1All);
+    await prefs.setInt(_scrollPos2AllKey, _currentPage2All);
+    await prefs.setInt(_scrollPos1FavoritesKey, _currentPage1Favorites);
+    await prefs.setInt(_scrollPos2FavoritesKey, _currentPage2Favorites);
+  }
+
+  Future<void> _loadScrollPositions() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _currentPage1All = prefs.getInt(_scrollPos1AllKey) ?? 0;
+      _currentPage2All = prefs.getInt(_scrollPos2AllKey) ?? 0;
+      _currentPage1Favorites = prefs.getInt(_scrollPos1FavoritesKey) ?? 0;
+      _currentPage2Favorites = prefs.getInt(_scrollPos2FavoritesKey) ?? 0;
+    });
   }
 
   void _toggleFavorite(String contactName) {
@@ -543,22 +656,23 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _confirmDeleteContact(String contactName) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Contact'),
-        content: Text('Are you sure you want to delete $contactName?'),
+        title: Text(l10n.deleteContact),
+        content: Text(l10n.deleteContactConfirm(contactName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -588,8 +702,15 @@ class ContactsPageState extends State<ContactsPage>
     // Update scroll positions if needed
     final displayedContacts = _displayedContacts;
     if (_currentPage1 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+      final newPage = displayedContacts.length - 1;
       setState(() {
-        _currentPage1 = displayedContacts.length - 1;
+        _currentPage1 = newPage;
+        // Update mode-specific position
+        if (_favoritesMode) {
+          _currentPage1Favorites = newPage;
+        } else {
+          _currentPage1All = newPage;
+        }
       });
       if (_scrollController1.hasClients) {
         final width = _scrollController1.position.viewportDimension;
@@ -600,8 +721,15 @@ class ContactsPageState extends State<ContactsPage>
       }
     }
     if (_currentPage2 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+      final newPage = displayedContacts.length - 1;
       setState(() {
-        _currentPage2 = displayedContacts.length - 1;
+        _currentPage2 = newPage;
+        // Update mode-specific position
+        if (_favoritesMode) {
+          _currentPage2Favorites = newPage;
+        } else {
+          _currentPage2All = newPage;
+        }
       });
       if (_scrollController2.hasClients) {
         final width = _scrollController2.position.viewportDimension;
@@ -612,6 +740,9 @@ class ContactsPageState extends State<ContactsPage>
       }
     }
 
+    // Save scroll positions
+    _saveScrollPositions();
+
     // Check for match after deletion
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForMatch();
@@ -619,28 +750,23 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   void _toggleFavoritesMode() {
+    // Save current positions before switching
+    if (_favoritesMode) {
+      _currentPage1Favorites = _currentPage1;
+      _currentPage2Favorites = _currentPage2;
+    } else {
+      _currentPage1All = _currentPage1;
+      _currentPage2All = _currentPage2;
+    }
+    _saveScrollPositions();
+    
     setState(() {
       _favoritesMode = !_favoritesMode;
-      // Reset scroll positions when toggling mode
-      _currentPage1 = 0;
-      _currentPage2 = 0;
-      final displayedContacts = _displayedContacts;
-      if (displayedContacts.isNotEmpty) {
-        // Scroll to index 1 (first contact, since index 0 is plus button)
-        if (_scrollController1.hasClients) {
-          final width = _scrollController1.position.viewportDimension;
-          if (width > 0) {
-            _scrollController1.jumpTo(width); // Index 1 = 1 * width
-          }
-        }
-        if (_scrollController2.hasClients) {
-          final width = _scrollController2.position.viewportDimension;
-          if (width > 0) {
-            _scrollController2.jumpTo(width); // Index 1 = 1 * width
-          }
-        }
+      // Restore appropriate positions for the new mode
+      if (_favoritesMode) {
+        _currentPage1 = _currentPage1Favorites;
+        _currentPage2 = _currentPage2Favorites;
       } else {
-        // Switching to all contacts mode, restore all contacts positions
         _currentPage1 = _currentPage1All;
         _currentPage2 = _currentPage2All;
       }

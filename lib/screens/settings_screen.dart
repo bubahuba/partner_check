@@ -3,6 +3,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models.dart';
+import '../l10n/app_localizations.dart';
 import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -88,18 +89,16 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Contact Limit Reached'),
-              content: const Text(
-                'You have reached the maximum of 10 contacts in the free version.\n\n'
-                'Upgrade to PartnerCheck Pro to add unlimited contacts.',
-              ),
+              title: Text(l10n.contactLimitReached),
+              content: Text(l10n.contactLimitMessage),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
@@ -114,9 +113,10 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Contacts permission is required'),
+            SnackBar(
+              content: Text(l10n.contactsPermissionRequired),
             ),
           );
         }
@@ -142,9 +142,10 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Selected contact has no name'),
+            SnackBar(
+              content: Text(l10n.selectedContactNoName),
             ),
           );
         }
@@ -163,15 +164,16 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('No Phone Number'),
-              content: Text('$contactName does not have a phone number. Please select a contact with a phone number.'),
+              title: Text(l10n.noPhoneNumber),
+              content: Text(l10n.noPhoneNumberMessage(contactName)),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
@@ -199,9 +201,10 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('$contactName is already in the list'),
+              content: Text(l10n.contactAlreadyInList(contactName)),
             ),
           );
         }
@@ -259,9 +262,10 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
         _isLoading = false;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error adding contact: $e'),
+            content: Text(l10n.errorAddingContact(e.toString())),
           ),
         );
       }
@@ -376,21 +380,26 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
-                        'PartnerCheck Free',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          height: 1.2,
-                          shadows: const [
-                            Shadow(
-                              color: Colors.black26,
-                              blurRadius: 10,
+                      Builder(
+                        builder: (context) {
+                          final l10n = AppLocalizations.of(context)!;
+                          return Text(
+                            l10n.partnerCheckFree,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              height: 1.2,
+                              shadows: const [
+                                Shadow(
+                                  color: Colors.black26,
+                                  blurRadius: 10,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
                       SizedBox(height: isPortrait ? 32 : 24),
                       ElevatedButton.icon(
@@ -406,9 +415,14 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                                 ),
                               )
                             : const Icon(Icons.person_add, size: 24),
-                        label: Text(
-                          _isLoading ? 'Adding...' : 'Add Contact',
-                          style: TextStyle(fontSize: buttonFontSize),
+                        label: Builder(
+                          builder: (context) {
+                            final l10n = AppLocalizations.of(context)!;
+                            return Text(
+                              _isLoading ? l10n.adding : l10n.addContact,
+                              style: TextStyle(fontSize: buttonFontSize),
+                            );
+                          },
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -425,18 +439,23 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Vibrations',
-                            style: TextStyle(
-                              fontSize: buttonFontSize * 0.9,
-                              color: Colors.white,
-                              shadows: const [
-                                Shadow(
-                                  color: Colors.black26,
-                                  blurRadius: 8,
+                          Builder(
+                            builder: (context) {
+                              final l10n = AppLocalizations.of(context)!;
+                              return Text(
+                                l10n.vibrations,
+                                style: TextStyle(
+                                  fontSize: buttonFontSize * 0.9,
+                                  color: Colors.white,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
                           const SizedBox(width: 12),
                           Switch(
@@ -480,19 +499,24 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                             );
                           }
                         },
-                        child: Text(
-                          'close',
-                          style: TextStyle(
-                            fontSize: buttonFontSize * 0.9,
-                            color: Colors.white.withValues(alpha: 0.9),
-                            decoration: TextDecoration.underline,
-                            shadows: const [
-                              Shadow(
-                                color: Colors.black26,
-                                blurRadius: 8,
+                        child: Builder(
+                          builder: (context) {
+                            final l10n = AppLocalizations.of(context)!;
+                            return Text(
+                              l10n.close,
+                              style: TextStyle(
+                                fontSize: buttonFontSize * 0.9,
+                                color: Colors.white.withValues(alpha: 0.9),
+                                decoration: TextDecoration.underline,
+                                shadows: const [
+                                  Shadow(
+                                    color: Colors.black26,
+                                    blurRadius: 8,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
                       ),
                     ],
