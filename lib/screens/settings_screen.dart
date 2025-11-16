@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/app_localizations.dart';
 import 'dart:convert';
@@ -97,125 +96,8 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
     });
 
     try {
-      // Check current permission status first
-      PermissionStatus status = await Permission.contacts.status;
-
-      // If permanently denied, open app settings
-      if (status.isPermanentlyDenied) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (mounted) {
-          final l10n = AppLocalizations.of(context)!;
-          final shouldOpen = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.permissionRequired),
-              content: Text(l10n.permissionRequiredMessage),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(l10n.cancel),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(l10n.openSettings),
-                ),
-              ],
-            ),
-          );
-
-          if (shouldOpen == true) {
-            await openAppSettings();
-          }
-        }
-        return;
-      }
-
-      // Request permission if not granted
-      if (!status.isGranted) {
-        status = await Permission.contacts.request();
-      }
-
-      if (status.isGranted) {
-        // Request permission for flutter_contacts (this should be granted now)
-        if (await FlutterContacts.requestPermission(readonly: true)) {
-          // Load contacts on background thread
-          final contacts = await FlutterContacts.getContacts(
-            withProperties: true,
-            withThumbnail: false,
-          );
-
-          // Convert to serializable format for isolate
-          final contactsData = contacts
-              .map((contact) => {
-                    'displayName': contact.displayName,
-                    'phones': contact.phones
-                        .map((phone) => {'value': phone.number})
-                        .toList(),
-                  })
-              .toList();
-
-          // Process contacts in background isolate
-          final processedData = await compute(_processContacts, contactsData);
-
-          // Convert to StoredContact
-          final storedContacts = processedData
-              .map((data) => StoredContact(
-                    name: data['name'] as String,
-                    color: data['color'] as int,
-                  ))
-              .toList();
-
-          // Save to storage
-          final prefs = await SharedPreferences.getInstance();
-          final jsonList =
-              storedContacts.map((contact) => contact.toJson()).toList();
-          await prefs.setString('stored_contacts', json.encode(jsonList));
-
-          // Close settings screen and reload contacts in ContactsPage
-          if (mounted) {
-            if (widget.onClose != null) {
-              _handleClose();
-            } else {
-              // Fallback to navigation if onClose is not provided (for InitialScreen)
-              Navigator.of(context).pushReplacement(
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      const ContactsPage(),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    const begin = Offset(1.0, 0.0);
-                    const end = Offset.zero;
-                    const curve = Curves.ease;
-
-                    var tween = Tween(begin: begin, end: end).chain(
-                      CurveTween(curve: curve),
-                    );
-
-                    return SlideTransition(
-                      position: animation.drive(tween),
-                      child: child,
-                    );
-                  },
-                ),
-              );
-            }
-          }
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-          if (mounted) {
-            final l10n = AppLocalizations.of(context)!;
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(l10n.contactsPermissionDenied),
-              ),
-            );
-          }
-        }
-      } else {
+      // Request permission using flutter_contacts (works on both iOS and Android)
+      if (!await FlutterContacts.requestPermission(readonly: true)) {
         setState(() {
           _isLoading = false;
         });
@@ -223,10 +105,78 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(l10n.permissionDenied(status.toString())),
+              content: Text(l10n.contactsPermissionRequired),
+              duration: const Duration(seconds: 2),
             ),
           );
-          openAppSettings();
+        }
+        return;
+      }
+
+      // Load contacts on background thread
+      final contacts = await FlutterContacts.getContacts(
+        withProperties: true,
+        withThumbnail: false,
+      );
+
+      // Convert to serializable format for isolate
+      final contactsData = contacts
+          .map((contact) => {
+                'displayName': contact.displayName,
+                'phones': contact.phones
+                    .map((phone) => {'value': phone.number})
+                    .toList(),
+              })
+          .toList();
+
+      // Process contacts in background isolate
+      final processedData = await compute(_processContacts, contactsData);
+
+      // Convert to StoredContact
+      final storedContacts = processedData
+          .map((data) => StoredContact(
+                name: data['name'] as String,
+                color: data['color'] as int,
+              ))
+          .toList();
+
+      // Save to storage
+      final prefs = await SharedPreferences.getInstance();
+      final jsonList =
+          storedContacts.map((contact) => contact.toJson()).toList();
+      await prefs.setString('stored_contacts', json.encode(jsonList));
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Close settings screen and reload contacts in ContactsPage
+      if (mounted) {
+        if (widget.onClose != null) {
+          _handleClose();
+        } else {
+          // Fallback to navigation if onClose is not provided (for InitialScreen)
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const ContactsPage(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(1.0, 0.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(
+                  CurveTween(curve: curve),
+                );
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ),
+          );
         }
       }
     } catch (e) {
@@ -274,41 +224,41 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
             stops: [0.0, 0.5, 1.0],
           ),
         ),
-        child: Stack(
-          children: [
-            // Smooth color overlay for blur effect
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.white.withValues(alpha: 0.1),
-                    Colors.transparent,
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
-                  stops: const [0.0, 0.5, 1.0],
+        child: SafeArea(
+          child: Stack(
+            children: [
+              // Smooth color overlay for blur effect
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white.withValues(alpha: 0.1),
+                      Colors.transparent,
+                      Colors.white.withValues(alpha: 0.05),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ),
                 ),
               ),
-            ),
-            // Back arrow button at the same position as HUD settings button
-            Positioned(
-              top: 10,
-              left: 0,
-              child: IconButton(
-                icon: const Icon(
-                  Icons.arrow_back,
-                  color: Colors.white,
-                ),
-                onPressed: _handleClose,
-                style: IconButton.styleFrom(
-                  backgroundColor: Colors.transparent,
+              // Back arrow button at the same position as HUD settings button
+              Positioned(
+                top: 10,
+                left: 0,
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                  ),
+                  onPressed: _handleClose,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.transparent,
+                  ),
                 ),
               ),
-            ),
-            // Content
-            SafeArea(
-              child: LayoutBuilder(
+              // Content
+              LayoutBuilder(
                 builder: (context, constraints) {
                   final isPortrait =
                       constraints.maxHeight > constraints.maxWidth;
@@ -530,8 +480,8 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                   }
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       ),

@@ -481,7 +481,7 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Future<void> _pickAndAddContactFromDevice({required ScrollController targetController}) async {
+  Future<void> _pickAndAddContactFromDevice({required ScrollController targetController, bool addAtStart = false}) async {
     try {
       // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
@@ -619,9 +619,13 @@ class ContactsPageState extends State<ContactsPage>
         isFavorite: _favoriteNames.contains(contactName),
       );
 
-      // Add to contacts list
+      // Add to contacts list at the beginning or end
       setState(() {
-        _contacts.add(newContact);
+        if (addAtStart) {
+          _contacts.insert(0, newContact);
+        } else {
+          _contacts.add(newContact);
+        }
         _updateFavoritesFromContacts();
       });
 
@@ -630,8 +634,7 @@ class ContactsPageState extends State<ContactsPage>
 
       // Scroll to the new contact only in the target ListView
       final displayedContacts = _displayedContacts;
-      // New contact is at index: displayedContacts.length (last contact index + 1, accounting for plus button at index 0)
-      final newIndex = displayedContacts.length;
+      final newIndex = addAtStart ? 0 : displayedContacts.length - 1;
       
       if (targetController == _scrollController1) {
         if (_scrollController1.hasClients && newIndex >= 0) {
@@ -813,7 +816,7 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Future<void> _addContactManually({required ScrollController targetController}) async {
+  Future<void> _addContactManually({required ScrollController targetController, bool addAtStart = false}) async {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
@@ -899,9 +902,13 @@ class ContactsPageState extends State<ContactsPage>
       isFavorite: _favoriteNames.contains(contactName),
     );
 
-    // Add to contacts list
+    // Add to contacts list at the beginning or end
     setState(() {
-      _contacts.add(newContact);
+      if (addAtStart) {
+        _contacts.insert(0, newContact);
+      } else {
+        _contacts.add(newContact);
+      }
       _updateFavoritesFromContacts();
     });
 
@@ -910,8 +917,7 @@ class ContactsPageState extends State<ContactsPage>
 
     // Scroll to the new contact only in the target ListView
     final displayedContacts = _displayedContacts;
-    // New contact is at index: displayedContacts.length (last contact index + 1, accounting for plus button at index 0)
-    final newIndex = displayedContacts.length;
+    final newIndex = addAtStart ? 0 : displayedContacts.length - 1;
     
     if (targetController == _scrollController1) {
       if (_scrollController1.hasClients && newIndex >= 0) {
@@ -1157,9 +1163,9 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Widget _buildAddContactCard(double height, ScrollController controller) {
+  Widget _buildAddContactCard(double height, ScrollController controller, {bool isStartCard = false}) {
     return GestureDetector(
-      onTap: () => _showAddContactMenu(controller),
+      onTap: () => _showAddContactMenu(controller, isStartCard: isStartCard),
       child: SizedBox(
         height: height,
         child: Card(
@@ -1175,7 +1181,7 @@ class ContactsPageState extends State<ContactsPage>
                 color: Colors.white.withValues(alpha: 0.5),
                 size: 48,
               ),
-              onPressed: () => _showAddContactMenu(controller),
+              onPressed: () => _showAddContactMenu(controller, isStartCard: isStartCard),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.transparent,
               ),
@@ -1186,7 +1192,7 @@ class ContactsPageState extends State<ContactsPage>
     );
   }
 
-  void _showAddContactMenu(ScrollController controller) {
+  void _showAddContactMenu(ScrollController controller, {bool isStartCard = false}) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
@@ -1205,7 +1211,7 @@ class ContactsPageState extends State<ContactsPage>
                 title: Text(l10n.addFromDevice, style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pickAndAddContactFromDevice(targetController: controller);
+                  _pickAndAddContactFromDevice(targetController: controller, addAtStart: isStartCard);
                 },
               ),
               const Divider(color: Colors.grey),
@@ -1214,7 +1220,7 @@ class ContactsPageState extends State<ContactsPage>
                 title: Text(l10n.addManually, style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _addContactManually(targetController: controller);
+                  _addContactManually(targetController: controller, addAtStart: isStartCard);
                 },
               ),
               const SizedBox(height: 8),
@@ -1245,12 +1251,12 @@ class ContactsPageState extends State<ContactsPage>
       itemBuilder: (context, index) {
         // First item is the add contact card
         if (index == 0) {
-          return _buildAddContactCard(height, controller);
+          return _buildAddContactCard(height, controller, isStartCard: true);
         }
         
         // Last item is also the add contact card
         if (index == displayedContacts.length + 1) {
-          return _buildAddContactCard(height, controller);
+          return _buildAddContactCard(height, controller, isStartCard: false);
         }
         
         // Adjust index for displayed contacts (subtract 1 because first item is plus button)
@@ -1519,41 +1525,42 @@ class ContactsPageState extends State<ContactsPage>
             });
           }
 
-          return Stack(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildListView(
-                        _scrollController1,
-                        constraints.maxHeight,
-                        halfWidth,
-                        _currentPage1,
-                        false,
-                        _heartAnimationController,
-                        _flashAnimationController1,
-                        _baseMatch1,
-                        _overlayMatch1),
-                  ),
-                  Expanded(
-                    child: _buildListView(
-                        _scrollController2,
-                        constraints.maxHeight,
-                        halfWidth,
-                        _currentPage2,
-                        false,
-                        _heartAnimationController,
-                        _flashAnimationController2,
-                        _baseMatch2,
-                        _overlayMatch2),
-                  ),
-                ],
-              ),
-              if (_isHudVisible)
-                Positioned(
-                  top: 10,
-                  left: 0,
-                  child: Row(
+          return SafeArea(
+            child: Stack(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildListView(
+                          _scrollController1,
+                          constraints.maxHeight,
+                          halfWidth,
+                          _currentPage1,
+                          false,
+                          _heartAnimationController,
+                          _flashAnimationController1,
+                          _baseMatch1,
+                          _overlayMatch1),
+                    ),
+                    Expanded(
+                      child: _buildListView(
+                          _scrollController2,
+                          constraints.maxHeight,
+                          halfWidth,
+                          _currentPage2,
+                          false,
+                          _heartAnimationController,
+                          _flashAnimationController2,
+                          _baseMatch2,
+                          _overlayMatch2),
+                    ),
+                  ],
+                ),
+                if (_isHudVisible)
+                  Positioned(
+                    top: 10,
+                    left: 0,
+                    child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
@@ -1585,21 +1592,22 @@ class ContactsPageState extends State<ContactsPage>
                     ],
                   ),
                 ),
-              if (_showSettings)
-                Positioned.fill(
-                  child: SettingsScreen(
-                    onClose: () {
-                      setState(() {
-                        _showSettings = false;
-                      });
-                      // Reload contacts in case they were loaded from settings
-                      _loadContacts();
-                      // Also reload vibrations setting
-                      _loadVibrationsSetting();
-                    },
+                if (_showSettings)
+                  Positioned.fill(
+                    child: SettingsScreen(
+                      onClose: () {
+                        setState(() {
+                          _showSettings = false;
+                        });
+                        // Reload contacts in case they were loaded from settings
+                        _loadContacts();
+                        // Also reload vibrations setting
+                        _loadVibrationsSetting();
+                      },
+                    ),
                   ),
-                ),
-            ],
+              ],
+            ),
           );
         }));
   }
