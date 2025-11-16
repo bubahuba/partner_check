@@ -45,6 +45,11 @@ class ContactsPageState extends State<ContactsPage>
   // Track which specific match type is currently flashing for each card
   String? _activeFlashType1; // 'base', 'overlay', 'cross1', 'cross2', or null
   String? _activeFlashType2;
+  // Track if name should be shown for flash (when match detected)
+  bool _showNameFlash1 = false;
+  bool _showNameFlash2 = false;
+  // Track which pane was last scrolled
+  ScrollController? _lastScrolledController;
 
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
@@ -102,6 +107,8 @@ class ContactsPageState extends State<ContactsPage>
                 } else {
                   _currentPage1All = contactIndex;
                 }
+                // Track that this pane was scrolled
+                _lastScrolledController = _scrollController1;
               });
               _saveScrollPositions();
               _checkForMatch();
@@ -132,6 +139,8 @@ class ContactsPageState extends State<ContactsPage>
                 } else {
                   _currentPage2All = contactIndex;
                 }
+                // Track that this pane was scrolled
+                _lastScrolledController = _scrollController2;
               });
               _saveScrollPositions();
               _checkForMatch();
@@ -286,6 +295,34 @@ class ContactsPageState extends State<ContactsPage>
       _overlayMatch1 = overlayMatch1;
       _baseMatch2 = baseMatch2;
       _overlayMatch2 = overlayMatch2;
+      
+      // Show name flash only in the pane that was last scrolled when match is detected
+      if (newMatch) {
+        // Only flash in the pane that was last scrolled, or default to pane 1 if none tracked
+        if (_lastScrolledController == _scrollController1) {
+          _showNameFlash1 = true;
+          _showNameFlash2 = false;
+        } else if (_lastScrolledController == _scrollController2) {
+          _showNameFlash1 = false;
+          _showNameFlash2 = true;
+        } else {
+          // Default to pane 1 if no scroll has been tracked yet
+          _showNameFlash1 = true;
+          _showNameFlash2 = false;
+        }
+        // Hide after 0.5 seconds
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            setState(() {
+              _showNameFlash1 = false;
+              _showNameFlash2 = false;
+            });
+          }
+        });
+      } else {
+        _showNameFlash1 = false;
+        _showNameFlash2 = false;
+      }
     });
 
     if (newMatch) {
@@ -1339,23 +1376,49 @@ class ContactsPageState extends State<ContactsPage>
                     ),
                   ),
                   SizedBox.expand(
-                    child: _isHudVisible
+                    child: (_isHudVisible || (isCurrentPage && ((controller == _scrollController1 && _showNameFlash1) || (controller == _scrollController2 && _showNameFlash2))))
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              GestureDetector(
-                                onTap: () => _editContact(contact),
-                                child: Text(
-                                  contact.name,
-                                  style: const TextStyle(color: Colors.white),
-                                  textAlign: TextAlign.center,
-                                ),
+                              // Show contact name with flash animation when there's a match
+                              AnimatedBuilder(
+                                animation: isCurrentPage && _isMatch
+                                    ? heartAnimationController
+                                    : const AlwaysStoppedAnimation(0.0),
+                                builder: (context, child) {
+                                  final shouldFlash = isCurrentPage && _isMatch && 
+                                      ((controller == _scrollController1 && _showNameFlash1) || 
+                                       (controller == _scrollController2 && _showNameFlash2));
+                                  final flashOpacity = shouldFlash
+                                      ? (heartAnimationController.value * 0.3 + 0.7)
+                                      : 1.0;
+                                  return Opacity(
+                                    opacity: flashOpacity,
+                                    child: GestureDetector(
+                                      onTap: _isHudVisible ? () => _editContact(contact) : null,
+                                      child: Text(
+                                        contact.name,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          shadows: [
+                                            Shadow(
+                                              color: Colors.black54,
+                                              blurRadius: 8,
+                                            ),
+                                          ],
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  isCurrentPage && _isMatch
+                              if (_isHudVisible) ...[
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    isCurrentPage && _isMatch
                                       ? AnimatedBuilder(
                                           animation: heartAnimationController,
                                           builder: (context, child) {
@@ -1399,22 +1462,23 @@ class ContactsPageState extends State<ContactsPage>
                                           constraints: const BoxConstraints(),
                                           visualDensity: VisualDensity.compact,
                                         ),
-                                  const SizedBox(width: 16),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.white,
-                                      size: 32,
+                                    const SizedBox(width: 16),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                      onPressed: () {
+                                        _confirmDeleteContact(contact.name);
+                                      },
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      visualDensity: VisualDensity.compact,
                                     ),
-                                    onPressed: () {
-                                      _confirmDeleteContact(contact.name);
-                                    },
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                    visualDensity: VisualDensity.compact,
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                              ],
                             ],
                           )
                         : const SizedBox.shrink(),
