@@ -1551,7 +1551,7 @@ class ContactsPageState extends State<ContactsPage>
               ),
               if (_isHudVisible)
                 Positioned(
-                  top: 0,
+                  top: 10,
                   left: 0,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
