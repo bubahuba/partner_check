@@ -640,16 +640,42 @@ class ContactsPageState extends State<ContactsPage>
           }
         }
       } else {
-        // No contacts, scroll to plus button (index 0)
-        if (_scrollController1.hasClients) {
-          _scrollController1.jumpTo(0);
-        }
-        if (_scrollController2.hasClients) {
-          _scrollController2.jumpTo(0);
-        }
+        // Switching to all contacts mode, restore all contacts positions
+        _currentPage1 = _currentPage1All;
+        _currentPage2 = _currentPage2All;
       }
     });
-    _checkForMatch();
+    
+    // Restore scroll positions after layout
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final displayedContacts = _displayedContacts;
+      final halfWidth = MediaQuery.of(context).size.width / 2;
+      
+      // Clamp positions to valid range
+      final maxIndex = displayedContacts.isNotEmpty ? displayedContacts.length - 1 : 0;
+      final targetPage1 = _currentPage1.clamp(0, maxIndex);
+      final targetPage2 = _currentPage2.clamp(0, maxIndex);
+      
+      if (_scrollController1.hasClients && halfWidth > 0) {
+        // Convert contact index to page index (add 1 for plus button at index 0)
+        final targetPage = targetPage1 + 1;
+        _scrollController1.jumpTo(targetPage * halfWidth);
+        setState(() {
+          _currentPage1 = targetPage1;
+        });
+      }
+      
+      if (_scrollController2.hasClients && halfWidth > 0) {
+        // Convert contact index to page index (add 1 for plus button at index 0)
+        final targetPage = targetPage2 + 1;
+        _scrollController2.jumpTo(targetPage * halfWidth);
+        setState(() {
+          _currentPage2 = targetPage2;
+        });
+      }
+      
+      _checkForMatch();
+    });
   }
 
   List<StoredContact> get _displayedContacts {
