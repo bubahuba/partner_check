@@ -54,6 +54,7 @@ class ContactsPageState extends State<ContactsPage>
   static const String _storageKey = 'stored_contacts';
   static const String _favoritesKey = 'favorite_contacts';
   static const String _vibrationsKey = 'vibrations_enabled';
+  static const String _hudVisibleKey = 'hud_visible';
   static const String _scrollPos1AllKey = 'scroll_pos_1_all';
   static const String _scrollPos2AllKey = 'scroll_pos_2_all';
   static const String _scrollPos1FavoritesKey = 'scroll_pos_1_favorites';
@@ -402,6 +403,7 @@ class ContactsPageState extends State<ContactsPage>
     // Load favorites first, then contacts (so contacts can be updated with favorite status)
     await _loadFavorites();
     await _loadScrollPositions();
+    await _loadHudState();
     await _loadContacts();
   }
 
@@ -487,6 +489,18 @@ class ContactsPageState extends State<ContactsPage>
     setState(() {
       _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
     });
+  }
+
+  Future<void> _loadHudState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isHudVisible = prefs.getBool(_hudVisibleKey) ?? false;
+    });
+  }
+
+  Future<void> _saveHudState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_hudVisibleKey, _isHudVisible);
   }
 
   Future<void> _saveFavorites() async {
@@ -1012,6 +1026,167 @@ class ContactsPageState extends State<ContactsPage>
     }).toList();
   }
 
+  // Calculate match count between two contacts
+  int _calculateMatchCount(StoredContact contact1, StoredContact contact2) {
+    if (contact1.color == contact2.color) {
+      return 0; // Same color means no match
+    }
+    
+    final color1 = ColorUtils.colorFromValue(contact1.color);
+    final color2 = ColorUtils.colorFromValue(contact2.color);
+    final overlay1 = ColorUtils.overlayColorFromValue(contact1.color);
+    final overlay2 = ColorUtils.overlayColorFromValue(contact2.color);
+
+    int matchCount = 0;
+    
+    // Check base match
+    if (ColorUtils.areColorsMatching(color1, color2)) {
+      matchCount++;
+    }
+    
+    // Check overlay match
+    if (ColorUtils.areColorsMatching(overlay1, overlay2)) {
+      matchCount++;
+    }
+    
+    // Check cross matches
+    if (ColorUtils.areColorsMatching(overlay1, color2)) {
+      matchCount++;
+    }
+    
+    if (ColorUtils.areColorsMatching(color1, overlay2)) {
+      matchCount++;
+    }
+    
+    return matchCount;
+  }
+
+  // Reorder contacts by match count with the current contact
+  void _reorderContactsByMatch(StoredContact currentContact, ScrollController controller) {
+    // Create list of all contacts with their match counts
+    final contactsWithMatches = _contacts.map((contact) {
+      final matchCount = _calculateMatchCount(currentContact, contact);
+      return {'contact': contact, 'matchCount': matchCount};
+    }).toList();
+    
+    // Sort by match count (descending), keeping current contact first
+    contactsWithMatches.sort((a, b) {
+      final contactA = a['contact'] as StoredContact;
+      final contactB = b['contact'] as StoredContact;
+      
+      // Keep current contact at the top
+      if (contactA.name == currentContact.name) return -1;
+      if (contactB.name == currentContact.name) return 1;
+      
+      // Sort by match count descending
+      final countA = a['matchCount'] as int;
+      final countB = b['matchCount'] as int;
+      return countB.compareTo(countA);
+    });
+    
+    // Extract reordered contacts
+    final reorderedContacts = contactsWithMatches
+        .map((item) => item['contact'] as StoredContact)
+        .toList();
+    
+    // Find new index of current contact after reordering
+    final newIndex = reorderedContacts.indexWhere((c) => c.name == currentContact.name);
+    if (newIndex == -1) return;
+    
+    // Update contacts list
+    setState(() {
+      _contacts = reorderedContacts;
+      _updateFavoritesFromContacts();
+    });
+    
+    // Save to storage
+    _saveContacts();
+    
+    // Find the new displayed index after reordering
+    final newDisplayedIndex = _displayedContacts.indexWhere((c) => c.name == currentContact.name);
+    
+    // Maintain scroll position on the current contact in the clicked pane
+    if (controller.hasClients && newDisplayedIndex >= 0) {
+      final width = controller.position.viewportDimension;
+      if (width > 0) {
+        // Convert contact index to page index (add 1 for plus button at index 0)
+        final targetPage = newDisplayedIndex + 1;
+        controller.animateTo(
+          targetPage * width,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+        
+        // Update current page state for the clicked pane
+        if (controller == _scrollController1) {
+          setState(() {
+            _currentPage1 = newDisplayedIndex;
+            if (_favoritesMode) {
+              _currentPage1Favorites = newDisplayedIndex;
+            } else {
+              _currentPage1All = newDisplayedIndex;
+            }
+          });
+        } else if (controller == _scrollController2) {
+          setState(() {
+            _currentPage2 = newDisplayedIndex;
+            if (_favoritesMode) {
+              _currentPage2Favorites = newDisplayedIndex;
+            } else {
+              _currentPage2All = newDisplayedIndex;
+            }
+          });
+        }
+      }
+    }
+    
+    // Scroll the OTHER pane to the best matched contact (index 1, first after current contact)
+    final otherController = controller == _scrollController1 ? _scrollController2 : _scrollController1;
+    final bestMatchIndex = 1; // First contact after current contact (which is at index 0)
+    
+    if (otherController.hasClients && bestMatchIndex < _displayedContacts.length) {
+      final width = otherController.position.viewportDimension;
+      if (width > 0) {
+        // Convert contact index to page index (add 1 for plus button at index 0)
+        final targetPage = bestMatchIndex + 1;
+        otherController.animateTo(
+          targetPage * width,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+        
+        // Update current page state for the other pane
+        if (otherController == _scrollController1) {
+          setState(() {
+            _currentPage1 = bestMatchIndex;
+            if (_favoritesMode) {
+              _currentPage1Favorites = bestMatchIndex;
+            } else {
+              _currentPage1All = bestMatchIndex;
+            }
+          });
+        } else if (otherController == _scrollController2) {
+          setState(() {
+            _currentPage2 = bestMatchIndex;
+            if (_favoritesMode) {
+              _currentPage2Favorites = bestMatchIndex;
+            } else {
+              _currentPage2All = bestMatchIndex;
+            }
+          });
+        }
+      }
+    }
+    
+    // Save scroll positions
+    _saveScrollPositions();
+    
+    // Check for match after reordering
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForMatch();
+    });
+  }
+
   void _toggleFavorite(String contactName) {
     setState(() {
       if (_favoriteNames.contains(contactName)) {
@@ -1189,6 +1364,7 @@ class ContactsPageState extends State<ContactsPage>
     setState(() {
       _isHudVisible = !_isHudVisible;
     });
+    _saveHudState();
   }
 
   void _updateOverlayHeight(double delta, double cardHeight) {
@@ -1462,6 +1638,20 @@ class ContactsPageState extends State<ContactsPage>
                                           constraints: const BoxConstraints(),
                                           visualDensity: VisualDensity.compact,
                                         ),
+                                    const SizedBox(width: 16),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.bar_chart,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                      onPressed: () {
+                                        _reorderContactsByMatch(contact, controller);
+                                      },
+                                      padding: EdgeInsets.zero,
+                                      constraints: const BoxConstraints(),
+                                      visualDensity: VisualDensity.compact,
+                                    ),
                                     const SizedBox(width: 16),
                                     IconButton(
                                       icon: const Icon(
