@@ -385,7 +385,7 @@ class ContactsPageState extends State<ContactsPage>
     }).toList();
   }
 
-  Future<void> _pickAndAddContact({required ScrollController targetController}) async {
+  Future<void> _pickAndAddContactFromDevice({required ScrollController targetController}) async {
     try {
       // Check contact limit
       if (_contacts.length >= _maxContacts) {
@@ -828,7 +828,7 @@ class ContactsPageState extends State<ContactsPage>
 
   Widget _buildAddContactCard(double height, ScrollController controller) {
     return GestureDetector(
-      onTap: () => _pickAndAddContact(targetController: controller),
+      onTap: () => _showAddContactMenu(controller),
       child: SizedBox(
         height: height,
         child: Card(
@@ -844,7 +844,7 @@ class ContactsPageState extends State<ContactsPage>
                 color: Colors.white.withValues(alpha: 0.5),
                 size: 48,
               ),
-              onPressed: () => _pickAndAddContact(targetController: controller),
+              onPressed: () => _showAddContactMenu(controller),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.transparent,
               ),
@@ -853,6 +853,256 @@ class ContactsPageState extends State<ContactsPage>
         ),
       ),
     );
+  }
+
+  void _showAddContactMenu(ScrollController controller) {
+    final l10n = AppLocalizations.of(context)!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.contacts, color: Colors.white),
+                title: Text(l10n.addFromDevice, style: const TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickAndAddContactFromDevice(targetController: controller);
+                },
+              ),
+              const Divider(color: Colors.grey),
+              ListTile(
+                leading: const Icon(Icons.edit, color: Colors.white),
+                title: Text(l10n.addManually, style: const TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _addContactManually(targetController: controller);
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _addContactManually({required ScrollController targetController}) async {
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
+
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.addContactManually),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: l10n.name,
+                hintText: l10n.enterContactName,
+              ),
+              autofocus: true,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: phoneController,
+              decoration: InputDecoration(
+                labelText: l10n.phoneNumber,
+                hintText: l10n.enterPhoneNumber,
+              ),
+              keyboardType: TextInputType.phone,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              final phone = phoneController.text.trim();
+              if (name.isNotEmpty && phone.isNotEmpty) {
+                Navigator.of(context).pop({'name': name, 'phone': phone});
+              }
+            },
+            child: Text(l10n.add),
+          ),
+        ],
+      ),
+    );
+
+    if (result == null) return;
+
+    final contactName = result['name']!;
+    final phoneNumber = result['phone']!;
+
+    // Check contact limit
+    if (_contacts.length >= _maxContacts) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contactLimitReached),
+            content: Text(l10n.contactLimitMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+
+    // Check for duplicates
+    if (_contacts.any((c) => c.name == contactName)) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.contactAlreadyInList(contactName)),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        
+        // Scroll to the duplicate contact in the target ListView
+        final displayedContacts = _displayedContacts;
+        final duplicateIndex = displayedContacts.indexWhere((c) => c.name == contactName);
+        if (duplicateIndex != -1 && targetController.hasClients) {
+          final width = targetController.position.viewportDimension;
+          if (width > 0) {
+            // Convert contact index to page index (add 1 for plus button at index 0)
+            final targetPage = duplicateIndex + 1;
+            targetController.animateTo(
+              targetPage * width,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.ease,
+            );
+            
+            // Update current page state
+            if (targetController == _scrollController1) {
+              setState(() {
+                _currentPage1 = duplicateIndex;
+                if (_favoritesMode) {
+                  _currentPage1Favorites = duplicateIndex;
+                } else {
+                  _currentPage1All = duplicateIndex;
+                }
+              });
+            } else if (targetController == _scrollController2) {
+              setState(() {
+                _currentPage2 = duplicateIndex;
+                if (_favoritesMode) {
+                  _currentPage2Favorites = duplicateIndex;
+                } else {
+                  _currentPage2All = duplicateIndex;
+                }
+              });
+            }
+            
+            // Save scroll positions
+            _saveScrollPositions();
+          }
+        }
+      }
+      return;
+    }
+
+    // Calculate color from phone number
+    final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    int colorValue = 0;
+    if (digits.isNotEmpty) {
+      final hexDigits = digits.length >= 6
+          ? digits.substring(digits.length - 6)
+          : digits.padLeft(6, '0');
+      colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
+    }
+
+    // Create new contact
+    final newContact = StoredContact(
+      name: contactName,
+      color: colorValue,
+      isFavorite: _favoriteNames.contains(contactName),
+    );
+
+    // Add to contacts list
+    setState(() {
+      _contacts.add(newContact);
+      _updateFavoritesFromContacts();
+    });
+
+    // Save to storage
+    await _saveContacts();
+
+    // Scroll to the new contact only in the target ListView
+    final displayedContacts = _displayedContacts;
+    // New contact is at index: displayedContacts.length (last contact index + 1, accounting for plus button at index 0)
+    final newIndex = displayedContacts.length;
+    
+    if (targetController == _scrollController1) {
+      if (_scrollController1.hasClients && newIndex >= 0) {
+        final width = _scrollController1.position.viewportDimension;
+        if (width > 0) {
+          _scrollController1.animateTo(
+            (newIndex + 1) * width, // +1 because index 0 is plus button
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
+          );
+          setState(() {
+            _currentPage1 = newIndex;
+            // Update mode-specific position
+            if (_favoritesMode) {
+              _currentPage1Favorites = newIndex;
+            } else {
+              _currentPage1All = newIndex;
+            }
+          });
+          _saveScrollPositions();
+        }
+      }
+    } else if (targetController == _scrollController2) {
+      if (_scrollController2.hasClients && newIndex >= 0) {
+        final width = _scrollController2.position.viewportDimension;
+        if (width > 0) {
+          _scrollController2.animateTo(
+            (newIndex + 1) * width, // +1 because index 0 is plus button
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.ease,
+          );
+          setState(() {
+            _currentPage2 = newIndex;
+            // Update mode-specific position
+            if (_favoritesMode) {
+              _currentPage2Favorites = newIndex;
+            } else {
+              _currentPage2All = newIndex;
+            }
+          });
+          _saveScrollPositions();
+        }
+      }
+    }
+
+    // Check for match after adding
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkForMatch();
+    });
   }
 
   Widget _buildListView(
