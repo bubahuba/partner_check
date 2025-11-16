@@ -15,11 +15,12 @@ class SettingsScreen extends StatefulWidget {
   SettingsScreenState createState() => SettingsScreenState();
 }
 
-class SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
+class SettingsScreenState extends State<SettingsScreen> with TickerProviderStateMixin {
   bool _isLoading = false;
   bool _vibrationsEnabled = true;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
+  late AnimationController _gradientController;
   static const String _vibrationsKey = 'vibrations_enabled';
   static const int _maxContacts = 10;
 
@@ -35,6 +36,13 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
     );
     // Animate in from the right when first shown
     _slideController.forward();
+    
+    // Gradient animation controller - loops infinitely back and forth
+    _gradientController = AnimationController(
+      duration: const Duration(seconds: 5),
+      vsync: this,
+    )..repeat(reverse: true);
+    
     _loadVibrationsSetting();
   }
 
@@ -56,6 +64,7 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
   @override
   void dispose() {
     _slideController.dispose();
+    _gradientController.dispose();
     super.dispose();
   }
 
@@ -274,6 +283,15 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
     }
   }
 
+  Color _interpolateColor(Color a, Color b, double t) {
+    return Color.fromRGBO(
+      (a.red + (b.red - a.red) * t).round(),
+      (a.green + (b.green - a.green) * t).round(),
+      (a.blue + (b.blue - a.blue) * t).round(),
+      (a.opacity + (b.opacity - a.opacity) * t),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // App icon colors: indigo (#6366F1), pink (#EC4899), blue (#3B82F6)
@@ -290,19 +308,42 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
         );
       },
       child: Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              indigo,
-              pink,
-              blue,
-            ],
-            stops: [0.0, 0.5, 1.0],
-          ),
-        ),
+      body: AnimatedBuilder(
+        animation: _gradientController,
+        builder: (context, child) {
+          // Calculate animated colors based on gradient animation
+          final t = _gradientController.value;
+          // Cycle through: indigo -> pink -> blue -> indigo
+          Color color1, color2, color3;
+          if (t < 0.33) {
+            // Transition from indigo to pink
+            final localT = t / 0.33;
+            color1 = _interpolateColor(indigo, pink, localT);
+            color2 = pink;
+            color3 = blue;
+          } else if (t < 0.66) {
+            // Transition from pink to blue
+            final localT = (t - 0.33) / 0.33;
+            color1 = pink;
+            color2 = _interpolateColor(pink, blue, localT);
+            color3 = blue;
+          } else {
+            // Transition from blue back to indigo
+            final localT = (t - 0.66) / 0.34;
+            color1 = pink;
+            color2 = blue;
+            color3 = _interpolateColor(blue, indigo, localT);
+          }
+          
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [color1, color2, color3],
+                stops: const [0.0, 0.5, 1.0],
+              ),
+            ),
         child: Stack(
           children: [
             // Smooth color overlay for blur effect
@@ -581,6 +622,8 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
             ),
           ],
         ),
+            );
+        },
       ),
       ),
     );
