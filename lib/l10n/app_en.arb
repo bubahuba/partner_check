@@ -1,0 +1,186 @@
+{
+  "@@locale": "en",
+  "appTitle": "Partner Check",
+  "@appTitle": {
+    "description": "The title of the application"
+  },
+  "contactsPermissionRequired": "Contacts permission is required",
+  "@contactsPermissionRequired": {
+    "description": "Message shown when contacts permission is denied"
+  },
+  "contactLimitReached": "Contact Limit Reached",
+  "@contactLimitReached": {
+    "description": "Title for contact limit dialog"
+  },
+  "contactLimitMessage": "You have reached the maximum of 10 contacts in the free version.\n\nUpgrade to PartnerCheck Pro to add unlimited contacts.",
+  "@contactLimitMessage": {
+    "description": "Message shown when contact limit is reached"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "OK button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "Add button text"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+  "selectedContactNoName": "Selected contact has no name",
+  "@selectedContactNoName": {
+    "description": "Error message when selected contact has no name"
+  },
+  "contactAlreadyInList": "{contactName} is already in the list",
+  "@contactAlreadyInList": {
+    "description": "Error message when contact already exists",
+    "placeholders": {
+      "contactName": {
+        "type": "String"
+      }
+    }
+  },
+  "noPhoneNumber": "No Phone Number",
+  "@noPhoneNumber": {
+    "description": "Title for no phone number dialog"
+  },
+  "noPhoneNumberMessage": "{contactName} does not have a phone number. Please select a contact with a phone number.",
+  "@noPhoneNumberMessage": {
+    "description": "Message when contact has no phone number",
+    "placeholders": {
+      "contactName": {
+        "type": "String"
+      }
+    }
+  },
+  "errorPickingContact": "Error picking contact: {error}",
+  "@errorPickingContact": {
+    "description": "Error message when contact picking fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteContact": "Delete Contact",
+  "@deleteContact": {
+    "description": "Title for delete contact dialog"
+  },
+  "deleteContactConfirm": "Are you sure you want to delete {contactName}?",
+  "@deleteContactConfirm": {
+    "description": "Confirmation message for deleting contact",
+    "placeholders": {
+      "contactName": {
+        "type": "String"
+      }
+    }
+  },
+  "addContactManually": "Add Contact Manually",
+  "@addContactManually": {
+    "description": "Title for add contact manually dialog"
+  },
+  "editContact": "Edit Contact",
+  "@editContact": {
+    "description": "Title for edit contact dialog"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Name field label"
+  },
+  "enterContactName": "Enter contact name",
+  "@enterContactName": {
+    "description": "Hint for name field"
+  },
+  "phoneNumber": "Phone Number",
+  "@phoneNumber": {
+    "description": "Phone number field label"
+  },
+  "enterPhoneNumber": "Enter phone number",
+  "@enterPhoneNumber": {
+    "description": "Hint for phone number field"
+  },
+  "phoneNumberOptional": "Phone Number (optional)",
+  "@phoneNumberOptional": {
+    "description": "Phone number field label for edit dialog"
+  },
+  "enterPhoneNumberToChangeColor": "Enter phone number to change color",
+  "@enterPhoneNumberToChangeColor": {
+    "description": "Hint for phone number field in edit dialog"
+  },
+  "leavePhoneEmptyKeepColor": "Leave phone number empty to keep current color",
+  "@leavePhoneEmptyKeepColor": {
+    "description": "Helper text for edit contact dialog"
+  },
+  "addFromDevice": "Add from device",
+  "@addFromDevice": {
+    "description": "Menu option to add contact from device"
+  },
+  "addManually": "Add manually",
+  "@addManually": {
+    "description": "Menu option to add contact manually"
+  },
+  "vibrations": "Vibrations",
+  "@vibrations": {
+    "description": "Label for vibrations toggle"
+  },
+  "loadContacts": "Load Contacts",
+  "@loadContacts": {
+    "description": "Button text to load contacts"
+  },
+  "permissionRequired": "Permission Required",
+  "@permissionRequired": {
+    "description": "Title for permission required dialog"
+  },
+  "permissionRequiredMessage": "This app needs access to your contacts to check partner compatibility. Please grant permission in settings.",
+  "@permissionRequiredMessage": {
+    "description": "Message for permission required dialog"
+  },
+  "openSettings": "Open Settings",
+  "@openSettings": {
+    "description": "Button text to open settings"
+  },
+  "contactsPermissionDenied": "Contacts permission denied",
+  "@contactsPermissionDenied": {
+    "description": "Message when contacts permission is denied"
+  },
+  "permissionDenied": "Permission denied: {status}",
+  "@permissionDenied": {
+    "description": "Message when permission is denied with status",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadingContacts": "Error loading contacts: {error}",
+  "@errorLoadingContacts": {
+    "description": "Error message when loading contacts fails",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "partnerCheckFree": "PartnerCheck Free",
+  "@partnerCheckFree": {
+    "description": "App title"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading text"
+  }
+}
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import '../l10n/app_localizations.dart';
 import 'dart:convert';
 import '../models.dart';
 import '../utils/color_utils.dart';
@@ -485,10 +486,11 @@ class ContactsPageState extends State<ContactsPage>
       // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Contacts permission is required'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(l10n.contactsPermissionRequired),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -508,10 +510,11 @@ class ContactsPageState extends State<ContactsPage>
       
       if (contactName.isEmpty) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Selected contact has no name'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(l10n.selectedContactNoName),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -521,9 +524,10 @@ class ContactsPageState extends State<ContactsPage>
       // Check for duplicates
       if (_contacts.any((c) => c.name == contactName)) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('$contactName is already in the list'),
+              content: Text(l10n.contactAlreadyInList(contactName)),
               duration: const Duration(seconds: 2),
             ),
           );
@@ -540,15 +544,16 @@ class ContactsPageState extends State<ContactsPage>
       // Check if contact has a phone number
       if (contact.phones.isEmpty || phoneNumber.isEmpty) {
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           await showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('No Phone Number'),
-              content: Text('$contactName does not have a phone number. Please select a contact with a phone number.'),
+              title: Text(l10n.noPhoneNumber),
+              content: Text(l10n.noPhoneNumberMessage(contactName)),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: Text(l10n.ok),
                 ),
               ],
             ),
@@ -636,9 +641,10 @@ class ContactsPageState extends State<ContactsPage>
       });
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking contact: $e'),
+            content: Text(l10n.errorPickingContact(e.toString())),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -654,41 +660,42 @@ class ContactsPageState extends State<ContactsPage>
     // Since we don't store the phone number, we'll just show an empty field
     // and let the user enter a new one if they want to change the color
 
+    final l10n = AppLocalizations.of(context)!;
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit Contact'),
+        title: Text(l10n.editContact),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter contact name',
+              decoration: InputDecoration(
+                labelText: l10n.name,
+                hintText: l10n.enterContactName,
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Phone Number (optional)',
-                hintText: 'Enter phone number to change color',
+              decoration: InputDecoration(
+                labelText: l10n.phoneNumberOptional,
+                hintText: l10n.enterPhoneNumberToChangeColor,
               ),
               keyboardType: TextInputType.phone,
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Leave phone number empty to keep current color',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+            Text(
+              l10n.leavePhoneEmptyKeepColor,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -700,7 +707,7 @@ class ContactsPageState extends State<ContactsPage>
                 });
               }
             },
-            child: const Text('Save'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -714,9 +721,10 @@ class ContactsPageState extends State<ContactsPage>
     // Check for duplicates (excluding the current contact)
     if (_contacts.any((c) => c.name == newName && c.name != contact.name)) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$newName is already in the list'),
+            content: Text(l10n.contactAlreadyInList(newName)),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -768,28 +776,29 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _addContactManually({required ScrollController targetController}) async {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
+    final l10n = AppLocalizations.of(context)!;
 
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Contact Manually'),
+        title: Text(l10n.addContactManually),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter contact name',
+              decoration: InputDecoration(
+                labelText: l10n.name,
+                hintText: l10n.enterContactName,
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
             TextField(
               controller: phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Phone Number',
-                hintText: 'Enter phone number',
+              decoration: InputDecoration(
+                labelText: l10n.phoneNumber,
+                hintText: l10n.enterPhoneNumber,
               ),
               keyboardType: TextInputType.phone,
             ),
@@ -798,7 +807,7 @@ class ContactsPageState extends State<ContactsPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -808,7 +817,7 @@ class ContactsPageState extends State<ContactsPage>
                 Navigator.of(context).pop({'name': name, 'phone': phone});
               }
             },
-            child: const Text('Add'),
+            child: Text(l10n.add),
           ),
         ],
       ),
@@ -822,9 +831,10 @@ class ContactsPageState extends State<ContactsPage>
     // Check for duplicates
     if (_contacts.any((c) => c.name == contactName)) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$contactName is already in the list'),
+            content: Text(l10n.contactAlreadyInList(contactName)),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -932,22 +942,23 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _confirmDeleteContact(String contactName) async {
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Contact'),
-        content: Text('Are you sure you want to delete $contactName?'),
+        title: Text(l10n.deleteContact),
+        content: Text(l10n.deleteContactConfirm(contactName)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: Colors.red,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -1136,6 +1147,7 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   void _showAddContactMenu(ScrollController controller) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -1150,7 +1162,7 @@ class ContactsPageState extends State<ContactsPage>
             children: [
               ListTile(
                 leading: const Icon(Icons.contacts, color: Colors.white),
-                title: const Text('Add from device', style: TextStyle(color: Colors.white)),
+                title: Text(l10n.addFromDevice, style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickAndAddContactFromDevice(targetController: controller);
@@ -1159,7 +1171,7 @@ class ContactsPageState extends State<ContactsPage>
               const Divider(color: Colors.grey),
               ListTile(
                 leading: const Icon(Icons.edit, color: Colors.white),
-                title: const Text('Add manually', style: TextStyle(color: Colors.white)),
+                title: Text(l10n.addManually, style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
                   _addContactManually(targetController: controller);

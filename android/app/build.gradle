@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.partner_check"
+    namespace = "com.shadowHub.partnerCheck"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

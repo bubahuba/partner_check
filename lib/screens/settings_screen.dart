@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../l10n/app_localizations.dart';
 import 'dart:convert';
 import '../models.dart';
 import 'contacts_page.dart';
@@ -105,21 +106,20 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           final shouldOpen = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text('Permission Required'),
-              content: const Text(
-                'Contacts permission is permanently denied. Please enable it in Settings.',
-              ),
+              title: Text(l10n.permissionRequired),
+              content: Text(l10n.permissionRequiredMessage),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.cancel),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Open Settings'),
+                  child: Text(l10n.openSettings),
                 ),
               ],
             ),
@@ -207,9 +207,10 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
             _isLoading = false;
           });
           if (mounted) {
+            final l10n = AppLocalizations.of(context)!;
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Contacts permission denied'),
+              SnackBar(
+                content: Text(l10n.contactsPermissionDenied),
               ),
             );
           }
@@ -219,9 +220,10 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
           _isLoading = false;
         });
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Permission denied: ${status.toString()}'),
+              content: Text(l10n.permissionDenied(status.toString())),
             ),
           );
           openAppSettings();
@@ -232,9 +234,10 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
         _isLoading = false;
       });
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error loading contacts: $e'),
+            content: Text(l10n.errorLoadingContacts(e.toString())),
           ),
         );
       }
@@ -346,12 +349,13 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                     ),
                   );
 
+                  final l10n = AppLocalizations.of(context)!;
                   Widget textAndButton = Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Partner Check',
+                        l10n.appTitle,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: fontSize,
@@ -381,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                               )
                             : const Icon(Icons.contacts, size: 24),
                         label: Text(
-                          _isLoading ? 'Loading...' : 'Load Contacts',
+                          _isLoading ? l10n.loading : l10n.loadContacts,
                           style: TextStyle(fontSize: buttonFontSize),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -400,7 +404,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Vibrations',
+                            l10n.vibrations,
                             style: TextStyle(
                               fontSize: buttonFontSize * 0.9,
                               color: Colors.white,
@@ -455,7 +459,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           }
                         },
                         child: Text(
-                          'close',
+                          l10n.close,
                           style: TextStyle(
                             fontSize: buttonFontSize * 0.9,
                             color: Colors.white.withValues(alpha: 0.9),
