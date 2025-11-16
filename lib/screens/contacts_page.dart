@@ -531,6 +531,46 @@ class ContactsPageState extends State<ContactsPage>
               duration: const Duration(seconds: 2),
             ),
           );
+          
+          // Scroll to the duplicate contact in the target ListView
+          final displayedContacts = _displayedContacts;
+          final duplicateIndex = displayedContacts.indexWhere((c) => c.name == contactName);
+          if (duplicateIndex != -1 && targetController.hasClients) {
+            final width = targetController.position.viewportDimension;
+            if (width > 0) {
+              // Convert contact index to page index (add 1 for plus button at index 0)
+              final targetPage = duplicateIndex + 1;
+              targetController.animateTo(
+                targetPage * width,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.ease,
+              );
+              
+              // Update current page state
+              if (targetController == _scrollController1) {
+                setState(() {
+                  _currentPage1 = duplicateIndex;
+                  if (_favoritesMode) {
+                    _currentPage1Favorites = duplicateIndex;
+                  } else {
+                    _currentPage1All = duplicateIndex;
+                  }
+                });
+              } else if (targetController == _scrollController2) {
+                setState(() {
+                  _currentPage2 = duplicateIndex;
+                  if (_favoritesMode) {
+                    _currentPage2Favorites = duplicateIndex;
+                  } else {
+                    _currentPage2All = duplicateIndex;
+                  }
+                });
+              }
+              
+              // Save scroll positions
+              _saveScrollPositions();
+            }
+          }
         }
         return;
       }
