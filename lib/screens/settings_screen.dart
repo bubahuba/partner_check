@@ -291,6 +291,21 @@ class SettingsScreenState extends State<SettingsScreen> with SingleTickerProvide
                 ),
               ),
             ),
+            // Back arrow button at the same position as HUD settings button
+            Positioned(
+              top: 10,
+              left: 0,
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                ),
+                onPressed: _handleClose,
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            ),
             // Content
             SafeArea(
               child: LayoutBuilder(
