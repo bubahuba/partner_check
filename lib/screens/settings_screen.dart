@@ -14,10 +14,10 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key, this.onClose});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
+class SettingsScreenState extends State<SettingsScreen> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   bool _vibrationsEnabled = true;
   late AnimationController _slideController;
@@ -420,7 +420,7 @@ class _SettingsScreenState extends State<SettingsScreen> with SingleTickerProvid
                           Switch(
                             value: _vibrationsEnabled,
                             onChanged: _toggleVibrations,
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                             activeTrackColor: Colors.white.withValues(alpha: 0.7),
                             inactiveThumbColor: Colors.white.withValues(alpha: 0.5),
                             inactiveTrackColor: Colors.white.withValues(alpha: 0.3),

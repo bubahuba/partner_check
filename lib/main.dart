@@ -36,7 +36,6 @@ class PartnerCheck extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,
         colorScheme: const ColorScheme.dark(
-          background: Colors.black,
           surface: Colors.black,
         ),
       ),

@@ -1109,7 +1109,7 @@ class ContactsPageState extends State<ContactsPage>
       final halfWidth = MediaQuery.of(context).size.width / 2;
       
       // Clamp positions to valid range
-      final maxIndex = displayedContacts.length > 0 ? displayedContacts.length - 1 : 0;
+      final maxIndex = displayedContacts.isNotEmpty ? displayedContacts.length - 1 : 0;
       final targetPage1 = _currentPage1.clamp(0, maxIndex);
       final targetPage2 = _currentPage2.clamp(0, maxIndex);
       
