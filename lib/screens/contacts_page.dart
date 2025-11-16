@@ -1140,11 +1140,32 @@ class ContactsPageState extends State<ContactsPage>
       }
     }
     
-    // Scroll the OTHER pane to the best matched contact (index 1, first after current contact)
+    // Scroll the OTHER pane to the best matched contact
     final otherController = controller == _scrollController1 ? _scrollController2 : _scrollController1;
-    final bestMatchIndex = 1; // First contact after current contact (which is at index 0)
     
-    if (otherController.hasClients && bestMatchIndex < _displayedContacts.length) {
+    // Find the best matched contact (highest match count, excluding current contact)
+    StoredContact? bestMatchContact;
+    int bestMatchCount = -1;
+    
+    for (final contact in _contacts) {
+      if (contact.name == currentContact.name) continue; // Skip current contact
+      
+      final matchCount = _calculateMatchCount(currentContact, contact);
+      if (matchCount > bestMatchCount) {
+        bestMatchCount = matchCount;
+        bestMatchContact = contact;
+      }
+    }
+    
+    // Find the best match contact's index in displayed contacts
+    int? bestMatchIndex;
+    if (bestMatchContact != null) {
+      bestMatchIndex = _displayedContacts.indexWhere((c) => c.name == bestMatchContact!.name);
+      if (bestMatchIndex == -1) bestMatchIndex = null; // Not in displayed contacts
+    }
+    
+    // Scroll to best match if found and valid
+    if (bestMatchIndex != null && otherController.hasClients && bestMatchIndex < _displayedContacts.length) {
       final width = otherController.position.viewportDimension;
       if (width > 0) {
         // Convert contact index to page index (add 1 for plus button at index 0)
@@ -1158,20 +1179,20 @@ class ContactsPageState extends State<ContactsPage>
         // Update current page state for the other pane
         if (otherController == _scrollController1) {
           setState(() {
-            _currentPage1 = bestMatchIndex;
+            _currentPage1 = bestMatchIndex!;
             if (_favoritesMode) {
-              _currentPage1Favorites = bestMatchIndex;
+              _currentPage1Favorites = bestMatchIndex!;
             } else {
-              _currentPage1All = bestMatchIndex;
+              _currentPage1All = bestMatchIndex!;
             }
           });
         } else if (otherController == _scrollController2) {
           setState(() {
-            _currentPage2 = bestMatchIndex;
+            _currentPage2 = bestMatchIndex!;
             if (_favoritesMode) {
-              _currentPage2Favorites = bestMatchIndex;
+              _currentPage2Favorites = bestMatchIndex!;
             } else {
-              _currentPage2All = bestMatchIndex;
+              _currentPage2All = bestMatchIndex!;
             }
           });
         }
