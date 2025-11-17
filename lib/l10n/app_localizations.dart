@@ -58,6 +58,9 @@ class AppLocalizations {
   String get loading => _localizedValues[locale.languageCode]?['loading'] ?? 'Loading...';
   String get aboutTitle => _localizedValues[locale.languageCode]?['aboutTitle'] ?? 'About';
   String get aboutText => _localizedValues[locale.languageCode]?['aboutText'] ?? 'every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings you a unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.';
+  String get heartIconDescription => _localizedValues[locale.languageCode]?['heartIconDescription'] ?? 'Mark contact as favorite';
+  String get chartIconDescription => _localizedValues[locale.languageCode]?['chartIconDescription'] ?? 'Reorder contacts by match count';
+  String get trashIconDescription => _localizedValues[locale.languageCode]?['trashIconDescription'] ?? 'Delete contact';
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -101,6 +104,9 @@ class AppLocalizations {
       'loading': 'Loading...',
       'aboutTitle': 'About',
       'aboutText': 'Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?',
+      'heartIconDescription': 'Mark contact as favorite',
+      'chartIconDescription': 'Reorder contacts by match count',
+      'trashIconDescription': 'Delete contact',
     },
     'cs': {
       'appTitle': 'Partner Check',
@@ -143,6 +149,9 @@ class AppLocalizations {
       'loading': 'Načítání...',
       'aboutTitle': 'O aplikaci',
       'aboutText': 'Každý člověk má telefon (nebo více)\n\nkaždý telefon má posledních 6 číslic\n\nkaždých 6 číslic má barvu (v hexadecimálním kódu)\n\nkaždá barva má člověka (?)\n\nNáhoda neexistuje!\n\nTato aplikace přináší jedinečnou příležitost podívat se jinak na svět telefonních čísel patřících konkrétním lidem. Projděte všechny možné kombinace a zjistěte, že náhoda neexistuje.\n\nLadí tedy? Neladí?',
+      'heartIconDescription': 'Označit kontakt jako oblíbený',
+      'chartIconDescription': 'Seřadit kontakty podle počtu shod',
+      'trashIconDescription': 'Smazat kontakt',
     },
   };
 }

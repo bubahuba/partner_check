@@ -204,6 +204,118 @@ class AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin 
                               },
                             ),
                             SizedBox(height: spacing * 2),
+                            // Icons with descriptions
+                            Builder(
+                              builder: (context) {
+                                final l10n = AppLocalizations.of(context)!;
+                                final iconDescriptionFontSize = isPortrait
+                                    ? (screenWidth * 0.035).clamp(12.0, 16.0)
+                                    : (screenHeight * 0.03).clamp(12.0, 14.0);
+                                
+                                return Container(
+                                  padding: EdgeInsets.all(spacing),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Heart icon
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              l10n.heartIconDescription,
+                                              style: TextStyle(
+                                                fontSize: iconDescriptionFontSize,
+                                                color: Colors.white,
+                                                height: 1.4,
+                                                shadows: const [
+                                                  Shadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 8,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: spacing),
+                                      // Chart icon
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.bar_chart,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              l10n.chartIconDescription,
+                                              style: TextStyle(
+                                                fontSize: iconDescriptionFontSize,
+                                                color: Colors.white,
+                                                height: 1.4,
+                                                shadows: const [
+                                                  Shadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 8,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: spacing),
+                                      // Trash icon
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.delete_outline,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              l10n.trashIconDescription,
+                                              style: TextStyle(
+                                                fontSize: iconDescriptionFontSize,
+                                                color: Colors.white,
+                                                height: 1.4,
+                                                shadows: const [
+                                                  Shadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 8,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            SizedBox(height: spacing * 2),
                           ],
                         ),
                       ),
