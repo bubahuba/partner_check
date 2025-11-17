@@ -8,6 +8,24 @@ from PIL import Image
 import os
 import sys
 
+def resize_and_save_foreground(source_image, size, output_path, optimize=True):
+    """Resize image to specified size and save as foreground (preserves transparency)"""
+    # Open and resize image
+    img = Image.open(source_image)
+    
+    # Preserve transparency for foreground icons
+    if img.mode == 'P':
+        img = img.convert('RGBA')
+    elif img.mode not in ('RGBA', 'LA'):
+        img = img.convert('RGBA')
+    
+    # Resize with high-quality resampling
+    img_resized = img.resize((size, size), Image.Resampling.LANCZOS)
+    
+    # Save as WebP for Android foreground icons
+    img_resized.save(output_path, 'WEBP', optimize=optimize)
+    print(f"Generated: {output_path} ({size}x{size})")
+
 def resize_and_save(source_image, size, output_path, optimize=True):
     """Resize image to specified size and save with optimization"""
     # Open and resize image
@@ -85,6 +103,7 @@ def main():
         android_dir = f'android/app/src/main/res/{folder}'
         os.makedirs(android_dir, exist_ok=True)
         resize_and_save(source_image, size, os.path.join(android_dir, 'ic_launcher.png'))
+        resize_and_save_foreground(source_image, size, os.path.join(android_dir, 'ic_launcher_foreground.webp'))
     
     # Web icons
     web_sizes = [
