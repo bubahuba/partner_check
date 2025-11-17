@@ -1182,8 +1182,29 @@ class ContactsPageState extends State<ContactsPage>
               ListTile(
                 leading: const Icon(Icons.edit, color: Colors.white),
                 title: Text(l10n.addManually, style: const TextStyle(color: Colors.white)),
-                onTap: () {
+                onTap: () async {
                   Navigator.of(context).pop();
+                  // Check contact limit before showing dialog
+                  if (_contacts.length >= _maxContacts) {
+                    if (mounted) {
+                      await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text(l10n.contactLimitReached),
+                          content: SingleChildScrollView(
+                            child: Text(l10n.contactLimitMessage),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(l10n.ok),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                    return;
+                  }
                   _addContactManually(targetController: controller, addAtStart: isStartCard);
                 },
               ),
@@ -1249,27 +1270,6 @@ class ContactsPageState extends State<ContactsPage>
 
     final contactName = result['name']!;
     final phoneNumber = result['phone']!;
-
-    // Check contact limit
-    if (_contacts.length >= _maxContacts) {
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(l10n.contactLimitReached),
-            content: Text(l10n.contactLimitMessage),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(l10n.ok),
-              ),
-            ],
-          ),
-        );
-      }
-      return;
-    }
 
     // Check for duplicates
     if (_contacts.any((c) => c.name == contactName)) {
