@@ -75,15 +75,6 @@
       }
     }
   },
-  "errorAddingContact": "Error adding contact: {error}",
-  "@errorAddingContact": {
-    "description": "Error message when adding contact fails",
-    "placeholders": {
-      "error": {
-        "type": "String"
-      }
-    }
-  },
   "deleteContact": "Delete Contact",
   "@deleteContact": {
     "description": "Title for delete contact dialog"
@@ -149,14 +140,6 @@
   "@loadContacts": {
     "description": "Button text to load contacts"
   },
-  "addContact": "Add Contact",
-  "@addContact": {
-    "description": "Button text to add contact"
-  },
-  "adding": "Adding...",
-  "@adding": {
-    "description": "Loading text when adding contact"
-  },
   "permissionRequired": "Permission Required",
   "@permissionRequired": {
     "description": "Title for permission required dialog"
@@ -203,7 +186,7 @@
   "@aboutTitle": {
     "description": "Title for the about screen"
   },
-  "aboutText": "Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings you a unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.",
+  "aboutText": "Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?",
   "@aboutText": {
     "description": "About text explaining the app concept"
   },

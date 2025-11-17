@@ -40,6 +40,6 @@ class PartnerCheck extends StatelessWidget {
         ),
       ),
       home: const InitialScreen(),
-            );
+    );
   }
 }

@@ -111,7 +111,7 @@ class AboutScreenState extends State<AboutScreen> with TickerProviderStateMixin 
                   stops: const [0.0, 0.5, 1.0],
                 ),
               ),
-          child: Stack(
+              child: Stack(
             children: [
               // Smooth color overlay for blur effect
               Container(
