@@ -4,8 +4,159 @@ Generate app icons for Partner Check app
 Design: Two overlapping circles (partners) with a checkmark (compatibility check)
 """
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import os
+
+def add_free_ribbon(img, size):
+    """Add a 'FREE' ribbon badge to the upper right corner of the image"""
+    # Ensure image is in RGB mode for drawing
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+    
+    # Calculate ribbon size based on icon size
+    # Make it much larger so it extends far beyond the icon edges
+    ribbon_width = int(size * 1.5)  # 150% of icon width (diagonal, extends far beyond)
+    ribbon_height = int(size * 0.15)  # 15% of icon height
+    
+    # Create a separate image for the ribbon to rotate it
+    # Make canvas much larger to accommodate ribbon extending far beyond edges
+    ribbon_size = int(size * 2.0)  # 2x larger canvas for rotation
+    ribbon_img = Image.new('RGBA', (ribbon_size, ribbon_size), (0, 0, 0, 0))
+    ribbon_draw = ImageDraw.Draw(ribbon_img)
+    
+    # Draw ribbon shape (rectangular, will be rotated)
+    # Position in center of rotation canvas
+    center_x = ribbon_size // 2
+    center_y = ribbon_size // 2
+    ribbon_x = center_x - ribbon_width // 2
+    ribbon_y = center_y - ribbon_height // 2
+    
+    # Draw ribbon background (black)
+    ribbon_color = (0, 0, 0)  # Black
+    ribbon_points = [
+        (ribbon_x, ribbon_y),
+        (ribbon_x + ribbon_width, ribbon_y),
+        (ribbon_x + ribbon_width, ribbon_y + ribbon_height),
+        (ribbon_x, ribbon_y + ribbon_height),
+    ]
+    
+    ribbon_draw.polygon(ribbon_points, fill=ribbon_color)
+    
+    # Add a subtle border for definition (dark gray)
+    border_color = (50, 50, 50)  # Dark gray border
+    ribbon_draw.polygon(ribbon_points, outline=border_color, width=max(1, size // 128))
+    
+    # Rotate the ribbon 45 degrees
+    rotated_ribbon = ribbon_img.rotate(-45, expand=False, fillcolor=(0, 0, 0, 0))
+    
+    # Calculate position to place rotated ribbon in upper right corner
+    # Position it so it extends far beyond the icon edges
+    # The ribbon should start from well outside the icon and extend into it
+    paste_x = int(size - ribbon_size * 0.6)  # Position so ribbon extends far beyond right edge
+    paste_y = int(-ribbon_size * 0.4)  # Position so ribbon extends far beyond top edge
+    
+    # Paste the rotated ribbon onto the main image
+    if img.mode == 'RGBA':
+        img.paste(rotated_ribbon, (paste_x, paste_y), rotated_ribbon)
+    else:
+        # Convert to RGBA temporarily for alpha compositing
+        img_rgba = img.convert('RGBA')
+        img_rgba.paste(rotated_ribbon, (paste_x, paste_y), rotated_ribbon)
+        img = img_rgba.convert('RGB')
+    
+    # Now draw text on the rotated ribbon
+    draw = ImageDraw.Draw(img)
+    
+    # Add "FREE" text on the rotated ribbon
+    # Create a text image, rotate it, and paste it
+    font_size = max(8, int(size * 0.1))  # 10% of icon size, minimum 8
+    
+    # Try to load a bold font
+    font = None
+    font_paths = [
+        "/System/Library/Fonts/Helvetica.ttc",
+        "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+        "/System/Library/Fonts/Supplemental/Arial.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Linux
+        "/Windows/Fonts/arialbd.ttf",  # Windows
+    ]
+    
+    for font_path in font_paths:
+        try:
+            font = ImageFont.truetype(font_path, font_size)
+            break
+        except:
+            continue
+    
+    # Fallback to default font if no system font found
+    if font is None:
+        try:
+            font = ImageFont.load_default()
+        except:
+            pass
+    
+    # Create text image
+    text = "FREE"
+    text_img_size = int(ribbon_width * 1.2)  # Slightly larger for rotation
+    text_img = Image.new('RGBA', (text_img_size, text_img_size), (0, 0, 0, 0))
+    text_draw = ImageDraw.Draw(text_img)
+    
+    # Calculate text position (centered)
+    if font:
+        try:
+            bbox = text_draw.textbbox((0, 0), text, font=font)
+            text_width = bbox[2] - bbox[0]
+            text_height = bbox[3] - bbox[1]
+        except:
+            text_width = len(text) * font_size * 0.6
+            text_height = font_size
+    else:
+        text_width = len(text) * font_size * 0.6
+        text_height = font_size
+    
+    text_x = (text_img_size - text_width) // 2
+    text_y = (text_img_size - text_height) // 2
+    
+    # Draw text with shadow for readability
+    shadow_offset = max(1, size // 256)
+    try:
+        text_draw.text(
+            (text_x + shadow_offset, text_y + shadow_offset),
+            text,
+            fill=(100, 100, 100, 200),  # Gray shadow with transparency
+            font=font
+        )
+    except:
+        pass
+    
+    # Draw main text
+    text_draw.text(
+        (text_x, text_y),
+        text,
+        fill=(255, 255, 255, 255),  # White text
+        font=font
+    )
+    
+    # Rotate text image -45 degrees (same as ribbon)
+    rotated_text = text_img.rotate(-45, expand=False, fillcolor=(0, 0, 0, 0))
+    
+    # Position text on the ribbon (centered on the rotated ribbon)
+    # Calculate center of ribbon after rotation
+    # Account for the paste position of the ribbon
+    ribbon_center_x = paste_x + ribbon_size // 2
+    ribbon_center_y = paste_y + ribbon_size // 2
+    text_paste_x = ribbon_center_x - text_img_size // 2
+    text_paste_y = ribbon_center_y - text_img_size // 2
+    
+    # Paste rotated text onto main image
+    if img.mode == 'RGBA':
+        img.paste(rotated_text, (text_paste_x, text_paste_y), rotated_text)
+    else:
+        img_rgba = img.convert('RGBA')
+        img_rgba.paste(rotated_text, (text_paste_x, text_paste_y), rotated_text)
+        img = img_rgba.convert('RGB')
+    
+    return img
 
 def create_icon(size, output_path):
     """Create an icon with partner compatibility theme"""
@@ -72,6 +223,9 @@ def create_icon(size, output_path):
         fill='#FFFFFF',
         width=check_thickness
     )
+    
+    # Add FREE ribbon badge
+    img = add_free_ribbon(img, size)
     
     # Save the image
     img.save(output_path, 'PNG')
