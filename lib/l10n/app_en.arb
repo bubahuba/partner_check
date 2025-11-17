@@ -206,6 +206,18 @@
   "aboutText": "Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings you a unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.",
   "@aboutText": {
     "description": "About text explaining the app concept"
+  },
+  "heartIconDescription": "Mark contact as favorite",
+  "@heartIconDescription": {
+    "description": "Description for the heart icon"
+  },
+  "chartIconDescription": "Reorder contacts by match count",
+  "@chartIconDescription": {
+    "description": "Description for the chart icon"
+  },
+  "trashIconDescription": "Delete contact",
+  "@trashIconDescription": {
+    "description": "Description for the trash icon"
   }
 }
 
