@@ -1,4 +1,4 @@
-name: PartnerCheck
+name: partner_check
 description: "Partner check compatibility"
 publish_to: 'none'
 version: 0.1.0

@@ -30,6 +30,7 @@
   "addManually": "Handmatig toevoegen",
   "vibrations": "Trillingen",
   "loadContacts": "Contacten laden",
+  "addContact": "Contact toevoegen",
   "permissionRequired": "Machtiging vereist",
   "permissionRequiredMessage": "Deze app heeft toegang tot uw contacten nodig om partnercompatibiliteit te controleren. Verleen machtiging in instellingen.",
   "openSettings": "Instellingen openen",

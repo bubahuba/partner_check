@@ -535,6 +535,27 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _pickAndAddContactFromDevice({required ScrollController targetController, bool addAtStart = false}) async {
+    // Check contact limit
+    if (_contacts.length >= 10) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contactLimitReached),
+            content: Text(l10n.contactLimitMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+    
     try {
       // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
@@ -870,6 +891,27 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _addContactManually({required ScrollController targetController, bool addAtStart = false}) async {
+    // Check contact limit
+    if (_contacts.length >= 10) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contactLimitReached),
+            content: Text(l10n.contactLimitMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+    
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
@@ -1377,10 +1419,14 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   List<StoredContact> get _displayedContacts {
+    List<StoredContact> contacts;
     if (_favoritesMode) {
-      return _contacts.where((contact) => contact.isFavorite).toList();
+      contacts = _contacts.where((contact) => contact.isFavorite).toList();
+    } else {
+      contacts = _contacts;
     }
-    return _contacts;
+    // Limit to max 10 contacts for free version
+    return contacts.take(10).toList();
   }
 
   void _toggleHudVisibility() {
@@ -1433,6 +1479,7 @@ class ContactsPageState extends State<ContactsPage>
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isScrollControlled: false,
       builder: (context) => Container(
         decoration: const BoxDecoration(
           color: Colors.black87,
@@ -1478,25 +1525,33 @@ class ContactsPageState extends State<ContactsPage>
       bool baseMatch,
       bool overlayMatch) {
     final displayedContacts = _displayedContacts;
+    // Always show at least 1 item (add contact card), plus 2 if there are contacts
+    final itemCount = displayedContacts.isEmpty 
+        ? 1 
+        : displayedContacts.length + 2; // +2 for add contact cards (first and last)
     return ListView.builder(
       controller: controller,
       scrollDirection: Axis.horizontal,
       physics: const PageScrollPhysics(),
       itemExtent: width,
-      itemCount: displayedContacts.length + 2, // +2 for add contact cards (first and last)
+      itemCount: itemCount,
       itemBuilder: (context, index) {
-        // First item is the add contact card
+        // First item is always the add contact card
         if (index == 0) {
           return _buildAddContactCard(height, controller, isStartCard: true);
         }
         
-        // Last item is also the add contact card
-        if (index == displayedContacts.length + 1) {
+        // Last item is also the add contact card (only if there are contacts)
+        if (!displayedContacts.isEmpty && index == displayedContacts.length + 1) {
           return _buildAddContactCard(height, controller, isStartCard: false);
         }
         
         // Adjust index for displayed contacts (subtract 1 because first item is plus button)
         final contactIndex = index - 1;
+        if (contactIndex < 0 || contactIndex >= displayedContacts.length) {
+          // Should not happen, but return add contact card as fallback
+          return _buildAddContactCard(height, controller, isStartCard: false);
+        }
         final contact = displayedContacts[contactIndex];
         final isCurrentPage =
             (controller == _scrollController1 && contactIndex == _currentPage1) ||
@@ -1894,6 +1949,17 @@ class ContactsPageState extends State<ContactsPage>
                         _loadContacts();
                         // Also reload vibrations setting
                         _loadVibrationsSetting();
+                      },
+                      onAddContact: () {
+                        setState(() {
+                          _showSettings = false;
+                        });
+                        // Directly trigger contact picker after closing settings
+                        Future.delayed(const Duration(milliseconds: 350), () {
+                          if (mounted) {
+                            _pickAndAddContactFromDevice(targetController: _scrollController1);
+                          }
+                        });
                       },
                     ),
                   ),

@@ -30,6 +30,7 @@
   "addManually": "手動で追加",
   "vibrations": "振動",
   "loadContacts": "連絡先を読み込む",
+  "addContact": "連絡先を追加",
   "permissionRequired": "権限が必要です",
   "permissionRequiredMessage": "このアプリはパートナーの互換性をチェックするために連絡先へのアクセスが必要です。設定で権限を付与してください。",
   "openSettings": "設定を開く",

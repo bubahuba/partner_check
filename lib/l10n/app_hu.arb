@@ -30,6 +30,7 @@
   "addManually": "Manuális hozzáadás",
   "vibrations": "Rezgések",
   "loadContacts": "Névjegyek betöltése",
+  "addContact": "Névjegy hozzáadása",
   "permissionRequired": "Engedély szükséges",
   "permissionRequiredMessage": "Ez az alkalmazás hozzáférést igényel a névjegyeihez a partner kompatibilitás ellenőrzéséhez. Kérjük, adja meg az engedélyt a beállításokban.",
   "openSettings": "Beállítások megnyitása",

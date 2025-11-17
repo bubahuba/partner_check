@@ -30,6 +30,7 @@
   "addManually": "Agregar manualmente",
   "vibrations": "Vibraciones",
   "loadContacts": "Cargar contactos",
+  "addContact": "Agregar contacto",
   "permissionRequired": "Permiso requerido",
   "permissionRequiredMessage": "Esta aplicación necesita acceso a sus contactos para verificar la compatibilidad de la pareja. Por favor otorgue el permiso en la configuración.",
   "openSettings": "Abrir configuración",

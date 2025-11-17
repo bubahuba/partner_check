@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/app_localizations.dart';
@@ -9,8 +8,9 @@ import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onClose;
+  final VoidCallback? onAddContact;
 
-  const SettingsScreen({super.key, this.onClose});
+  const SettingsScreen({super.key, this.onClose, this.onAddContact});
 
   @override
   SettingsScreenState createState() => SettingsScreenState();
@@ -18,12 +18,12 @@ class SettingsScreen extends StatefulWidget {
 
 class SettingsScreenState extends State<SettingsScreen>
     with TickerProviderStateMixin {
-  bool _isLoading = false;
   bool _vibrationsEnabled = true;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
   late AnimationController _gradientController;
   static const String _vibrationsKey = 'vibrations_enabled';
+  static const String _storageKey = 'stored_contacts';
 
   @override
   void initState() {
@@ -86,42 +86,107 @@ class SettingsScreenState extends State<SettingsScreen>
     });
   }
 
-  // Process contacts in background isolate
-  static List<Map<String, dynamic>> _processContacts(
-      List<Map<String, dynamic>> contactsData) {
-    return contactsData
-        .where((data) =>
-            data['phones'] != null && (data['phones'] as List).isNotEmpty)
-        .map((data) {
-      final phone = (data['phones'] as List).first['value'] ?? '';
-      final digits = phone.replaceAll(RegExp(r'\D'), '');
-      int colorValue = 0;
-      if (digits.isNotEmpty) {
-        final hexDigits = digits.length >= 6
-            ? digits.substring(digits.length - 6)
-            : digits.padLeft(6, '0');
-        colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
-      }
-      return {
-        'name': data['displayName'] ?? 'No Name',
-        'color': colorValue,
-      };
-    }).toList();
+  void _showAddContactMenu() {
+    final l10n = AppLocalizations.of(context)!;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: false,
+      builder: (context) => Container(
+        decoration: const BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.contacts, color: Colors.white),
+                title: Text(l10n.addFromDevice,
+                    style: const TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickAndAddContactFromDevice();
+                },
+              ),
+              const Divider(color: Colors.grey),
+              ListTile(
+                leading: const Icon(Icons.edit, color: Colors.white),
+                title: Text(l10n.addManually,
+                    style: const TextStyle(color: Colors.white)),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _addContactManually();
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
-  Future<void> _loadContacts() async {
-    setState(() {
-      _isLoading = true;
-    });
+  Future<bool> _checkContactLimit() async {
+    final l10n = AppLocalizations.of(context)!;
+    final prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString(_storageKey);
+    if (storedData != null) {
+      final List<dynamic> jsonList = json.decode(storedData);
+      if (jsonList.length >= 10) {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.contactLimitReached),
+              content: Text(l10n.contactLimitMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
+          );
+        }
+        return true; // Limit reached
+      }
+    }
+    return false; // Limit not reached
+  }
+
+  Future<void> _saveContact(StoredContact contact) async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString(_storageKey);
+    List<StoredContact> contacts = [];
+    if (storedData != null) {
+      final List<dynamic> jsonList = json.decode(storedData);
+      contacts = jsonList.map((json) => StoredContact.fromJson(json)).toList();
+    }
+
+    contacts.add(contact);
+
+    // Save to storage
+    final jsonList = contacts.map((c) => c.toJson()).toList();
+    await prefs.setString(_storageKey, json.encode(jsonList));
+
+    // Close settings - ContactsPage will reload contacts automatically
+    _handleClose();
+  }
+
+  Future<void> _pickAndAddContactFromDevice() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Check contact limit
+    if (await _checkContactLimit()) {
+      return;
+    }
 
     try {
-      // Request permission using flutter_contacts (works on both iOS and Android)
+      // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
-        setState(() {
-          _isLoading = false;
-        });
         if (mounted) {
-          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.contactsPermissionRequired),
@@ -132,85 +197,205 @@ class SettingsScreenState extends State<SettingsScreen>
         return;
       }
 
-      // Load contacts on background thread
-      final contacts = await FlutterContacts.getContacts(
-        withProperties: true,
-        withThumbnail: false,
-      );
+      // Open native contact picker
+      final Contact? contact = await FlutterContacts.openExternalPick();
 
-      // Convert to serializable format for isolate
-      final contactsData = contacts
-          .map((contact) => {
-                'displayName': contact.displayName,
-                'phones': contact.phones
-                    .map((phone) => {'value': phone.number})
-                    .toList(),
-              })
-          .toList();
+      if (contact == null) {
+        // User cancelled
+        return;
+      }
 
-      // Process contacts in background isolate
-      final processedData = await compute(_processContacts, contactsData);
+      // Get the contact name
+      final contactName = contact.displayName;
 
-      // Convert to StoredContact
-      final storedContacts = processedData
-          .map((data) => StoredContact(
-                name: data['name'] as String,
-                color: data['color'] as int,
-              ))
-          .toList();
-
-      // Save to storage
-      final prefs = await SharedPreferences.getInstance();
-      final jsonList =
-          storedContacts.map((contact) => contact.toJson()).toList();
-      await prefs.setString('stored_contacts', json.encode(jsonList));
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Close settings screen and reload contacts in ContactsPage
-      if (mounted) {
-        if (widget.onClose != null) {
-          _handleClose();
-        } else {
-          // Fallback to navigation if onClose is not provided (for InitialScreen)
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const ContactsPage(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.ease;
-
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
-              },
+      if (contactName.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.selectedContactNoName),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
+        return;
       }
+
+      // Check for duplicates
+      final prefs = await SharedPreferences.getInstance();
+      final existingData = prefs.getString(_storageKey);
+      if (existingData != null) {
+        final List<dynamic> existingList = json.decode(existingData);
+        final existingContacts =
+            existingList.map((json) => StoredContact.fromJson(json)).toList();
+        if (existingContacts.any((c) => c.name == contactName)) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.contactAlreadyInList(contactName)),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      // Get phone number (use first available)
+      String phoneNumber = '';
+      if (contact.phones.isNotEmpty) {
+        phoneNumber = contact.phones.first.number;
+      }
+
+      // Check if contact has a phone number
+      if (contact.phones.isEmpty || phoneNumber.isEmpty) {
+        if (mounted) {
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.noPhoneNumber),
+              content: Text(l10n.noPhoneNumberMessage(contactName)),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
+      // Calculate color from phone number
+      final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
+      int colorValue = 0;
+      if (digits.isNotEmpty) {
+        final hexDigits = digits.length >= 6
+            ? digits.substring(digits.length - 6)
+            : digits.padLeft(6, '0');
+        colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
+      }
+
+      // Create new contact
+      final newContact = StoredContact(
+        name: contactName,
+        color: colorValue,
+      );
+
+      // Save contact
+      await _saveContact(newContact);
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.errorLoadingContacts(e.toString())),
+            content: Text(l10n.errorPickingContact(e.toString())),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
     }
+  }
+
+  Future<void> _addContactManually() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Check contact limit
+    if (await _checkContactLimit()) {
+      return;
+    }
+
+    final nameController = TextEditingController();
+    final phoneController = TextEditingController();
+
+    final result = await showDialog<Map<String, String>>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.addContactManually),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: l10n.name,
+                hintText: l10n.enterContactName,
+              ),
+              autofocus: true,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: phoneController,
+              decoration: InputDecoration(
+                labelText: l10n.phoneNumber,
+                hintText: l10n.enterPhoneNumber,
+              ),
+              keyboardType: TextInputType.phone,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              final name = nameController.text.trim();
+              final phone = phoneController.text.trim();
+              if (name.isNotEmpty && phone.isNotEmpty) {
+                Navigator.of(context).pop({'name': name, 'phone': phone});
+              }
+            },
+            child: Text(l10n.add),
+          ),
+        ],
+      ),
+    );
+
+    if (result == null) return;
+
+    final contactName = result['name']!;
+    final phoneNumber = result['phone']!;
+
+    // Check for duplicates
+    final prefs = await SharedPreferences.getInstance();
+    final existingData = prefs.getString(_storageKey);
+    if (existingData != null) {
+      final List<dynamic> existingList = json.decode(existingData);
+      final existingContacts =
+          existingList.map((json) => StoredContact.fromJson(json)).toList();
+      if (existingContacts.any((c) => c.name == contactName)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.contactAlreadyInList(contactName)),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+        return;
+      }
+    }
+
+    // Calculate color from phone number
+    final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
+    int colorValue = 0;
+    if (digits.isNotEmpty) {
+      final hexDigits = digits.length >= 6
+          ? digits.substring(digits.length - 6)
+          : digits.padLeft(6, '0');
+      colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
+    }
+
+    // Create new contact
+    final newContact = StoredContact(
+      name: contactName,
+      color: colorValue,
+    );
+
+    // Save contact
+    await _saveContact(newContact);
   }
 
   @override
@@ -383,21 +568,10 @@ class SettingsScreenState extends State<SettingsScreen>
                             ),
                             SizedBox(height: isPortrait ? 32 : 24),
                             ElevatedButton.icon(
-                              onPressed: _isLoading ? null : _loadContacts,
-                              icon: _isLoading
-                                  ? SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
-                                    )
-                                  : const Icon(Icons.contacts, size: 24),
+                              onPressed: _showAddContactMenu,
+                              icon: const Icon(Icons.add, size: 24),
                               label: Text(
-                                _isLoading ? l10n.loading : l10n.loadContacts,
+                                l10n.addContact,
                                 style: TextStyle(fontSize: buttonFontSize),
                               ),
                               style: ElevatedButton.styleFrom(
