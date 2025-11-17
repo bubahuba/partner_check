@@ -94,7 +94,8 @@ class ContactsPageState extends State<ContactsPage>
         final width = _scrollController1.position.viewportDimension;
         if (width > 0) {
           final displayedContacts = _displayedContacts;
-          final totalItems = displayedContacts.length + 2; // +2 for plus buttons at start and end
+          final totalItems = displayedContacts.length +
+              2; // +2 for plus buttons at start and end
           final page = (_scrollController1.offset / width)
               .round()
               .clamp(0, totalItems - 1);
@@ -126,7 +127,8 @@ class ContactsPageState extends State<ContactsPage>
         final width = _scrollController2.position.viewportDimension;
         if (width > 0) {
           final displayedContacts = _displayedContacts;
-          final totalItems = displayedContacts.length + 2; // +2 for plus buttons at start and end
+          final totalItems = displayedContacts.length +
+              2; // +2 for plus buttons at start and end
           final page = (_scrollController2.offset / width)
               .round()
               .clamp(0, totalItems - 1);
@@ -155,7 +157,8 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   // Check if a scroll controller is currently on a plus button card
-  bool _isOnPlusButton(ScrollController controller, List<StoredContact> displayedContacts) {
+  bool _isOnPlusButton(
+      ScrollController controller, List<StoredContact> displayedContacts) {
     if (!controller.hasClients) return false;
     final width = controller.position.viewportDimension;
     if (width <= 0) return false;
@@ -168,7 +171,7 @@ class ContactsPageState extends State<ContactsPage>
   void _flashMatchType(String matchType, int delayMs) {
     Future.delayed(Duration(milliseconds: delayMs), () {
       if (!mounted) return;
-      
+
       setState(() {
         // Determine which areas to flash based on match type
         switch (matchType) {
@@ -194,7 +197,7 @@ class ContactsPageState extends State<ContactsPage>
             break;
         }
       });
-      
+
       // Trigger flash animations
       _flashAnimationController1.forward().then((_) {
         _flashAnimationController1.reverse().then((_) {
@@ -220,7 +223,7 @@ class ContactsPageState extends State<ContactsPage>
   // Check for match between current pair and trigger animation
   void _checkForMatch() {
     final displayedContacts = _displayedContacts;
-    
+
     // Check if either ListView is on a plus button card
     if (_isOnPlusButton(_scrollController1, displayedContacts) ||
         _isOnPlusButton(_scrollController2, displayedContacts)) {
@@ -233,7 +236,7 @@ class ContactsPageState extends State<ContactsPage>
       }
       return;
     }
-    
+
     if (displayedContacts.isEmpty ||
         _currentPage1 >= displayedContacts.length ||
         _currentPage2 >= displayedContacts.length) {
@@ -268,12 +271,12 @@ class ContactsPageState extends State<ContactsPage>
       final overlay2 = ColorUtils.overlayColorFromValue(contact2.color);
 
       // Check if base colors match or overlay colors match
-      baseMatch = ColorUtils.areColorsMatching(color1, color2);
-      overlayMatch = ColorUtils.areColorsMatching(overlay1, overlay2);
+      baseMatch = ColorUtils.areColorsMatching(color1, color2).$1;
+      overlayMatch = ColorUtils.areColorsMatching(overlay1, overlay2).$1;
 
       // Cross-match: overlay of one contact with base of the other
-      crossMatch1 = ColorUtils.areColorsMatching(overlay1, color2);
-      crossMatch2 = ColorUtils.areColorsMatching(color1, overlay2);
+      crossMatch1 = ColorUtils.areColorsMatching(overlay1, color2).$1;
+      crossMatch2 = ColorUtils.areColorsMatching(color1, overlay2).$1;
 
       newMatch = baseMatch || overlayMatch || crossMatch1 || crossMatch2;
     }
@@ -298,7 +301,7 @@ class ContactsPageState extends State<ContactsPage>
       _overlayMatch1 = overlayMatch1;
       _baseMatch2 = baseMatch2;
       _overlayMatch2 = overlayMatch2;
-      
+
       // Show name flash only in the pane that was last scrolled when match is detected
       if (newMatch) {
         // Only flash in the pane that was last scrolled, or default to pane 1 if none tracked
@@ -331,14 +334,14 @@ class ContactsPageState extends State<ContactsPage>
     if (newMatch) {
       // Trigger animation and haptic feedback
       _heartAnimationController.repeat(reverse: true);
-      
+
       // Count number of matches and collect match types in order
       List<String> matchTypes = [];
       if (baseMatch) matchTypes.add('base');
       if (overlayMatch) matchTypes.add('overlay');
       if (crossMatch1) matchTypes.add('cross1');
       if (crossMatch2) matchTypes.add('cross2');
-      
+
       int matchCount = matchTypes.length;
 
       // Flash matches in sequence with the same delays as vibrations
@@ -354,14 +357,14 @@ class ContactsPageState extends State<ContactsPage>
         if (_vibrationsEnabled) {
           HapticFeedback.vibrate();
         }
-        
+
         _flashMatchType(matchTypes[1], 600);
         if (_vibrationsEnabled) {
           Future.delayed(const Duration(milliseconds: 600), () {
             HapticFeedback.vibrate();
           });
         }
-        
+
         if (matchCount >= 3) {
           _flashMatchType(matchTypes[2], 1200);
           if (_vibrationsEnabled) {
@@ -370,7 +373,7 @@ class ContactsPageState extends State<ContactsPage>
             });
           }
         }
-        
+
         if (matchCount >= 4) {
           _flashMatchType(matchTypes[3], 1800);
           if (_vibrationsEnabled) {
@@ -427,14 +430,16 @@ class ContactsPageState extends State<ContactsPage>
         final displayedContacts = _displayedContacts;
         if (displayedContacts.isNotEmpty) {
           // Restore scroll positions based on current mode
-          final targetPage1 = _favoritesMode ? _currentPage1Favorites : _currentPage1All;
-          final targetPage2 = _favoritesMode ? _currentPage2Favorites : _currentPage2All;
-          
+          final targetPage1 =
+              _favoritesMode ? _currentPage1Favorites : _currentPage1All;
+          final targetPage2 =
+              _favoritesMode ? _currentPage2Favorites : _currentPage2All;
+
           // Clamp to valid range
           final maxIndex = displayedContacts.length - 1;
           final clampedPage1 = targetPage1.clamp(0, maxIndex);
           final clampedPage2 = targetPage2.clamp(0, maxIndex);
-          
+
           if (_scrollController1.hasClients) {
             final width = _scrollController1.position.viewportDimension;
             if (width > 0) {
@@ -534,7 +539,9 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Future<void> _pickAndAddContactFromDevice({required ScrollController targetController, bool addAtStart = false}) async {
+  Future<void> _pickAndAddContactFromDevice(
+      {required ScrollController targetController,
+      bool addAtStart = false}) async {
     try {
       // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
@@ -552,7 +559,7 @@ class ContactsPageState extends State<ContactsPage>
 
       // Open native contact picker
       final Contact? contact = await FlutterContacts.openExternalPick();
-      
+
       if (contact == null) {
         // User cancelled
         return;
@@ -560,7 +567,7 @@ class ContactsPageState extends State<ContactsPage>
 
       // Get the contact name
       final contactName = contact.displayName;
-      
+
       if (contactName.isEmpty) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
@@ -573,7 +580,7 @@ class ContactsPageState extends State<ContactsPage>
         }
         return;
       }
-      
+
       // Check for duplicates
       if (_contacts.any((c) => c.name == contactName)) {
         if (mounted) {
@@ -584,10 +591,11 @@ class ContactsPageState extends State<ContactsPage>
               duration: const Duration(seconds: 2),
             ),
           );
-          
+
           // Scroll to the duplicate contact in the target ListView
           final displayedContacts = _displayedContacts;
-          final duplicateIndex = displayedContacts.indexWhere((c) => c.name == contactName);
+          final duplicateIndex =
+              displayedContacts.indexWhere((c) => c.name == contactName);
           if (duplicateIndex != -1 && targetController.hasClients) {
             final width = targetController.position.viewportDimension;
             if (width > 0) {
@@ -598,7 +606,7 @@ class ContactsPageState extends State<ContactsPage>
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.ease,
               );
-              
+
               // Update current page state
               if (targetController == _scrollController1) {
                 setState(() {
@@ -619,7 +627,7 @@ class ContactsPageState extends State<ContactsPage>
                   }
                 });
               }
-              
+
               // Save scroll positions
               _saveScrollPositions();
             }
@@ -688,7 +696,7 @@ class ContactsPageState extends State<ContactsPage>
       // Scroll to the new contact only in the target ListView
       final displayedContacts = _displayedContacts;
       final newIndex = addAtStart ? 0 : displayedContacts.length - 1;
-      
+
       if (targetController == _scrollController1) {
         if (_scrollController1.hasClients && newIndex >= 0) {
           final width = _scrollController1.position.viewportDimension;
@@ -751,7 +759,7 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _editContact(StoredContact contact) async {
     final nameController = TextEditingController(text: contact.name);
     final phoneController = TextEditingController();
-    
+
     // We need to reverse-engineer the phone number from the color
     // Since we don't store the phone number, we'll just show an empty field
     // and let the user enter a new one if they want to change the color
@@ -850,7 +858,7 @@ class ContactsPageState extends State<ContactsPage>
           _favoriteNames.add(newName);
           _saveFavorites();
         }
-        
+
         _contacts[index] = StoredContact(
           name: newName,
           color: newColorValue,
@@ -869,7 +877,9 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Future<void> _addContactManually({required ScrollController targetController, bool addAtStart = false}) async {
+  Future<void> _addContactManually(
+      {required ScrollController targetController,
+      bool addAtStart = false}) async {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
@@ -971,7 +981,7 @@ class ContactsPageState extends State<ContactsPage>
     // Scroll to the new contact only in the target ListView
     final displayedContacts = _displayedContacts;
     final newIndex = addAtStart ? 0 : displayedContacts.length - 1;
-    
+
     if (targetController == _scrollController1) {
       if (_scrollController1.hasClients && newIndex >= 0) {
         final width = _scrollController1.position.viewportDimension;
@@ -1028,85 +1038,96 @@ class ContactsPageState extends State<ContactsPage>
     }).toList();
   }
 
-  // Calculate match count between two contacts
-  int _calculateMatchCount(StoredContact contact1, StoredContact contact2) {
+  // Calculate match score between two contacts with granularity based on diff
+  // Returns a score where higher values indicate better matches
+  // Uses the diff value (0-36) to create granular scoring within the match range
+  num _calculateMatchCount(StoredContact contact1, StoredContact contact2) {
     if (contact1.color == contact2.color) {
       return 0; // Same color means no match
     }
-    
+
     final color1 = ColorUtils.colorFromValue(contact1.color);
     final color2 = ColorUtils.colorFromValue(contact2.color);
     final overlay1 = ColorUtils.overlayColorFromValue(contact1.color);
     final overlay2 = ColorUtils.overlayColorFromValue(contact2.color);
 
-    int matchCount = 0;
-    
-    // Check base match
-    if (ColorUtils.areColorsMatching(color1, color2)) {
-      matchCount++;
+    num matchScore = 0;
+
+    // Check base match - score based on how close the match is (diff 0 = perfect, diff 36 = threshold)
+    final baseMatch = ColorUtils.areColorsMatching(color1, color2);
+    if (baseMatch.$1) {
+      // Score: 1.0 for perfect match (diff=0), decreasing to ~0.0 at diff=30
+      // Using inverse relationship: smaller diff = higher score
+      matchScore += 2.0 - (baseMatch.$2 / 30.0);
     }
-    
+
     // Check overlay match
-    if (ColorUtils.areColorsMatching(overlay1, overlay2)) {
-      matchCount++;
+    final overlayMatch = ColorUtils.areColorsMatching(overlay1, overlay2);
+    if (overlayMatch.$1) {
+      matchScore += 1.5 - (overlayMatch.$2 / 30.0);
     }
-    
+
     // Check cross matches
-    if (ColorUtils.areColorsMatching(overlay1, color2)) {
-      matchCount++;
+    final crossMatch1 = ColorUtils.areColorsMatching(overlay1, color2);
+    if (crossMatch1.$1) {
+      matchScore += 1.3 - (crossMatch1.$2 / 30.0);
     }
-    
-    if (ColorUtils.areColorsMatching(color1, overlay2)) {
-      matchCount++;
+
+    final crossMatch2 = ColorUtils.areColorsMatching(color1, overlay2);
+    if (crossMatch2.$1) {
+      matchScore += 1.3 - (crossMatch2.$2 / 30.0);
     }
-    
-    return matchCount;
+
+    return matchScore;
   }
 
   // Reorder contacts by match count with the current contact
-  void _reorderContactsByMatch(StoredContact currentContact, ScrollController controller) {
+  void _reorderContactsByMatch(
+      StoredContact currentContact, ScrollController controller) {
     // Create list of all contacts with their match counts
     final contactsWithMatches = _contacts.map((contact) {
       final matchCount = _calculateMatchCount(currentContact, contact);
       return {'contact': contact, 'matchCount': matchCount};
     }).toList();
-    
+
     // Sort by match count (descending), keeping current contact first
     contactsWithMatches.sort((a, b) {
       final contactA = a['contact'] as StoredContact;
       final contactB = b['contact'] as StoredContact;
-      
+
       // Keep current contact at the top
       if (contactA.name == currentContact.name) return -1;
       if (contactB.name == currentContact.name) return 1;
-      
-      // Sort by match count descending
-      final countA = a['matchCount'] as int;
-      final countB = b['matchCount'] as int;
+
+      // Sort by match score descending (higher score = better match)
+      final countA = a['matchCount'] as num;
+      final countB = b['matchCount'] as num;
       return countB.compareTo(countA);
     });
-    
+
     // Extract reordered contacts
     final reorderedContacts = contactsWithMatches
         .map((item) => item['contact'] as StoredContact)
         .toList();
-    
+
     // Find new index of current contact after reordering
-    final newIndex = reorderedContacts.indexWhere((c) => c.name == currentContact.name);
+    final newIndex =
+        reorderedContacts.indexWhere((c) => c.name == currentContact.name);
     if (newIndex == -1) return;
-    
+
     // Update contacts list
     setState(() {
       _contacts = reorderedContacts;
       _updateFavoritesFromContacts();
     });
-    
+
     // Save to storage
     _saveContacts();
-    
+
     // Find the new displayed index after reordering
-    final newDisplayedIndex = _displayedContacts.indexWhere((c) => c.name == currentContact.name);
-    
+    final newDisplayedIndex =
+        _displayedContacts.indexWhere((c) => c.name == currentContact.name);
+
     // Maintain scroll position on the current contact in the clicked pane
     if (controller.hasClients && newDisplayedIndex >= 0) {
       final width = controller.position.viewportDimension;
@@ -1118,7 +1139,7 @@ class ContactsPageState extends State<ContactsPage>
           duration: const Duration(milliseconds: 300),
           curve: Curves.ease,
         );
-        
+
         // Update current page state for the clicked pane
         if (controller == _scrollController1) {
           setState(() {
@@ -1141,33 +1162,40 @@ class ContactsPageState extends State<ContactsPage>
         }
       }
     }
-    
+
     // Scroll the OTHER pane to the best matched contact
-    final otherController = controller == _scrollController1 ? _scrollController2 : _scrollController1;
-    
-    // Find the best matched contact (highest match count, excluding current contact)
+    final otherController = controller == _scrollController1
+        ? _scrollController2
+        : _scrollController1;
+
+    // Find the best matched contact (highest match score, excluding current contact)
     StoredContact? bestMatchContact;
-    int bestMatchCount = -1;
-    
+    num bestMatchCount = -1;
+
     for (final contact in _contacts) {
       if (contact.name == currentContact.name) continue; // Skip current contact
-      
+
       final matchCount = _calculateMatchCount(currentContact, contact);
       if (matchCount > bestMatchCount) {
         bestMatchCount = matchCount;
         bestMatchContact = contact;
       }
     }
-    
+
     // Find the best match contact's index in displayed contacts
     int? bestMatchIndex;
     if (bestMatchContact != null) {
-      bestMatchIndex = _displayedContacts.indexWhere((c) => c.name == bestMatchContact!.name);
-      if (bestMatchIndex == -1) bestMatchIndex = null; // Not in displayed contacts
+      bestMatchIndex = _displayedContacts
+          .indexWhere((c) => c.name == bestMatchContact!.name);
+      if (bestMatchIndex == -1) {
+        bestMatchIndex = null; // Not in displayed contacts
+      }
     }
-    
+
     // Scroll to best match if found and valid
-    if (bestMatchIndex != null && otherController.hasClients && bestMatchIndex < _displayedContacts.length) {
+    if (bestMatchIndex != null &&
+        otherController.hasClients &&
+        bestMatchIndex < _displayedContacts.length) {
       final width = otherController.position.viewportDimension;
       if (width > 0) {
         // Convert contact index to page index (add 1 for plus button at index 0)
@@ -1177,7 +1205,7 @@ class ContactsPageState extends State<ContactsPage>
           duration: const Duration(milliseconds: 300),
           curve: Curves.ease,
         );
-        
+
         // Update current page state for the other pane
         if (otherController == _scrollController1) {
           setState(() {
@@ -1200,10 +1228,10 @@ class ContactsPageState extends State<ContactsPage>
         }
       }
     }
-    
+
     // Save scroll positions
     _saveScrollPositions();
-    
+
     // Check for match after reordering
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForMatch();
@@ -1268,7 +1296,8 @@ class ContactsPageState extends State<ContactsPage>
 
     // Update scroll positions if needed
     final displayedContacts = _displayedContacts;
-    if (_currentPage1 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+    if (_currentPage1 >= displayedContacts.length &&
+        displayedContacts.isNotEmpty) {
       final newPage1 = displayedContacts.length - 1;
       setState(() {
         _currentPage1 = newPage1;
@@ -1287,7 +1316,8 @@ class ContactsPageState extends State<ContactsPage>
         }
       }
     }
-    if (_currentPage2 >= displayedContacts.length && displayedContacts.isNotEmpty) {
+    if (_currentPage2 >= displayedContacts.length &&
+        displayedContacts.isNotEmpty) {
       final newPage2 = displayedContacts.length - 1;
       setState(() {
         _currentPage2 = newPage2;
@@ -1328,10 +1358,10 @@ class ContactsPageState extends State<ContactsPage>
       _currentPage2All = _currentPage2;
     }
     _saveScrollPositions();
-    
+
     setState(() {
       _favoritesMode = !_favoritesMode;
-      
+
       // Restore scroll positions for the new mode
       if (_favoritesMode) {
         // Switching to favorites mode, restore favorites positions
@@ -1343,17 +1373,18 @@ class ContactsPageState extends State<ContactsPage>
         _currentPage2 = _currentPage2All;
       }
     });
-    
+
     // Restore scroll positions after layout
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final displayedContacts = _displayedContacts;
       final halfWidth = MediaQuery.of(context).size.width / 2;
-      
+
       // Clamp positions to valid range
-      final maxIndex = displayedContacts.isNotEmpty ? displayedContacts.length - 1 : 0;
+      final maxIndex =
+          displayedContacts.isNotEmpty ? displayedContacts.length - 1 : 0;
       final targetPage1 = _currentPage1.clamp(0, maxIndex);
       final targetPage2 = _currentPage2.clamp(0, maxIndex);
-      
+
       if (_scrollController1.hasClients && halfWidth > 0) {
         // Convert contact index to page index (add 1 for plus button at index 0)
         final targetPage = targetPage1 + 1;
@@ -1362,7 +1393,7 @@ class ContactsPageState extends State<ContactsPage>
           _currentPage1 = targetPage1;
         });
       }
-      
+
       if (_scrollController2.hasClients && halfWidth > 0) {
         // Convert contact index to page index (add 1 for plus button at index 0)
         final targetPage = targetPage2 + 1;
@@ -1371,7 +1402,7 @@ class ContactsPageState extends State<ContactsPage>
           _currentPage2 = targetPage2;
         });
       }
-      
+
       _checkForMatch();
     });
   }
@@ -1399,7 +1430,8 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Widget _buildAddContactCard(double height, ScrollController controller, {bool isStartCard = false}) {
+  Widget _buildAddContactCard(double height, ScrollController controller,
+      {bool isStartCard = false}) {
     return GestureDetector(
       onTap: () => _showAddContactMenu(controller, isStartCard: isStartCard),
       child: SizedBox(
@@ -1417,7 +1449,8 @@ class ContactsPageState extends State<ContactsPage>
                 color: Colors.white.withValues(alpha: 0.5),
                 size: 48,
               ),
-              onPressed: () => _showAddContactMenu(controller, isStartCard: isStartCard),
+              onPressed: () =>
+                  _showAddContactMenu(controller, isStartCard: isStartCard),
               style: IconButton.styleFrom(
                 backgroundColor: Colors.transparent,
               ),
@@ -1428,7 +1461,8 @@ class ContactsPageState extends State<ContactsPage>
     );
   }
 
-  void _showAddContactMenu(ScrollController controller, {bool isStartCard = false}) {
+  void _showAddContactMenu(ScrollController controller,
+      {bool isStartCard = false}) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
@@ -1444,19 +1478,23 @@ class ContactsPageState extends State<ContactsPage>
             children: [
               ListTile(
                 leading: const Icon(Icons.contacts, color: Colors.white),
-                title: Text(l10n.addFromDevice, style: const TextStyle(color: Colors.white)),
+                title: Text(l10n.addFromDevice,
+                    style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pickAndAddContactFromDevice(targetController: controller, addAtStart: isStartCard);
+                  _pickAndAddContactFromDevice(
+                      targetController: controller, addAtStart: isStartCard);
                 },
               ),
               const Divider(color: Colors.grey),
               ListTile(
                 leading: const Icon(Icons.edit, color: Colors.white),
-                title: Text(l10n.addManually, style: const TextStyle(color: Colors.white)),
+                title: Text(l10n.addManually,
+                    style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _addContactManually(targetController: controller, addAtStart: isStartCard);
+                  _addContactManually(
+                      targetController: controller, addAtStart: isStartCard);
                 },
               ),
               const SizedBox(height: 8),
@@ -1483,24 +1521,25 @@ class ContactsPageState extends State<ContactsPage>
       scrollDirection: Axis.horizontal,
       physics: const PageScrollPhysics(),
       itemExtent: width,
-      itemCount: displayedContacts.length + 2, // +2 for add contact cards (first and last)
+      itemCount: displayedContacts.length +
+          2, // +2 for add contact cards (first and last)
       itemBuilder: (context, index) {
         // First item is the add contact card
         if (index == 0) {
           return _buildAddContactCard(height, controller, isStartCard: true);
         }
-        
+
         // Last item is also the add contact card
         if (index == displayedContacts.length + 1) {
           return _buildAddContactCard(height, controller, isStartCard: false);
         }
-        
+
         // Adjust index for displayed contacts (subtract 1 because first item is plus button)
         final contactIndex = index - 1;
         final contact = displayedContacts[contactIndex];
-        final isCurrentPage =
-            (controller == _scrollController1 && contactIndex == _currentPage1) ||
-                (controller == _scrollController2 && contactIndex == _currentPage2);
+        final isCurrentPage = (controller == _scrollController1 &&
+                contactIndex == _currentPage1) ||
+            (controller == _scrollController2 && contactIndex == _currentPage2);
         return GestureDetector(
           onTap: _toggleHudVisibility,
           onVerticalDragUpdate: (details) {
@@ -1521,9 +1560,11 @@ class ContactsPageState extends State<ContactsPage>
                       animation: flashAnimationController,
                       builder: (context, child) {
                         // Check if this card should flash base area
-                        final shouldFlashBase = isCurrentPage && 
-                            ((controller == _scrollController1 && _activeFlashType1 == 'base') ||
-                             (controller == _scrollController2 && _activeFlashType2 == 'base'));
+                        final shouldFlashBase = isCurrentPage &&
+                            ((controller == _scrollController1 &&
+                                    _activeFlashType1 == 'base') ||
+                                (controller == _scrollController2 &&
+                                    _activeFlashType2 == 'base'));
                         final flashOpacity = shouldFlashBase
                             ? flashAnimationController.value * 0.6
                             : 0.0;
@@ -1552,9 +1593,11 @@ class ContactsPageState extends State<ContactsPage>
                       animation: flashAnimationController,
                       builder: (context, child) {
                         // Check if this card should flash overlay area
-                        final shouldFlashOverlay = isCurrentPage && 
-                            ((controller == _scrollController1 && _activeFlashType1 == 'overlay') ||
-                             (controller == _scrollController2 && _activeFlashType2 == 'overlay'));
+                        final shouldFlashOverlay = isCurrentPage &&
+                            ((controller == _scrollController1 &&
+                                    _activeFlashType1 == 'overlay') ||
+                                (controller == _scrollController2 &&
+                                    _activeFlashType2 == 'overlay'));
                         final flashOpacity = shouldFlashOverlay
                             ? flashAnimationController.value * 0.6
                             : 0.0;
@@ -1575,7 +1618,12 @@ class ContactsPageState extends State<ContactsPage>
                     ),
                   ),
                   SizedBox.expand(
-                    child: (_isHudVisible || (isCurrentPage && ((controller == _scrollController1 && _showNameFlash1) || (controller == _scrollController2 && _showNameFlash2))))
+                    child: (_isHudVisible ||
+                            (isCurrentPage &&
+                                ((controller == _scrollController1 &&
+                                        _showNameFlash1) ||
+                                    (controller == _scrollController2 &&
+                                        _showNameFlash2))))
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -1585,16 +1633,22 @@ class ContactsPageState extends State<ContactsPage>
                                     ? heartAnimationController
                                     : const AlwaysStoppedAnimation(0.0),
                                 builder: (context, child) {
-                                  final shouldFlash = isCurrentPage && _isMatch && 
-                                      ((controller == _scrollController1 && _showNameFlash1) || 
-                                       (controller == _scrollController2 && _showNameFlash2));
+                                  final shouldFlash = isCurrentPage &&
+                                      _isMatch &&
+                                      ((controller == _scrollController1 &&
+                                              _showNameFlash1) ||
+                                          (controller == _scrollController2 &&
+                                              _showNameFlash2));
                                   final flashOpacity = shouldFlash
-                                      ? (heartAnimationController.value * 0.3 + 0.7)
+                                      ? (heartAnimationController.value * 0.3 +
+                                          0.7)
                                       : 1.0;
                                   return Opacity(
                                     opacity: flashOpacity,
                                     child: GestureDetector(
-                                      onTap: _isHudVisible ? () => _editContact(contact) : null,
+                                      onTap: _isHudVisible
+                                          ? () => _editContact(contact)
+                                          : null,
                                       child: Text(
                                         contact.name,
                                         style: const TextStyle(
@@ -1618,49 +1672,53 @@ class ContactsPageState extends State<ContactsPage>
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     isCurrentPage && _isMatch
-                                      ? AnimatedBuilder(
-                                          animation: heartAnimationController,
-                                          builder: (context, child) {
-                                            // Scale from 1.0 to 1.2 when there's a match
-                                            final scale = 1.0 +
-                                                (heartAnimationController.value *
-                                                    0.2);
-                                            return Transform.scale(
-                                              scale: scale,
-                                              child: IconButton(
-                                                icon: Icon(
-                                                  contact.isFavorite
-                                                      ? Icons.favorite
-                                                      : Icons.favorite_border,
-                                                  color: Colors.white,
-                                                  size: 32,
+                                        ? AnimatedBuilder(
+                                            animation: heartAnimationController,
+                                            builder: (context, child) {
+                                              // Scale from 1.0 to 1.2 when there's a match
+                                              final scale = 1.0 +
+                                                  (heartAnimationController
+                                                          .value *
+                                                      0.2);
+                                              return Transform.scale(
+                                                scale: scale,
+                                                child: IconButton(
+                                                  icon: Icon(
+                                                    contact.isFavorite
+                                                        ? Icons.favorite
+                                                        : Icons.favorite_border,
+                                                    color: Colors.white,
+                                                    size: 32,
+                                                  ),
+                                                  onPressed: () {
+                                                    _toggleFavorite(
+                                                        contact.name);
+                                                  },
+                                                  padding: EdgeInsets.zero,
+                                                  constraints:
+                                                      const BoxConstraints(),
+                                                  visualDensity:
+                                                      VisualDensity.compact,
                                                 ),
-                                                onPressed: () {
-                                                  _toggleFavorite(contact.name);
-                                                },
-                                                padding: EdgeInsets.zero,
-                                                constraints: const BoxConstraints(),
-                                                visualDensity:
-                                                    VisualDensity.compact,
-                                              ),
-                                            );
-                                          },
-                                        )
-                                      : IconButton(
-                                          icon: Icon(
-                                            contact.isFavorite
-                                                ? Icons.favorite
-                                                : Icons.favorite_border,
-                                            color: Colors.white,
-                                            size: 32,
+                                              );
+                                            },
+                                          )
+                                        : IconButton(
+                                            icon: Icon(
+                                              contact.isFavorite
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_border,
+                                              color: Colors.white,
+                                              size: 32,
+                                            ),
+                                            onPressed: () {
+                                              _toggleFavorite(contact.name);
+                                            },
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                            visualDensity:
+                                                VisualDensity.compact,
                                           ),
-                                          onPressed: () {
-                                            _toggleFavorite(contact.name);
-                                          },
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                          visualDensity: VisualDensity.compact,
-                                        ),
                                     const SizedBox(width: 16),
                                     IconButton(
                                       icon: const Icon(
@@ -1669,7 +1727,8 @@ class ContactsPageState extends State<ContactsPage>
                                         size: 32,
                                       ),
                                       onPressed: () {
-                                        _reorderContactsByMatch(contact, controller);
+                                        _reorderContactsByMatch(
+                                            contact, controller);
                                       },
                                       padding: EdgeInsets.zero,
                                       constraints: const BoxConstraints(),
@@ -1838,51 +1897,51 @@ class ContactsPageState extends State<ContactsPage>
                     top: 10,
                     left: 0,
                     child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.settings,
-                          color: Colors.white,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showSettings = true;
+                            });
+                          },
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                          ),
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _showSettings = true;
-                          });
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
+                        IconButton(
+                          icon: Icon(
+                            _favoritesMode
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: Colors.white,
+                          ),
+                          onPressed: _toggleFavoritesMode,
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                          ),
                         ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          _favoritesMode
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: Colors.white,
+                        IconButton(
+                          icon: const Icon(
+                            Icons.help_outline,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showAbout = true;
+                            });
+                          },
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                          ),
                         ),
-                        onPressed: _toggleFavoritesMode,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(
-                          Icons.help_outline,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _showAbout = true;
-                          });
-                        },
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
                 if (_showSettings)
                   Positioned.fill(
                     child: SettingsScreen(

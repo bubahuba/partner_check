@@ -60,27 +60,28 @@ class ColorUtils {
   }
 
   /// Check if two hues are similar (within threshold) or complementary
-  static bool areColorsMatching(Color color1, Color color2) {
+  /// Returns a tuple: (bool match, num diff) where diff is the hue difference (0-36 for matches)
+  static (bool match, num diff) areColorsMatching(Color color1, Color color2) {
     final hue1 = getHue(color1);
     final hue2 = getHue(color2);
 
-    // Similar hue (within 30 degrees)
+    // Similar hue (within 36 degrees)
     final hueDiff = (hue1 - hue2).abs();
     final minDiff = math.min(hueDiff, 360 - hueDiff);
-    if (minDiff <= 36) {
-      return true;
+    if (minDiff <= 30) {
+      return (true, minDiff);
     }
-/*
-    // Complementary hue (opposite on color wheel, within 30 degrees)
+
+    /*   // Complementary hue (opposite on color wheel, within 30 degrees)
     final complementaryHue1 = (hue1 + 180) % 360;
     final complementaryDiff = (complementaryHue1 - hue2).abs();
     final minComplementaryDiff =
         math.min(complementaryDiff, 360 - complementaryDiff);
-    if (minComplementaryDiff <= 30) {
-      return true;
+    if (minComplementaryDiff <= 25) {
+      return (true, minComplementaryDiff);
     }
-*/
-    return false;
+
+  */
+    return (false, minDiff);
   }
 }
-
