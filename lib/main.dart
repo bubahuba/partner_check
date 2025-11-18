@@ -26,6 +26,7 @@ class PartnerCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Partner Check',
+      debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
