@@ -33,6 +33,7 @@
   "permissionRequired": "Berechtigung erforderlich",
   "permissionRequiredMessage": "Diese App benötigt Zugriff auf Ihre Kontakte, um die Partnerkompatibilität zu überprüfen. Bitte gewähren Sie die Berechtigung in den Einstellungen.",
   "openSettings": "Einstellungen öffnen",
+  "settings": "Einstellungen",
   "contactsPermissionDenied": "Kontaktberechtigung verweigert",
   "permissionDenied": "Berechtigung verweigert: {status}",
   "errorLoadingContacts": "Fehler beim Laden der Kontakte: {error}",

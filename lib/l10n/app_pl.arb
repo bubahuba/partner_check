@@ -33,6 +33,7 @@
   "permissionRequired": "Wymagane uprawnienie",
   "permissionRequiredMessage": "Ta aplikacja potrzebuje dostępu do Twoich kontaktów, aby sprawdzić zgodność partnerów. Proszę udzielić uprawnienia w ustawieniach.",
   "openSettings": "Otwórz ustawienia",
+  "settings": "Ustawienia",
   "contactsPermissionDenied": "Uprawnienie do kontaktów odrzucone",
   "permissionDenied": "Uprawnienie odrzucone: {status}",
   "errorLoadingContacts": "Błąd podczas ładowania kontaktów: {error}",

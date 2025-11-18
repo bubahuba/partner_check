@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
 import 'dart:convert';
 import '../models.dart';
@@ -125,7 +126,15 @@ class SettingsScreenState extends State<SettingsScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.contactsPermissionRequired),
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: l10n.settings,
+                textColor: Colors.white,
+                onPressed: () async {
+                  // Open app settings to allow user to enable permission
+                  await openAppSettings();
+                },
+              ),
             ),
           );
         }

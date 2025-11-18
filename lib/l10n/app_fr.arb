@@ -33,6 +33,7 @@
   "permissionRequired": "Autorisation requise",
   "permissionRequiredMessage": "Cette application a besoin d'accéder à vos contacts pour vérifier la compatibilité des partenaires. Veuillez accorder l'autorisation dans les paramètres.",
   "openSettings": "Ouvrir les paramètres",
+  "settings": "Paramètres",
   "contactsPermissionDenied": "Autorisation de contacts refusée",
   "permissionDenied": "Autorisation refusée : {status}",
   "errorLoadingContacts": "Erreur lors du chargement des contacts : {error}",

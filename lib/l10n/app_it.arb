@@ -33,6 +33,7 @@
   "permissionRequired": "Autorizzazione richiesta",
   "permissionRequiredMessage": "Questa app ha bisogno dell'accesso ai tuoi contatti per verificare la compatibilità del partner. Concedi l'autorizzazione nelle impostazioni.",
   "openSettings": "Apri impostazioni",
+  "settings": "Impostazioni",
   "contactsPermissionDenied": "Autorizzazione contatti negata",
   "permissionDenied": "Autorizzazione negata: {status}",
   "errorLoadingContacts": "Errore nel caricamento dei contatti: {error}",

@@ -1,4 +1,4 @@
-package com.example.partner_check
+package cz.shadow_hub.partner_check
 
 import io.flutter.embedding.android.FlutterActivity
 

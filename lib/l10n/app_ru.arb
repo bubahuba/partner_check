@@ -33,6 +33,7 @@
   "permissionRequired": "Требуется разрешение",
   "permissionRequiredMessage": "Это приложение нуждается в доступе к вашим контактам для проверки совместимости партнеров. Пожалуйста, предоставьте разрешение в настройках.",
   "openSettings": "Открыть настройки",
+  "settings": "Настройки",
   "contactsPermissionDenied": "Разрешение на контакты отклонено",
   "permissionDenied": "Разрешение отклонено: {status}",
   "errorLoadingContacts": "Ошибка при загрузке контактов: {error}",

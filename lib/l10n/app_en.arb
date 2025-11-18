@@ -152,6 +152,10 @@
   "@openSettings": {
     "description": "Button text to open settings"
   },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings label for snackbar action button"
+  },
   "contactsPermissionDenied": "Contacts permission denied",
   "@contactsPermissionDenied": {
     "description": "Message when contacts permission is denied"

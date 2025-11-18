@@ -33,6 +33,7 @@
   "permissionRequired": "Permiso requerido",
   "permissionRequiredMessage": "Esta aplicación necesita acceso a sus contactos para verificar la compatibilidad de parejas. Por favor, otorgue el permiso en la configuración.",
   "openSettings": "Abrir configuración",
+  "settings": "Configuración",
   "contactsPermissionDenied": "Permiso de contactos denegado",
   "permissionDenied": "Permiso denegado: {status}",
   "errorLoadingContacts": "Error al cargar contactos: {error}",

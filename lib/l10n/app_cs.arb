@@ -33,6 +33,7 @@
   "permissionRequired": "Vyžadováno oprávnění",
   "permissionRequiredMessage": "Tato aplikace potřebuje přístup ke kontaktům pro kontrolu kompatibility partnerů. Prosím udělte oprávnění v nastavení.",
   "openSettings": "Otevřít nastavení",
+  "settings": "Nastavení",
   "contactsPermissionDenied": "Oprávnění ke kontaktům zamítnuto",
   "permissionDenied": "Oprávnění zamítnuto: {status}",
   "errorLoadingContacts": "Chyba při načítání kontaktů: {error}",

@@ -33,6 +33,7 @@
   "permissionRequired": "Engedély szükséges",
   "permissionRequiredMessage": "Ez az alkalmazás hozzáférést igényel a kapcsolataihoz a partner kompatibilitás ellenőrzéséhez. Kérjük, adja meg az engedélyt a beállításokban.",
   "openSettings": "Beállítások megnyitása",
+  "settings": "Beállítások",
   "contactsPermissionDenied": "Kapcsolatok engedélye megtagadva",
   "permissionDenied": "Engedély megtagadva: {status}",
   "errorLoadingContacts": "Hiba a kapcsolatok betöltésekor: {error}",

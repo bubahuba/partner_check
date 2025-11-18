@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
 import 'dart:convert';
 import '../models.dart';
@@ -21,7 +22,7 @@ class ContactsPageState extends State<ContactsPage>
   List<StoredContact> _contacts = [];
   late final ScrollController _scrollController1;
   late final ScrollController _scrollController2;
-  bool _isHudVisible = false;
+  bool _isHudVisible = true; // Show HUD by default
   double _overlayHeight = 0.2; // Initial height: 20%
   int _currentPage1 = 0;
   int _currentPage2 = 0;
@@ -66,8 +67,9 @@ class ContactsPageState extends State<ContactsPage>
   @override
   void initState() {
     super.initState();
-    _scrollController1 = ScrollController();
-    _scrollController2 = ScrollController();
+    // Initialize scroll controllers with initial offset of 0 to ensure ListView renders
+    _scrollController1 = ScrollController(initialScrollOffset: 0.0);
+    _scrollController2 = ScrollController(initialScrollOffset: 0.0);
     _heartAnimationController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -85,6 +87,36 @@ class ContactsPageState extends State<ContactsPage>
     // Check for initial match after everything is loaded
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForMatch();
+      // Ensure ListView is visible on initial launch with no contacts
+      if (_contacts.isEmpty) {
+        // Add multiple callbacks to ensure ListView renders
+        Future.delayed(const Duration(milliseconds: 50), () {
+          if (mounted) {
+            if (_scrollController1.hasClients) {
+              _scrollController1.jumpTo(0);
+            }
+            if (_scrollController2.hasClients) {
+              _scrollController2.jumpTo(0);
+            }
+            setState(() {
+              // Force rebuild to ensure ListView renders
+            });
+          }
+        });
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (mounted && _contacts.isEmpty) {
+            if (_scrollController1.hasClients) {
+              _scrollController1.jumpTo(0);
+            }
+            if (_scrollController2.hasClients) {
+              _scrollController2.jumpTo(0);
+            }
+            setState(() {
+              // Force another rebuild to ensure ListView renders
+            });
+          }
+        });
+      }
     });
   }
 
@@ -473,6 +505,16 @@ class ContactsPageState extends State<ContactsPage>
         }
         _checkForMatch();
       });
+    } else {
+      // No stored data - first launch, ensure scroll controllers are at position 0
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController1.hasClients) {
+          _scrollController1.jumpTo(0);
+        }
+        if (_scrollController2.hasClients) {
+          _scrollController2.jumpTo(0);
+        }
+      });
     }
 
     // Load vibrations setting
@@ -501,7 +543,7 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _loadHudState() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _isHudVisible = prefs.getBool(_hudVisibleKey) ?? false;
+      _isHudVisible = prefs.getBool(_hudVisibleKey) ?? true; // Default to visible
     });
   }
 
@@ -550,7 +592,15 @@ class ContactsPageState extends State<ContactsPage>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.contactsPermissionRequired),
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: l10n.settings,
+                textColor: Colors.white,
+                onPressed: () async {
+                  // Open app settings to allow user to enable permission
+                  await openAppSettings();
+                },
+              ),
             ),
           );
         }
@@ -1211,18 +1261,18 @@ class ContactsPageState extends State<ContactsPage>
           setState(() {
             _currentPage1 = bestMatchIndex!;
             if (_favoritesMode) {
-              _currentPage1Favorites = bestMatchIndex!;
+              _currentPage1Favorites = bestMatchIndex;
             } else {
-              _currentPage1All = bestMatchIndex!;
+              _currentPage1All = bestMatchIndex;
             }
           });
         } else if (otherController == _scrollController2) {
           setState(() {
             _currentPage2 = bestMatchIndex!;
             if (_favoritesMode) {
-              _currentPage2Favorites = bestMatchIndex!;
+              _currentPage2Favorites = bestMatchIndex;
             } else {
-              _currentPage2All = bestMatchIndex!;
+              _currentPage2All = bestMatchIndex;
             }
           });
         }
@@ -1516,26 +1566,53 @@ class ContactsPageState extends State<ContactsPage>
       bool baseMatch,
       bool overlayMatch) {
     final displayedContacts = _displayedContacts;
+    // Ensure at least 2 items (one add contact card on each side) even when no contacts
+    final itemCount = displayedContacts.isEmpty
+        ? 2 // Two add contact cards (one on each side)
+        : displayedContacts.length + 2; // +2 for add contact cards (first and last)
+    
+    // If width is 0 or invalid, return a placeholder to prevent blank screen
+    if (width <= 0) {
+      return Container(
+        color: Colors.black,
+        child: const Center(
+          child: CircularProgressIndicator(color: Colors.white),
+        ),
+      );
+    }
+    
     return ListView.builder(
+      key: ValueKey('listview_${controller.hashCode}_${itemCount}'),
       controller: controller,
       scrollDirection: Axis.horizontal,
       physics: const PageScrollPhysics(),
       itemExtent: width,
-      itemCount: displayedContacts.length +
-          2, // +2 for add contact cards (first and last)
+      itemCount: itemCount,
+      cacheExtent: width * 2, // Cache at least 2 items to ensure rendering
+      addAutomaticKeepAlives: true, // Keep items alive to ensure rendering
+      addRepaintBoundaries: true, // Add repaint boundaries for better rendering
       itemBuilder: (context, index) {
-        // First item is the add contact card
+        // First item is always the add contact card
         if (index == 0) {
           return _buildAddContactCard(height, controller, isStartCard: true);
         }
 
-        // Last item is also the add contact card
-        if (index == displayedContacts.length + 1) {
+        // Last item is also the add contact card (only if there are contacts)
+        if (!displayedContacts.isEmpty && index == displayedContacts.length + 1) {
+          return _buildAddContactCard(height, controller, isStartCard: false);
+        }
+        
+        // When no contacts, index 1 should also be the add contact card
+        if (displayedContacts.isEmpty && index == 1) {
           return _buildAddContactCard(height, controller, isStartCard: false);
         }
 
         // Adjust index for displayed contacts (subtract 1 because first item is plus button)
         final contactIndex = index - 1;
+        if (contactIndex < 0 || contactIndex >= displayedContacts.length) {
+          // Should not happen, but return add contact card as fallback
+          return _buildAddContactCard(height, controller, isStartCard: false);
+        }
         final contact = displayedContacts[contactIndex];
         final isCurrentPage = (controller == _scrollController1 &&
                 contactIndex == _currentPage1) ||
@@ -1857,6 +1934,21 @@ class ContactsPageState extends State<ContactsPage>
                     _currentPage2All = savedPage2;
                   }
                 });
+              }
+            });
+          }
+
+          // Ensure ListView is visible on initial build when no contacts
+          if (displayedContacts.isEmpty && halfWidth > 0) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                // Ensure scroll controllers are at position 0 when no contacts
+                if (_scrollController1.hasClients) {
+                  _scrollController1.jumpTo(0);
+                }
+                if (_scrollController2.hasClients) {
+                  _scrollController2.jumpTo(0);
+                }
               }
             });
           }
