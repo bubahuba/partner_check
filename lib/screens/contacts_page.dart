@@ -595,7 +595,7 @@ class ContactsPageState extends State<ContactsPage>
               duration: const Duration(seconds: 5),
               action: SnackBarAction(
                 label: l10n.settings,
-                textColor: Colors.white,
+                textColor: Colors.black,
                 onPressed: () async {
                   // Open app settings to allow user to enable permission
                   await openAppSettings();

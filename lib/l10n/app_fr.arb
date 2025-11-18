@@ -30,6 +30,7 @@
   "addManually": "Ajouter manuellement",
   "vibrations": "Vibrations",
   "loadContacts": "Charger les contacts",
+  "loadAllContacts": "Charger tous les contacts",
   "permissionRequired": "Autorisation requise",
   "permissionRequiredMessage": "Cette application a besoin d'accéder à vos contacts pour vérifier la compatibilité des partenaires. Veuillez accorder l'autorisation dans les paramètres.",
   "openSettings": "Ouvrir les paramètres",

@@ -140,6 +140,10 @@
   "@loadContacts": {
     "description": "Button text to load contacts"
   },
+  "loadAllContacts": "Load all contacts",
+  "@loadAllContacts": {
+    "description": "Menu option to load all contacts"
+  },
   "permissionRequired": "Permission Required",
   "@permissionRequired": {
     "description": "Title for permission required dialog"

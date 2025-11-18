@@ -30,6 +30,7 @@
   "addManually": "手动添加",
   "vibrations": "振动",
   "loadContacts": "加载联系人",
+  "loadAllContacts": "加载所有联系人",
   "permissionRequired": "需要权限",
   "permissionRequiredMessage": "此应用需要访问您的联系人以检查伴侣兼容性。请在设置中授予权限。",
   "openSettings": "打开设置",

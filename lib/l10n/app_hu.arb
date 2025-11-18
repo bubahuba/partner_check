@@ -30,6 +30,7 @@
   "addManually": "Manuális hozzáadás",
   "vibrations": "Rezgések",
   "loadContacts": "Kapcsolatok betöltése",
+  "loadAllContacts": "Összes kapcsolat betöltése",
   "permissionRequired": "Engedély szükséges",
   "permissionRequiredMessage": "Ez az alkalmazás hozzáférést igényel a kapcsolataihoz a partner kompatibilitás ellenőrzéséhez. Kérjük, adja meg az engedélyt a beállításokban.",
   "openSettings": "Beállítások megnyitása",
