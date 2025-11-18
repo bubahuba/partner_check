@@ -28,6 +28,7 @@
   "leavePhoneEmptyKeepColor": "現在の色を保持するには電話番号を空のままにします",
   "addFromDevice": "デバイスから追加",
   "addManually": "手動で追加",
+  "addContact": "連絡先を追加",
   "vibrations": "振動",
   "loadContacts": "連絡先を読み込む",
   "loadAllContacts": "すべての連絡先を読み込む",

@@ -28,6 +28,7 @@
   "leavePhoneEmptyKeepColor": "将电话号码留空以保持当前颜色",
   "addFromDevice": "从设备添加",
   "addManually": "手动添加",
+  "addContact": "添加联系人",
   "vibrations": "振动",
   "loadContacts": "加载联系人",
   "loadAllContacts": "加载所有联系人",

@@ -132,6 +132,10 @@
   "@addManually": {
     "description": "Menu option to add contact manually"
   },
+  "addContact": "Add Contact",
+  "@addContact": {
+    "description": "Button text to add contact"
+  },
   "vibrations": "Vibrations",
   "@vibrations": {
     "description": "Label for vibrations toggle"
