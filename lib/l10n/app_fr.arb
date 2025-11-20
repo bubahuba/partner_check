@@ -45,6 +45,8 @@
   "aboutText": "Chaque personne a un téléphone (ou plus)\n\nchaque téléphone a les 6 derniers chiffres\n\nchaque 6 chiffres a une couleur (en code hexadécimal)\n\nchaque couleur a une personne (?)\n\nIl n'y a pas de coïncidence !\n\nCette application offre une opportunité unique de regarder différemment le monde des numéros de téléphone appartenant à des personnes spécifiques. Parcourez toutes les combinaisons possibles et découvrez que la coïncidence n'existe pas.\n\nEst-ce que ça correspond ou pas ?",
   "heartIconDescription": "Marquer le contact comme favori",
   "chartIconDescription": "Réorganiser les contacts par nombre de correspondances",
-  "trashIconDescription": "Supprimer le contact"
+  "trashIconDescription": "Supprimer le contact",
+  "deleteAllContacts": "Supprimer tous les contacts",
+  "deleteAllContactsConfirm": "Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée."
 }
 

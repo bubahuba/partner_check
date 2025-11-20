@@ -45,6 +45,8 @@
   "aboutText": "Każda osoba ma telefon (lub więcej)\n\nkażdy telefon ma ostatnie 6 cyfr\n\nkażde 6 cyfr ma kolor (w kodzie szesnastkowym)\n\nkażdy kolor ma osobę (?)\n\nNie ma przypadku!\n\nTa aplikacja daje wyjątkową okazję, aby spojrzeć inaczej na świat numerów telefonów należących do konkretnych osób. Przejrzyj wszystkie możliwe kombinacje i odkryj, że przypadek nie istnieje.\n\nPasuje czy nie?",
   "heartIconDescription": "Oznacz kontakt jako ulubiony",
   "chartIconDescription": "Przeładuj kontakty według liczby dopasowań",
-  "trashIconDescription": "Usuń kontakt"
+  "trashIconDescription": "Usuń kontakt",
+  "deleteAllContacts": "Usuń wszystkie kontakty",
+  "deleteAllContactsConfirm": "Czy na pewno chcesz usunąć wszystkie kontakty? Tej akcji nie można cofnąć."
 }
 

@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
 import 'dart:convert';
 import '../models.dart';
+import '../services/contact_storage_service.dart';
 import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class SettingsScreenState extends State<SettingsScreen>
   late Animation<double> _slideAnimation;
   late AnimationController _gradientController;
   static const String _vibrationsKey = 'vibrations_enabled';
+  final ContactStorageService _storageService = ContactStorageService();
 
   @override
   void initState() {
@@ -281,7 +283,8 @@ class SettingsScreenState extends State<SettingsScreen>
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
                   const ContactsPage(),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
                 const begin = Offset(1.0, 0.0);
                 const end = Offset.zero;
                 const curve = Curves.ease;
@@ -422,7 +425,78 @@ class SettingsScreenState extends State<SettingsScreen>
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const ContactsPage(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
+              var tween = Tween(begin: begin, end: end).chain(
+                CurveTween(curve: curve),
+              );
+              return SlideTransition(
+                position: animation.drive(tween),
+                child: child,
+              );
+            },
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteAllContacts() async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteAllContacts),
+        content: Text(l10n.deleteAllContactsConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) {
+      return;
+    }
+
+    // Clear all contacts and related data
+    await _storageService.saveContacts([]);
+    await _storageService.saveFavorites({});
+    await _storageService.saveScrollPositions(ScrollPositions(
+      page1All: 0,
+      page2All: 0,
+      page1Favorites: 0,
+      page2Favorites: 0,
+    ));
+    await _storageService.saveLockedPane(null);
+    await _storageService.saveOrderingContact(null);
+    await _storageService.clearOriginalContactOrder();
+
+    // Close settings screen and navigate to contacts page
+    if (mounted) {
+      if (widget.onClose != null) {
+        _handleClose();
+      } else {
+        Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const ContactsPage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
               const begin = Offset(1.0, 0.0);
               const end = Offset.zero;
               const curve = Curves.ease;
@@ -720,9 +794,10 @@ class SettingsScreenState extends State<SettingsScreen>
                                 ],
                               ),
                             ),
-                            SizedBox(height: isPortrait ? 52 : 24),
+                            SizedBox(height: isPortrait ? 32 : 24),
                             ElevatedButton.icon(
-                              onPressed: _isLoading ? null : _showAddContactMenu,
+                              onPressed:
+                                  _isLoading ? null : _showAddContactMenu,
                               icon: _isLoading
                                   ? SizedBox(
                                       width: 20,
@@ -781,6 +856,24 @@ class SettingsScreenState extends State<SettingsScreen>
                                       Colors.white.withValues(alpha: 0.3),
                                 ),
                               ],
+                            ),
+                            SizedBox(height: isPortrait ? 24 : 16),
+                            TextButton(
+                              onPressed: _deleteAllContacts,
+                              child: Text(
+                                l10n.deleteAllContacts,
+                                style: TextStyle(
+                                  fontSize: buttonFontSize * 0.9,
+                                  color: Colors.red.withValues(alpha: 0.9),
+                                  decoration: TextDecoration.underline,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                             SizedBox(height: isPortrait ? 24 : 16),
                             TextButton(

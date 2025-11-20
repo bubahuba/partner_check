@@ -45,6 +45,8 @@
   "aboutText": "每个人都有电话（或更多）\n\n每部电话都有最后6位数字\n\n每6位数字都有一个颜色（十六进制代码）\n\n每种颜色都有一个人（？）\n\n没有巧合！\n\n此应用提供了一个独特的机会，以不同的视角看待属于特定人员的电话号码世界。浏览所有可能的组合，发现巧合并不存在。\n\n匹配还是不匹配？",
   "heartIconDescription": "将联系人标记为收藏",
   "chartIconDescription": "按匹配数重新排序联系人",
-  "trashIconDescription": "删除联系人"
+  "trashIconDescription": "删除联系人",
+  "deleteAllContacts": "删除所有联系人",
+  "deleteAllContactsConfirm": "您确定要删除所有联系人吗？此操作无法撤销。"
 }
 

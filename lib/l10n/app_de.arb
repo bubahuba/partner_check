@@ -45,6 +45,8 @@
   "aboutText": "Jede Person hat ein Telefon (oder mehr)\n\njedes Telefon hat die letzten 6 Ziffern\n\njede 6 Ziffern haben eine Farbe (im Hexadezimalcode)\n\njede Farbe hat eine Person (?)\n\nEs gibt keinen Zufall!\n\nDiese App bietet eine einzigartige Gelegenheit, die Welt der Telefonnummern, die zu bestimmten Personen gehören, anders zu betrachten. Gehen Sie durch alle möglichen Kombinationen und finden Sie heraus, dass Zufall nicht existiert.\n\nPasst es oder nicht?",
   "heartIconDescription": "Kontakt als Favorit markieren",
   "chartIconDescription": "Kontakte nach Anzahl der Übereinstimmungen sortieren",
-  "trashIconDescription": "Kontakt löschen"
+  "trashIconDescription": "Kontakt löschen",
+  "deleteAllContacts": "Alle Kontakte löschen",
+  "deleteAllContactsConfirm": "Sind Sie sicher, dass Sie alle Kontakte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
 }
 

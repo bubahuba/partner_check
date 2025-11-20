@@ -213,6 +213,14 @@
   "trashIconDescription": "Delete contact",
   "@trashIconDescription": {
     "description": "Description for the trash icon"
+  },
+  "deleteAllContacts": "Delete all contacts",
+  "@deleteAllContacts": {
+    "description": "Button text to delete all contacts"
+  },
+  "deleteAllContactsConfirm": "Are you sure you want to delete all contacts? This action cannot be undone.",
+  "@deleteAllContactsConfirm": {
+    "description": "Confirmation message for deleting all contacts"
   }
 }
 

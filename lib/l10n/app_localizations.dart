@@ -75,6 +75,8 @@ class AppLocalizations {
   String get heartIconDescription => _localizedValues[locale.languageCode]?['heartIconDescription'] ?? 'Mark contact as favorite';
   String get chartIconDescription => _localizedValues[locale.languageCode]?['chartIconDescription'] ?? 'Reorder contacts by match count';
   String get trashIconDescription => _localizedValues[locale.languageCode]?['trashIconDescription'] ?? 'Delete contact';
+  String get deleteAllContacts => _localizedValues[locale.languageCode]?['deleteAllContacts'] ?? 'Delete all contacts';
+  String get deleteAllContactsConfirm => _localizedValues[locale.languageCode]?['deleteAllContactsConfirm'] ?? 'Are you sure you want to delete all contacts? This action cannot be undone.';
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -124,6 +126,8 @@ class AppLocalizations {
       'heartIconDescription': 'Mark contact as favorite',
       'chartIconDescription': 'Reorder contacts by match count',
       'trashIconDescription': 'Delete contact',
+      'deleteAllContacts': 'Delete all contacts',
+      'deleteAllContactsConfirm': 'Are you sure you want to delete all contacts? This action cannot be undone.',
     },
     'cs': {
       'appTitle': 'Partner Check',
@@ -172,6 +176,8 @@ class AppLocalizations {
       'heartIconDescription': 'Označit kontakt jako oblíbený',
       'chartIconDescription': 'Seřadit kontakty podle počtu shod',
       'trashIconDescription': 'Smazat kontakt',
+      'deleteAllContacts': 'Smazat všechny kontakty',
+      'deleteAllContactsConfirm': 'Opravdu chcete smazat všechny kontakty? Tuto akci nelze vrátit zpět.',
     },
     'zh': {
       'appTitle': 'Partner Check',
@@ -220,6 +226,8 @@ class AppLocalizations {
       'heartIconDescription': '将联系人标记为收藏',
       'chartIconDescription': '按匹配数重新排序联系人',
       'trashIconDescription': '删除联系人',
+      'deleteAllContacts': '删除所有联系人',
+      'deleteAllContactsConfirm': '您确定要删除所有联系人吗？此操作无法撤销。',
     },
     'ja': {
       'appTitle': 'Partner Check',
@@ -268,6 +276,8 @@ class AppLocalizations {
       'heartIconDescription': '連絡先をお気に入りとしてマーク',
       'chartIconDescription': '一致数で連絡先を並べ替え',
       'trashIconDescription': '連絡先を削除',
+      'deleteAllContacts': 'すべての連絡先を削除',
+      'deleteAllContactsConfirm': 'すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。',
     },
     'nl': {
       'appTitle': 'Partner Check',
@@ -316,6 +326,8 @@ class AppLocalizations {
       'heartIconDescription': 'Contact als favoriet markeren',
       'chartIconDescription': 'Contacten sorteren op aantal matches',
       'trashIconDescription': 'Contact verwijderen',
+      'deleteAllContacts': 'Alle contacten verwijderen',
+      'deleteAllContactsConfirm': 'Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.',
     },
     'de': {
       'appTitle': 'Partner Check',
@@ -364,6 +376,8 @@ class AppLocalizations {
       'heartIconDescription': 'Kontakt als Favorit markieren',
       'chartIconDescription': 'Kontakte nach Anzahl der Übereinstimmungen sortieren',
       'trashIconDescription': 'Kontakt löschen',
+      'deleteAllContacts': 'Alle Kontakte löschen',
+      'deleteAllContactsConfirm': 'Sind Sie sicher, dass Sie alle Kontakte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
     },
     'es': {
       'appTitle': 'Partner Check',
@@ -412,6 +426,8 @@ class AppLocalizations {
       'heartIconDescription': 'Marcar contacto como favorito',
       'chartIconDescription': 'Reordenar contactos por número de coincidencias',
       'trashIconDescription': 'Eliminar contacto',
+      'deleteAllContacts': 'Eliminar todos los contactos',
+      'deleteAllContactsConfirm': '¿Está seguro de que desea eliminar todos los contactos? Esta acción no se puede deshacer.',
     },
     'fr': {
       'appTitle': 'Partner Check',
@@ -460,6 +476,8 @@ class AppLocalizations {
       'heartIconDescription': 'Marquer le contact comme favori',
       'chartIconDescription': 'Réorganiser les contacts par nombre de correspondances',
       'trashIconDescription': 'Supprimer le contact',
+      'deleteAllContacts': 'Supprimer tous les contacts',
+      'deleteAllContactsConfirm': 'Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée.',
     },
     'it': {
       'appTitle': 'Partner Check',
@@ -508,6 +526,8 @@ class AppLocalizations {
       'heartIconDescription': 'Segna contatto come preferito',
       'chartIconDescription': 'Riordina contatti per numero di corrispondenze',
       'trashIconDescription': 'Elimina contatto',
+      'deleteAllContacts': 'Elimina tutti i contatti',
+      'deleteAllContactsConfirm': 'Sei sicuro di voler eliminare tutti i contatti? Questa azione non può essere annullata.',
     },
     'pl': {
       'appTitle': 'Partner Check',
@@ -556,6 +576,8 @@ class AppLocalizations {
       'heartIconDescription': 'Oznacz kontakt jako ulubiony',
       'chartIconDescription': 'Przeładuj kontakty według liczby dopasowań',
       'trashIconDescription': 'Usuń kontakt',
+      'deleteAllContacts': 'Usuń wszystkie kontakty',
+      'deleteAllContactsConfirm': 'Czy na pewno chcesz usunąć wszystkie kontakty? Tej akcji nie można cofnąć.',
     },
     'hu': {
       'appTitle': 'Partner Check',
@@ -604,6 +626,8 @@ class AppLocalizations {
       'heartIconDescription': 'Kapcsolat megjelölése kedvencként',
       'chartIconDescription': 'Kapcsolatok újrarendezése egyezések száma szerint',
       'trashIconDescription': 'Kapcsolat törlése',
+      'deleteAllContacts': 'Összes kapcsolat törlése',
+      'deleteAllContactsConfirm': 'Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza.',
     },
     'ru': {
       'appTitle': 'Partner Check',
@@ -652,6 +676,8 @@ class AppLocalizations {
       'heartIconDescription': 'Отметить контакт как избранный',
       'chartIconDescription': 'Переупорядочить контакты по количеству совпадений',
       'trashIconDescription': 'Удалить контакт',
+      'deleteAllContacts': 'Удалить все контакты',
+      'deleteAllContactsConfirm': 'Вы уверены, что хотите удалить все контакты? Это действие нельзя отменить.',
     },
     'pt': {
       'appTitle': 'Partner Check',
@@ -700,6 +726,8 @@ class AppLocalizations {
       'heartIconDescription': 'Marcar contato como favorito',
       'chartIconDescription': 'Reordenar contatos por número de correspondências',
       'trashIconDescription': 'Excluir contato',
+      'deleteAllContacts': 'Excluir todos os contatos',
+      'deleteAllContactsConfirm': 'Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita.',
     },
   };
 }

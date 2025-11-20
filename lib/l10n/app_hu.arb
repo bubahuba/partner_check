@@ -45,6 +45,8 @@
   "aboutText": "Minden embernek van telefonja (vagy több)\n\nminden telefonnak van az utolsó 6 számjegye\n\nminden 6 számjegynek van színe (hexadecimális kódban)\n\nminden színnek van embere (?)\n\nNincs véletlen!\n\nEz az alkalmazás egyedi lehetőséget nyújt, hogy másképp nézzük meg az adott emberekhez tartozó telefonszámok világát. Tekintse át az összes lehetséges kombinációt és fedezze fel, hogy a véletlen nem létezik.\n\nEgyezik vagy nem?",
   "heartIconDescription": "Kapcsolat megjelölése kedvencként",
   "chartIconDescription": "Kapcsolatok újrarendezése egyezések száma szerint",
-  "trashIconDescription": "Kapcsolat törlése"
+  "trashIconDescription": "Kapcsolat törlése",
+  "deleteAllContacts": "Összes kapcsolat törlése",
+  "deleteAllContactsConfirm": "Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza."
 }
 

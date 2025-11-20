@@ -45,6 +45,8 @@
   "aboutText": "Ogni persona ha un telefono (o più)\n\nogni telefono ha le ultime 6 cifre\n\nogni 6 cifre ha un colore (in codice esadecimale)\n\nogni colore ha una persona (?)\n\nNon c'è coincidenza!\n\nQuesta app offre un'opportunità unica di guardare in modo diverso il mondo dei numeri di telefono appartenenti a persone specifiche. Esplora tutte le combinazioni possibili e scopri che la coincidenza non esiste.\n\nCorrisponde o no?",
   "heartIconDescription": "Segna contatto come preferito",
   "chartIconDescription": "Riordina contatti per numero di corrispondenze",
-  "trashIconDescription": "Elimina contatto"
+  "trashIconDescription": "Elimina contatto",
+  "deleteAllContacts": "Elimina tutti i contatti",
+  "deleteAllContactsConfirm": "Sei sicuro di voler eliminare tutti i contatti? Questa azione non può essere annullata."
 }
 

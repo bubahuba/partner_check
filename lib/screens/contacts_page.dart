@@ -1881,7 +1881,7 @@ class ContactsPageState extends State<ContactsPage>
     final isLocked = _lockedPaneController == controller;
 
     return ListView.builder(
-      key: ValueKey('listview_${controller.hashCode}_${itemCount}'),
+      key: ValueKey('listview_${controller.hashCode}_$itemCount'),
       controller: controller,
       scrollDirection: Axis.horizontal,
       physics: isLocked
@@ -1902,7 +1902,7 @@ class ContactsPageState extends State<ContactsPage>
         }
 
         // Last item is also the add contact card (only if there are contacts)
-        if (!displayedContacts.isEmpty &&
+        if (displayedContacts.isNotEmpty &&
             index == displayedContacts.length + 1) {
           return AddContactCard(
             height: height,
