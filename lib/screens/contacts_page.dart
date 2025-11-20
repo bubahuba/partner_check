@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
-import 'dart:convert';
 import '../models.dart';
 import '../utils/color_utils.dart';
+import '../utils/match_calculator.dart';
+import '../utils/phone_utils.dart';
+import '../services/contact_storage_service.dart';
+import '../widgets/contact_card.dart';
+import '../widgets/add_contact_card.dart';
+import '../widgets/contacts_hud.dart';
 import 'settings_screen.dart';
 import 'about_screen.dart';
 
@@ -53,15 +57,9 @@ class ContactsPageState extends State<ContactsPage>
   bool _showNameFlash2 = false;
   // Track which pane was last scrolled
   ScrollController? _lastScrolledController;
-
-  static const String _storageKey = 'stored_contacts';
-  static const String _favoritesKey = 'favorite_contacts';
-  static const String _vibrationsKey = 'vibrations_enabled';
-  static const String _hudVisibleKey = 'hud_visible';
-  static const String _scrollPos1AllKey = 'scroll_pos_1_all';
-  static const String _scrollPos2AllKey = 'scroll_pos_2_all';
-  static const String _scrollPos1FavoritesKey = 'scroll_pos_1_favorites';
-  static const String _scrollPos2FavoritesKey = 'scroll_pos_2_favorites';
+  
+  // Storage service
+  final ContactStorageService _storageService = ContactStorageService();
   bool _vibrationsEnabled = true;
 
   @override
@@ -287,39 +285,9 @@ class ContactsPageState extends State<ContactsPage>
     final contact2 =
         displayedContacts[_currentPage2.clamp(0, displayedContacts.length - 1)];
 
-    // If same contact, always match
-    bool newMatch = false;
-    bool baseMatch = false;
-    bool overlayMatch = false;
-    bool crossMatch1 = false;
-    bool crossMatch2 = false;
-
-    if (contact1.color == contact2.color) {
-      newMatch = false;
-    } else {
-      final color1 = ColorUtils.colorFromValue(contact1.color);
-      final color2 = ColorUtils.colorFromValue(contact2.color);
-      final overlay1 = ColorUtils.overlayColorFromValue(contact1.color);
-      final overlay2 = ColorUtils.overlayColorFromValue(contact2.color);
-
-      // Check if base colors match or overlay colors match
-      baseMatch = ColorUtils.areColorsMatching(color1, color2).$1;
-      overlayMatch = ColorUtils.areColorsMatching(overlay1, overlay2).$1;
-
-      // Cross-match: overlay of one contact with base of the other
-      crossMatch1 = ColorUtils.areColorsMatching(overlay1, color2).$1;
-      crossMatch2 = ColorUtils.areColorsMatching(color1, overlay2).$1;
-
-      newMatch = baseMatch || overlayMatch || crossMatch1 || crossMatch2;
-    }
-
-    // Determine which areas to highlight for each card
-    // Card 1: base matches if baseMatch or crossMatch2, overlay matches if overlayMatch or crossMatch1
-    final baseMatch1 = baseMatch || crossMatch2;
-    final overlayMatch1 = overlayMatch || crossMatch1;
-    // Card 2: base matches if baseMatch or crossMatch1, overlay matches if overlayMatch or crossMatch2
-    final baseMatch2 = baseMatch || crossMatch1;
-    final overlayMatch2 = overlayMatch || crossMatch2;
+    // Check for match using MatchCalculator
+    final (matchResult, matchDetails) = MatchCalculator.checkForMatch(contact1, contact2);
+    final newMatch = matchResult;
 
     // Stop any existing animations
     if (_heartAnimationController.isAnimating) {
@@ -329,10 +297,10 @@ class ContactsPageState extends State<ContactsPage>
 
     setState(() {
       _isMatch = newMatch;
-      _baseMatch1 = baseMatch1;
-      _overlayMatch1 = overlayMatch1;
-      _baseMatch2 = baseMatch2;
-      _overlayMatch2 = overlayMatch2;
+      _baseMatch1 = matchDetails.baseMatch1;
+      _overlayMatch1 = matchDetails.overlayMatch1;
+      _baseMatch2 = matchDetails.baseMatch2;
+      _overlayMatch2 = matchDetails.overlayMatch2;
 
       // Show name flash only in the pane that was last scrolled when match is detected
       if (newMatch) {
@@ -367,14 +335,9 @@ class ContactsPageState extends State<ContactsPage>
       // Trigger animation and haptic feedback
       _heartAnimationController.repeat(reverse: true);
 
-      // Count number of matches and collect match types in order
-      List<String> matchTypes = [];
-      if (baseMatch) matchTypes.add('base');
-      if (overlayMatch) matchTypes.add('overlay');
-      if (crossMatch1) matchTypes.add('cross1');
-      if (crossMatch2) matchTypes.add('cross2');
-
-      int matchCount = matchTypes.length;
+      // Get match types from match details
+      final matchTypes = matchDetails.matchTypes;
+      final matchCount = matchTypes.length;
 
       // Flash matches in sequence with the same delays as vibrations
       if (matchCount == 1) {
@@ -438,147 +401,95 @@ class ContactsPageState extends State<ContactsPage>
 
   Future<void> _initializeData() async {
     // Load favorites first, then contacts (so contacts can be updated with favorite status)
-    await _loadFavorites();
-    await _loadScrollPositions();
-    await _loadHudState();
+    _favoriteNames = await _storageService.loadFavorites();
+    final positions = await _storageService.loadScrollPositions();
+    _currentPage1All = positions.page1All;
+    _currentPage2All = positions.page2All;
+    _currentPage1Favorites = positions.page1Favorites;
+    _currentPage2Favorites = positions.page2Favorites;
+    _isHudVisible = await _storageService.loadHudVisible();
+    _vibrationsEnabled = await _storageService.loadVibrationsEnabled();
     await _loadContacts();
   }
 
   Future<void> _loadContacts() async {
-    // Load from storage
-    final prefs = await SharedPreferences.getInstance();
-    final storedData = prefs.getString(_storageKey);
+    final contacts = await _storageService.loadContacts();
+    setState(() {
+      _contacts = contacts;
+      _updateFavoritesFromContacts();
+    });
+    
+    // Restore scroll positions from storage
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final displayedContacts = _displayedContacts;
+      if (displayedContacts.isNotEmpty) {
+        // Restore scroll positions based on current mode
+        final targetPage1 =
+            _favoritesMode ? _currentPage1Favorites : _currentPage1All;
+        final targetPage2 =
+            _favoritesMode ? _currentPage2Favorites : _currentPage2All;
 
-    if (storedData != null) {
-      final List<dynamic> jsonList = json.decode(storedData);
-      setState(() {
-        _contacts =
-            jsonList.map((json) => StoredContact.fromJson(json)).toList();
-        // Update favorites from loaded contacts
-        _updateFavoritesFromContacts();
-      });
-      // Restore scroll positions from storage
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final displayedContacts = _displayedContacts;
-        if (displayedContacts.isNotEmpty) {
-          // Restore scroll positions based on current mode
-          final targetPage1 =
-              _favoritesMode ? _currentPage1Favorites : _currentPage1All;
-          final targetPage2 =
-              _favoritesMode ? _currentPage2Favorites : _currentPage2All;
+        // Clamp to valid range
+        final maxIndex = displayedContacts.length - 1;
+        final clampedPage1 = targetPage1.clamp(0, maxIndex);
+        final clampedPage2 = targetPage2.clamp(0, maxIndex);
 
-          // Clamp to valid range
-          final maxIndex = displayedContacts.length - 1;
-          final clampedPage1 = targetPage1.clamp(0, maxIndex);
-          final clampedPage2 = targetPage2.clamp(0, maxIndex);
-
-          if (_scrollController1.hasClients) {
-            final width = _scrollController1.position.viewportDimension;
-            if (width > 0) {
-              // Convert contact index to page index (add 1 for plus button at index 0)
-              final targetPage = clampedPage1 + 1;
-              _scrollController1.jumpTo(targetPage * width);
-              setState(() {
-                _currentPage1 = clampedPage1;
-              });
-            }
-          }
-          if (_scrollController2.hasClients) {
-            final width = _scrollController2.position.viewportDimension;
-            if (width > 0) {
-              // Convert contact index to page index (add 1 for plus button at index 0)
-              final targetPage = clampedPage2 + 1;
-              _scrollController2.jumpTo(targetPage * width);
-              setState(() {
-                _currentPage2 = clampedPage2;
-              });
-            }
-          }
-        } else {
-          // No contacts, scroll to plus button (index 0)
-          if (_scrollController1.hasClients) {
-            _scrollController1.jumpTo(0);
-          }
-          if (_scrollController2.hasClients) {
-            _scrollController2.jumpTo(0);
+        if (_scrollController1.hasClients) {
+          final width = _scrollController1.position.viewportDimension;
+          if (width > 0) {
+            final targetPage = clampedPage1 + 1;
+            _scrollController1.jumpTo(targetPage * width);
+            setState(() {
+              _currentPage1 = clampedPage1;
+            });
           }
         }
-        _checkForMatch();
-      });
-    } else {
-      // No stored data - first launch, ensure scroll controllers are at position 0
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController2.hasClients) {
+          final width = _scrollController2.position.viewportDimension;
+          if (width > 0) {
+            final targetPage = clampedPage2 + 1;
+            _scrollController2.jumpTo(targetPage * width);
+            setState(() {
+              _currentPage2 = clampedPage2;
+            });
+          }
+        }
+      } else {
         if (_scrollController1.hasClients) {
           _scrollController1.jumpTo(0);
         }
         if (_scrollController2.hasClients) {
           _scrollController2.jumpTo(0);
         }
-      });
-    }
-
-    // Load vibrations setting
-    setState(() {
-      _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
+      }
+      _checkForMatch();
     });
-  }
-
-  Future<void> _loadFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final favoritesList = prefs.getStringList(_favoritesKey);
-    if (favoritesList != null) {
-      setState(() {
-        _favoriteNames = favoritesList.toSet();
-      });
-    }
   }
 
   Future<void> _loadVibrationsSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _vibrationsEnabled = prefs.getBool(_vibrationsKey) ?? true;
-    });
-  }
-
-  Future<void> _loadHudState() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _isHudVisible = prefs.getBool(_hudVisibleKey) ?? true; // Default to visible
-    });
+    _vibrationsEnabled = await _storageService.loadVibrationsEnabled();
+    setState(() {});
   }
 
   Future<void> _saveHudState() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_hudVisibleKey, _isHudVisible);
+    await _storageService.saveHudVisible(_isHudVisible);
   }
 
   Future<void> _saveFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_favoritesKey, _favoriteNames.toList());
+    await _storageService.saveFavorites(_favoriteNames);
   }
 
   Future<void> _saveContacts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonList = _contacts.map((contact) => contact.toJson()).toList();
-    await prefs.setString(_storageKey, json.encode(jsonList));
+    await _storageService.saveContacts(_contacts);
   }
 
   Future<void> _saveScrollPositions() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(_scrollPos1AllKey, _currentPage1All);
-    await prefs.setInt(_scrollPos2AllKey, _currentPage2All);
-    await prefs.setInt(_scrollPos1FavoritesKey, _currentPage1Favorites);
-    await prefs.setInt(_scrollPos2FavoritesKey, _currentPage2Favorites);
-  }
-
-  Future<void> _loadScrollPositions() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _currentPage1All = prefs.getInt(_scrollPos1AllKey) ?? 0;
-      _currentPage2All = prefs.getInt(_scrollPos2AllKey) ?? 0;
-      _currentPage1Favorites = prefs.getInt(_scrollPos1FavoritesKey) ?? 0;
-      _currentPage2Favorites = prefs.getInt(_scrollPos2FavoritesKey) ?? 0;
-    });
+    await _storageService.saveScrollPositions(ScrollPositions(
+      page1All: _currentPage1All,
+      page2All: _currentPage2All,
+      page1Favorites: _currentPage1Favorites,
+      page2Favorites: _currentPage2Favorites,
+    ));
   }
 
   Future<void> _pickAndAddContactFromDevice(
@@ -714,14 +625,7 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       // Calculate color from phone number
-      final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
-      int colorValue = 0;
-      if (digits.isNotEmpty) {
-        final hexDigits = digits.length >= 6
-            ? digits.substring(digits.length - 6)
-            : digits.padLeft(6, '0');
-        colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
-      }
+      final colorValue = PhoneUtils.colorFromPhoneNumber(phoneNumber);
 
       // Create new contact
       final newContact = StoredContact(
@@ -889,13 +793,7 @@ class ContactsPageState extends State<ContactsPage>
     // Calculate new color if phone number is provided, otherwise keep the old one
     int newColorValue = contact.color;
     if (phoneNumber.isNotEmpty) {
-      final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
-      if (digits.isNotEmpty) {
-        final hexDigits = digits.length >= 6
-            ? digits.substring(digits.length - 6)
-            : digits.padLeft(6, '0');
-        newColorValue = int.tryParse(hexDigits, radix: 16) ?? contact.color;
-      }
+      newColorValue = PhoneUtils.colorFromPhoneNumber(phoneNumber);
     }
 
     // Update contact in the list
@@ -999,14 +897,7 @@ class ContactsPageState extends State<ContactsPage>
     }
 
     // Calculate color from phone number
-    final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
-    int colorValue = 0;
-    if (digits.isNotEmpty) {
-      final hexDigits = digits.length >= 6
-          ? digits.substring(digits.length - 6)
-          : digits.padLeft(6, '0');
-      colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
-    }
+    final colorValue = PhoneUtils.colorFromPhoneNumber(phoneNumber);
 
     // Create new contact
     final newContact = StoredContact(
@@ -1089,46 +980,8 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   // Calculate match score between two contacts with granularity based on diff
-  // Returns a score where higher values indicate better matches
-  // Uses the diff value (0-36) to create granular scoring within the match range
   num _calculateMatchCount(StoredContact contact1, StoredContact contact2) {
-    if (contact1.color == contact2.color) {
-      return 0; // Same color means no match
-    }
-
-    final color1 = ColorUtils.colorFromValue(contact1.color);
-    final color2 = ColorUtils.colorFromValue(contact2.color);
-    final overlay1 = ColorUtils.overlayColorFromValue(contact1.color);
-    final overlay2 = ColorUtils.overlayColorFromValue(contact2.color);
-
-    num matchScore = 0;
-
-    // Check base match - score based on how close the match is (diff 0 = perfect, diff 36 = threshold)
-    final baseMatch = ColorUtils.areColorsMatching(color1, color2);
-    if (baseMatch.$1) {
-      // Score: 1.0 for perfect match (diff=0), decreasing to ~0.0 at diff=30
-      // Using inverse relationship: smaller diff = higher score
-      matchScore += 2.0 - (baseMatch.$2 / 30.0);
-    }
-
-    // Check overlay match
-    final overlayMatch = ColorUtils.areColorsMatching(overlay1, overlay2);
-    if (overlayMatch.$1) {
-      matchScore += 1.5 - (overlayMatch.$2 / 30.0);
-    }
-
-    // Check cross matches
-    final crossMatch1 = ColorUtils.areColorsMatching(overlay1, color2);
-    if (crossMatch1.$1) {
-      matchScore += 1.3 - (crossMatch1.$2 / 30.0);
-    }
-
-    final crossMatch2 = ColorUtils.areColorsMatching(color1, overlay2);
-    if (crossMatch2.$1) {
-      matchScore += 1.3 - (crossMatch2.$2 / 30.0);
-    }
-
-    return matchScore;
+    return MatchCalculator.calculateMatchCount(contact1, contact2);
   }
 
   // Reorder contacts by match count with the current contact
@@ -1480,78 +1333,18 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  Widget _buildAddContactCard(double height, ScrollController controller,
-      {bool isStartCard = false}) {
-    return GestureDetector(
-      onTap: () => _showAddContactMenu(controller, isStartCard: isStartCard),
-      child: SizedBox(
-        height: height,
-        child: Card(
-          margin: EdgeInsets.zero,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-          ),
-          color: Colors.black,
-          child: Center(
-            child: IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.white.withValues(alpha: 0.5),
-                size: 48,
-              ),
-              onPressed: () =>
-                  _showAddContactMenu(controller, isStartCard: isStartCard),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.transparent,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   void _showAddContactMenu(ScrollController controller,
       {bool isStartCard = false}) {
-    final l10n = AppLocalizations.of(context)!;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.black87,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.contacts, color: Colors.white),
-                title: Text(l10n.addFromDevice,
-                    style: const TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _pickAndAddContactFromDevice(
-                      targetController: controller, addAtStart: isStartCard);
-                },
-              ),
-              const Divider(color: Colors.grey),
-              ListTile(
-                leading: const Icon(Icons.edit, color: Colors.white),
-                title: Text(l10n.addManually,
-                    style: const TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _addContactManually(
-                      targetController: controller, addAtStart: isStartCard);
-                },
-              ),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      ),
+    showAddContactMenu(
+      context,
+      onAddFromDevice: () {
+        _pickAndAddContactFromDevice(
+            targetController: controller, addAtStart: isStartCard);
+      },
+      onAddManually: () {
+        _addContactManually(
+            targetController: controller, addAtStart: isStartCard);
+      },
     );
   }
 
@@ -1594,248 +1387,75 @@ class ContactsPageState extends State<ContactsPage>
       itemBuilder: (context, index) {
         // First item is always the add contact card
         if (index == 0) {
-          return _buildAddContactCard(height, controller, isStartCard: true);
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: true),
+          );
         }
 
         // Last item is also the add contact card (only if there are contacts)
         if (!displayedContacts.isEmpty && index == displayedContacts.length + 1) {
-          return _buildAddContactCard(height, controller, isStartCard: false);
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: false),
+          );
         }
         
         // When no contacts, index 1 should also be the add contact card
         if (displayedContacts.isEmpty && index == 1) {
-          return _buildAddContactCard(height, controller, isStartCard: false);
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: false),
+          );
         }
 
         // Adjust index for displayed contacts (subtract 1 because first item is plus button)
         final contactIndex = index - 1;
         if (contactIndex < 0 || contactIndex >= displayedContacts.length) {
           // Should not happen, but return add contact card as fallback
-          return _buildAddContactCard(height, controller, isStartCard: false);
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: false),
+          );
         }
         final contact = displayedContacts[contactIndex];
         final isCurrentPage = (controller == _scrollController1 &&
                 contactIndex == _currentPage1) ||
             (controller == _scrollController2 && contactIndex == _currentPage2);
-        return GestureDetector(
+        
+        // Determine active flash type for this card
+        String? activeFlashType;
+        if (controller == _scrollController1) {
+          activeFlashType = _activeFlashType1;
+        } else {
+          activeFlashType = _activeFlashType2;
+        }
+        
+        // Determine if name should flash
+        bool showNameFlash = false;
+        if (controller == _scrollController1) {
+          showNameFlash = _showNameFlash1;
+        } else {
+          showNameFlash = _showNameFlash2;
+        }
+        
+        return ContactCard(
+          contact: contact,
+          height: height,
+          overlayHeight: _overlayHeight,
+          isCurrentPage: isCurrentPage,
+          isMatch: _isMatch,
+          isHudVisible: _isHudVisible,
+          showNameFlash: showNameFlash,
+          activeFlashType: activeFlashType,
+          heartAnimationController: heartAnimationController,
+          flashAnimationController: flashAnimationController,
           onTap: _toggleHudVisibility,
-          onVerticalDragUpdate: (details) {
-            _updateOverlayHeight(details.delta.dy, height);
-          },
-          child: SizedBox(
-            height: height,
-            child: Card(
-              margin: EdgeInsets.zero,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ),
-              child: Stack(
-                children: [
-                  // Base color area with flash highlight
-                  Positioned.fill(
-                    child: AnimatedBuilder(
-                      animation: flashAnimationController,
-                      builder: (context, child) {
-                        // Check if this card should flash base area
-                        final shouldFlashBase = isCurrentPage &&
-                            ((controller == _scrollController1 &&
-                                    _activeFlashType1 == 'base') ||
-                                (controller == _scrollController2 &&
-                                    _activeFlashType2 == 'base'));
-                        final flashOpacity = shouldFlashBase
-                            ? flashAnimationController.value * 0.6
-                            : 0.0;
-                        return Stack(
-                          children: [
-                            Container(
-                              color: ColorUtils.colorFromValue(contact.color),
-                            ),
-                            if (flashOpacity > 0)
-                              Container(
-                                color: Colors.white
-                                    .withValues(alpha: flashOpacity),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  // Overlay color area with flash highlight
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    height: height * _overlayHeight,
-                    child: AnimatedBuilder(
-                      animation: flashAnimationController,
-                      builder: (context, child) {
-                        // Check if this card should flash overlay area
-                        final shouldFlashOverlay = isCurrentPage &&
-                            ((controller == _scrollController1 &&
-                                    _activeFlashType1 == 'overlay') ||
-                                (controller == _scrollController2 &&
-                                    _activeFlashType2 == 'overlay'));
-                        final flashOpacity = shouldFlashOverlay
-                            ? flashAnimationController.value * 0.6
-                            : 0.0;
-                        return Stack(
-                          children: [
-                            Container(
-                              color: ColorUtils.overlayColorFromValue(
-                                  contact.color),
-                            ),
-                            if (flashOpacity > 0)
-                              Container(
-                                color: Colors.white
-                                    .withValues(alpha: flashOpacity),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox.expand(
-                    child: (_isHudVisible ||
-                            (isCurrentPage &&
-                                ((controller == _scrollController1 &&
-                                        _showNameFlash1) ||
-                                    (controller == _scrollController2 &&
-                                        _showNameFlash2))))
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Show contact name with flash animation when there's a match
-                              AnimatedBuilder(
-                                animation: isCurrentPage && _isMatch
-                                    ? heartAnimationController
-                                    : const AlwaysStoppedAnimation(0.0),
-                                builder: (context, child) {
-                                  final shouldFlash = isCurrentPage &&
-                                      _isMatch &&
-                                      ((controller == _scrollController1 &&
-                                              _showNameFlash1) ||
-                                          (controller == _scrollController2 &&
-                                              _showNameFlash2));
-                                  final flashOpacity = shouldFlash
-                                      ? (heartAnimationController.value * 0.3 +
-                                          0.7)
-                                      : 1.0;
-                                  return Opacity(
-                                    opacity: flashOpacity,
-                                    child: GestureDetector(
-                                      onTap: _isHudVisible
-                                          ? () => _editContact(contact)
-                                          : null,
-                                      child: Text(
-                                        contact.name,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          shadows: [
-                                            Shadow(
-                                              color: Colors.black54,
-                                              blurRadius: 8,
-                                            ),
-                                          ],
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              if (_isHudVisible) ...[
-                                const SizedBox(height: 16),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    isCurrentPage && _isMatch
-                                        ? AnimatedBuilder(
-                                            animation: heartAnimationController,
-                                            builder: (context, child) {
-                                              // Scale from 1.0 to 1.2 when there's a match
-                                              final scale = 1.0 +
-                                                  (heartAnimationController
-                                                          .value *
-                                                      0.2);
-                                              return Transform.scale(
-                                                scale: scale,
-                                                child: IconButton(
-                                                  icon: Icon(
-                                                    contact.isFavorite
-                                                        ? Icons.favorite
-                                                        : Icons.favorite_border,
-                                                    color: Colors.white,
-                                                    size: 32,
-                                                  ),
-                                                  onPressed: () {
-                                                    _toggleFavorite(
-                                                        contact.name);
-                                                  },
-                                                  padding: EdgeInsets.zero,
-                                                  constraints:
-                                                      const BoxConstraints(),
-                                                  visualDensity:
-                                                      VisualDensity.compact,
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        : IconButton(
-                                            icon: Icon(
-                                              contact.isFavorite
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: Colors.white,
-                                              size: 32,
-                                            ),
-                                            onPressed: () {
-                                              _toggleFavorite(contact.name);
-                                            },
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            visualDensity:
-                                                VisualDensity.compact,
-                                          ),
-                                    const SizedBox(width: 16),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.bar_chart,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                      onPressed: () {
-                                        _reorderContactsByMatch(
-                                            contact, controller);
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                    const SizedBox(width: 16),
-                                    IconButton(
-                                      icon: const Icon(
-                                        Icons.delete_outline,
-                                        color: Colors.white,
-                                        size: 32,
-                                      ),
-                                      onPressed: () {
-                                        _confirmDeleteContact(contact.name);
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      visualDensity: VisualDensity.compact,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ],
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
+          onEdit: _isHudVisible ? () => _editContact(contact) : null,
+          onToggleFavorite: () => _toggleFavorite(contact.name),
+          onReorder: () => _reorderContactsByMatch(contact, controller),
+          onDelete: () => _confirmDeleteContact(contact.name),
         );
       },
     );
@@ -1985,54 +1605,19 @@ class ContactsPageState extends State<ContactsPage>
                   ],
                 ),
                 if (_isHudVisible)
-                  Positioned(
-                    top: 10,
-                    left: 0,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(
-                            Icons.settings,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _showSettings = true;
-                            });
-                          },
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            _favoritesMode
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: Colors.white,
-                          ),
-                          onPressed: _toggleFavoritesMode,
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.help_outline,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _showAbout = true;
-                            });
-                          },
-                          style: IconButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                          ),
-                        ),
-                      ],
-                    ),
+                  ContactsHud(
+                    favoritesMode: _favoritesMode,
+                    onSettings: () {
+                      setState(() {
+                        _showSettings = true;
+                      });
+                    },
+                    onToggleFavorites: _toggleFavoritesMode,
+                    onAbout: () {
+                      setState(() {
+                        _showAbout = true;
+                      });
+                    },
                   ),
                 if (_showSettings)
                   Positioned.fill(
