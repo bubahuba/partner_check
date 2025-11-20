@@ -20,6 +20,7 @@ class ContactCard extends StatelessWidget {
   final VoidCallback onToggleFavorite;
   final VoidCallback onReorder;
   final VoidCallback onDelete;
+  final bool isOrderingActive;
 
   const ContactCard({
     super.key,
@@ -39,6 +40,7 @@ class ContactCard extends StatelessWidget {
     required this.onToggleFavorite,
     required this.onReorder,
     required this.onDelete,
+    this.isOrderingActive = false,
   });
 
   @override
@@ -230,11 +232,27 @@ class ContactCard extends StatelessWidget {
 
   Widget _buildReorderButton() {
     return IconButton(
-      icon: const Icon(
-        Icons.bar_chart,
-        color: Colors.white,
-        size: 32,
-      ),
+      icon: isOrderingActive
+          ? Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2.0,
+                ),
+              ),
+              padding: const EdgeInsets.all(4.0),
+              child: const Icon(
+                Icons.lock,
+                color: Colors.white,
+                size: 24,
+              ),
+            )
+          : const Icon(
+              Icons.bar_chart,
+              color: Colors.white,
+              size: 32,
+            ),
       onPressed: onReorder,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),

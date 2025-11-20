@@ -61,6 +61,11 @@ class ContactsPageState extends State<ContactsPage>
   // Storage service
   final ContactStorageService _storageService = ContactStorageService();
   bool _vibrationsEnabled = true;
+  
+  // Match ordering state
+  ScrollController? _lockedPaneController;
+  StoredContact? _orderingContact;
+  List<StoredContact>? _originalContactOrder;
 
   @override
   void initState() {
@@ -987,6 +992,41 @@ class ContactsPageState extends State<ContactsPage>
   // Reorder contacts by match count with the current contact
   void _reorderContactsByMatch(
       StoredContact currentContact, ScrollController controller) {
+    // Check if the same contact is already being used for ordering (toggle off)
+    if (_lockedPaneController == controller && 
+        _orderingContact?.name == currentContact.name) {
+      // Unlock and restore original order
+      if (_originalContactOrder != null) {
+        setState(() {
+          _contacts = List.from(_originalContactOrder!);
+          _updateFavoritesFromContacts();
+          _lockedPaneController = null;
+          _orderingContact = null;
+          _originalContactOrder = null;
+        });
+        _saveContacts();
+        // Check for match after restoring
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _checkForMatch();
+        });
+      }
+      return;
+    }
+
+    // If switching to a different contact, restore original order first
+    if (_originalContactOrder != null && 
+        _orderingContact?.name != currentContact.name) {
+      setState(() {
+        _contacts = List.from(_originalContactOrder!);
+        _updateFavoritesFromContacts();
+      });
+    }
+
+    // Store original order if not already stored
+    if (_originalContactOrder == null) {
+      _originalContactOrder = List.from(_contacts);
+    }
+
     // Create list of all contacts with their match counts
     final contactsWithMatches = _contacts.map((contact) {
       final matchCount = _calculateMatchCount(currentContact, contact);
@@ -1018,10 +1058,12 @@ class ContactsPageState extends State<ContactsPage>
         reorderedContacts.indexWhere((c) => c.name == currentContact.name);
     if (newIndex == -1) return;
 
-    // Update contacts list
+    // Update contacts list and lock the pane
     setState(() {
       _contacts = reorderedContacts;
       _updateFavoritesFromContacts();
+      _lockedPaneController = controller;
+      _orderingContact = currentContact;
     });
 
     // Save to storage
@@ -1374,11 +1416,14 @@ class ContactsPageState extends State<ContactsPage>
       );
     }
     
+    // Check if this pane is locked
+    final isLocked = _lockedPaneController == controller;
+    
     return ListView.builder(
       key: ValueKey('listview_${controller.hashCode}_${itemCount}'),
       controller: controller,
       scrollDirection: Axis.horizontal,
-      physics: const PageScrollPhysics(),
+      physics: isLocked ? const NeverScrollableScrollPhysics() : const PageScrollPhysics(),
       itemExtent: width,
       itemCount: itemCount,
       cacheExtent: width * 2, // Cache at least 2 items to ensure rendering
@@ -1439,6 +1484,10 @@ class ContactsPageState extends State<ContactsPage>
           showNameFlash = _showNameFlash2;
         }
         
+        // Check if this contact is being used for ordering
+        final isOrderingActive = _orderingContact?.name == contact.name && 
+                                 _lockedPaneController == controller;
+        
         return ContactCard(
           contact: contact,
           height: height,
@@ -1456,6 +1505,7 @@ class ContactsPageState extends State<ContactsPage>
           onToggleFavorite: () => _toggleFavorite(contact.name),
           onReorder: () => _reorderContactsByMatch(contact, controller),
           onDelete: () => _confirmDeleteContact(contact.name),
+          isOrderingActive: isOrderingActive,
         );
       },
     );

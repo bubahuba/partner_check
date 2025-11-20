@@ -5,6 +5,7 @@ import 'color_utils.dart';
 class MatchCalculator {
   /// Calculate match score between two contacts with granularity based on diff
   /// Returns a score where higher values indicate better matches
+  /// Prioritizes number of match types (vibrations) over granular score
   /// Uses the diff value (0-36) to create granular scoring within the match range
   static num calculateMatchCount(StoredContact contact1, StoredContact contact2) {
     if (contact1.color == contact2.color) {
@@ -16,34 +17,43 @@ class MatchCalculator {
     final overlay1 = ColorUtils.overlayColorFromValue(contact1.color);
     final overlay2 = ColorUtils.overlayColorFromValue(contact2.color);
 
-    num matchScore = 0;
+    // Count number of match types (vibrations)
+    int vibrationCount = 0;
+    num granularScore = 0;
 
     // Check base match - score based on how close the match is (diff 0 = perfect, diff 36 = threshold)
     final baseMatch = ColorUtils.areColorsMatching(color1, color2);
     if (baseMatch.$1) {
+      vibrationCount++;
       // Score: 1.0 for perfect match (diff=0), decreasing to ~0.0 at diff=30
       // Using inverse relationship: smaller diff = higher score
-      matchScore += 2.0 - (baseMatch.$2 / 30.0);
+      granularScore += 2.0 - (baseMatch.$2 / 30.0);
     }
 
     // Check overlay match
     final overlayMatch = ColorUtils.areColorsMatching(overlay1, overlay2);
     if (overlayMatch.$1) {
-      matchScore += 1.5 - (overlayMatch.$2 / 30.0);
+      vibrationCount++;
+      granularScore += 1.5 - (overlayMatch.$2 / 30.0);
     }
 
     // Check cross matches
     final crossMatch1 = ColorUtils.areColorsMatching(overlay1, color2);
     if (crossMatch1.$1) {
-      matchScore += 1.3 - (crossMatch1.$2 / 30.0);
+      vibrationCount++;
+      granularScore += 1.3 - (crossMatch1.$2 / 30.0);
     }
 
     final crossMatch2 = ColorUtils.areColorsMatching(color1, overlay2);
     if (crossMatch2.$1) {
-      matchScore += 1.3 - (crossMatch2.$2 / 30.0);
+      vibrationCount++;
+      granularScore += 1.3 - (crossMatch2.$2 / 30.0);
     }
 
-    return matchScore;
+    // Prioritize vibration count over granular score
+    // Multiply vibration count by large number (10000) to ensure it's always the primary factor
+    // Add granular score (max ~6.1) as secondary factor
+    return (vibrationCount * 10000) + granularScore;
   }
 
   /// Check if two contacts match (for vibrations and flashing)
