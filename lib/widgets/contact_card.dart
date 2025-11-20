@@ -138,7 +138,10 @@ class ContactCard extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildContactName(),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _buildContactName(),
+        ),
         if (isHudVisible) ...[
           const SizedBox(height: 16),
           _buildHudButtons(),
@@ -173,6 +176,8 @@ class ContactCard extends StatelessWidget {
                 ],
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         );

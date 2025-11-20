@@ -720,7 +720,7 @@ class SettingsScreenState extends State<SettingsScreen>
                                 ],
                               ),
                             ),
-                            SizedBox(height: isPortrait ? 32 : 24),
+                            SizedBox(height: isPortrait ? 52 : 24),
                             ElevatedButton.icon(
                               onPressed: _isLoading ? null : _showAddContactMenu,
                               icon: _isLoading
@@ -840,6 +840,7 @@ class SettingsScreenState extends State<SettingsScreen>
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                SizedBox(height: 40),
                                 iconWidget,
                                 SizedBox(height: spacing),
                                 Expanded(

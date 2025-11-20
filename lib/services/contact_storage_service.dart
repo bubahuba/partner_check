@@ -12,6 +12,9 @@ class ContactStorageService {
   static const String _scrollPos2AllKey = 'scroll_pos_2_all';
   static const String _scrollPos1FavoritesKey = 'scroll_pos_1_favorites';
   static const String _scrollPos2FavoritesKey = 'scroll_pos_2_favorites';
+  static const String _lockedPaneKey = 'locked_pane';
+  static const String _orderingContactKey = 'ordering_contact';
+  static const String _originalContactOrderKey = 'original_contact_order';
 
   /// Load contacts from storage
   Future<List<StoredContact>> loadContacts() async {
@@ -87,6 +90,64 @@ class ContactStorageService {
     await prefs.setInt(_scrollPos2AllKey, positions.page2All);
     await prefs.setInt(_scrollPos1FavoritesKey, positions.page1Favorites);
     await prefs.setInt(_scrollPos2FavoritesKey, positions.page2Favorites);
+  }
+
+  /// Load locked pane state (1 or 2, or null if not locked)
+  Future<int?> loadLockedPane() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lockedPane = prefs.getInt(_lockedPaneKey);
+    return lockedPane; // Returns null if not set
+  }
+
+  /// Save locked pane state
+  Future<void> saveLockedPane(int? lockedPane) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (lockedPane != null) {
+      await prefs.setInt(_lockedPaneKey, lockedPane);
+    } else {
+      await prefs.remove(_lockedPaneKey);
+    }
+  }
+
+  /// Load ordering contact name
+  Future<String?> loadOrderingContact() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_orderingContactKey);
+  }
+
+  /// Save ordering contact name
+  Future<void> saveOrderingContact(String? contactName) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (contactName != null && contactName.isNotEmpty) {
+      await prefs.setString(_orderingContactKey, contactName);
+    } else {
+      await prefs.remove(_orderingContactKey);
+    }
+  }
+
+  /// Load original contact order
+  Future<List<StoredContact>> loadOriginalContactOrder() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString(_originalContactOrderKey);
+    
+    if (storedData != null) {
+      final List<dynamic> jsonList = json.decode(storedData);
+      return jsonList.map((json) => StoredContact.fromJson(json)).toList();
+    }
+    return [];
+  }
+
+  /// Save original contact order
+  Future<void> saveOriginalContactOrder(List<StoredContact> contacts) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = contacts.map((contact) => contact.toJson()).toList();
+    await prefs.setString(_originalContactOrderKey, json.encode(jsonList));
+  }
+
+  /// Clear original contact order
+  Future<void> clearOriginalContactOrder() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_originalContactOrderKey);
   }
 }
 

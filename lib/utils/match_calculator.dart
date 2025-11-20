@@ -51,9 +51,9 @@ class MatchCalculator {
     }
 
     // Prioritize vibration count over granular score
-    // Multiply vibration count by large number (10000) to ensure it's always the primary factor
+    // Multiply vibration count by 2 to ensure it's always the primary factor
     // Add granular score (max ~6.1) as secondary factor
-    return (vibrationCount * 10000) + granularScore;
+    return (vibrationCount * 2) + granularScore;
   }
 
   /// Check if two contacts match (for vibrations and flashing)
