@@ -321,28 +321,35 @@ class SettingsScreenState extends State<SettingsScreen>
     final result = await showDialog<Map<String, String>>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.addContactManually),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: l10n.name,
-                hintText: l10n.enterContactName,
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.addContactManually,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              autofocus: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: phoneController,
-              decoration: InputDecoration(
-                labelText: l10n.phoneNumber,
-                hintText: l10n.enterPhoneNumber,
+              const SizedBox(height: 16),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: l10n.name,
+                  hintText: l10n.enterContactName,
+                ),
+                autofocus: true,
               ),
-              keyboardType: TextInputType.phone,
-            ),
-          ],
+              const SizedBox(height: 16),
+              TextField(
+                controller: phoneController,
+                decoration: InputDecoration(
+                  labelText: l10n.phoneNumber,
+                  hintText: l10n.enterPhoneNumber,
+                ),
+                keyboardType: TextInputType.phone,
+              ),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -451,8 +458,20 @@ class SettingsScreenState extends State<SettingsScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(l10n.deleteAllContacts),
-        content: Text(l10n.deleteAllContactsConfirm),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.deleteAllContacts,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              Text(l10n.deleteAllContactsConfirm),
+            ],
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -858,21 +877,19 @@ class SettingsScreenState extends State<SettingsScreen>
                               ],
                             ),
                             SizedBox(height: isPortrait ? 24 : 16),
-                            TextButton(
+                            ElevatedButton.icon(
                               onPressed: _deleteAllContacts,
-                              child: Text(
+                              icon: const Icon(Icons.delete, color: Colors.white),
+                              label: Text(
                                 l10n.deleteAllContacts,
                                 style: TextStyle(
                                   fontSize: buttonFontSize * 0.9,
-                                  color: Colors.red.withValues(alpha: 0.9),
-                                  decoration: TextDecoration.underline,
-                                  shadows: const [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      blurRadius: 8,
-                                    ),
-                                  ],
+                                  color: Colors.white,
                                 ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
                               ),
                             ),
                             SizedBox(height: isPortrait ? 24 : 16),
