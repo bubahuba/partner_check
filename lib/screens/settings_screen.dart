@@ -797,50 +797,19 @@ class SettingsScreenState extends State<SettingsScreen>
                               ),
                             ),
                             SizedBox(height: isPortrait ? 24 : 16),
-                            TextButton(
-                              onPressed: () {
-                                if (widget.onClose != null) {
-                                  _handleClose();
-                                } else {
-                                  // Fallback to navigation if onClose is not provided (for InitialScreen)
-                                  Navigator.of(context).pushReplacement(
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation,
-                                              secondaryAnimation) =>
-                                          const ContactsPage(),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        const begin = Offset(1.0, 0.0);
-                                        const end = Offset.zero;
-                                        const curve = Curves.ease;
-
-                                        var tween =
-                                            Tween(begin: begin, end: end).chain(
-                                          CurveTween(curve: curve),
-                                        );
-
-                                        return SlideTransition(
-                                          position: animation.drive(tween),
-                                          child: child,
-                                        );
-                                      },
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Text(
-                                l10n.close,
+                            ElevatedButton.icon(
+                              onPressed: _deleteAllContacts,
+                              icon: const Icon(Icons.delete, color: Colors.white),
+                              label: Text(
+                                l10n.deleteAllContacts,
                                 style: TextStyle(
                                   fontSize: buttonFontSize * 0.9,
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  decoration: TextDecoration.underline,
-                                  shadows: const [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      blurRadius: 8,
-                                    ),
-                                  ],
+                                  color: Colors.white,
                                 ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
                               ),
                             ),
                           ],
