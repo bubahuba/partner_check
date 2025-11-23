@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "partner_check" "\0"
+            VALUE "CompanyName", "cz.shadow_hub" "\0"
+            VALUE "FileDescription", "partner_check_free" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "partner_check" "\0"
+            VALUE "InternalName", "partner_check_free" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "partner_check.exe" "\0"
-            VALUE "ProductName", "partner_check" "\0"
+            VALUE "OriginalFilename", "partner_check_free.exe" "\0"
+            VALUE "ProductName", "partner_check_free" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
