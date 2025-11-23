@@ -145,16 +145,6 @@ class SettingsScreenState extends State<SettingsScreen>
                   _addContactManually();
                 },
               ),
-              const Divider(color: Colors.grey),
-              ListTile(
-                leading: const Icon(Icons.download, color: Colors.white),
-                title: Text(l10n.loadAllContacts,
-                    style: const TextStyle(color: Colors.white)),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _loadContacts();
-                },
-              ),
               const SizedBox(height: 8),
             ],
           ),
@@ -556,117 +546,6 @@ class SettingsScreenState extends State<SettingsScreen>
     }
   }
 
-  Future<void> _loadContacts() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Request permission using flutter_contacts (works on both iOS and Android)
-      if (!await FlutterContacts.requestPermission(readonly: true)) {
-        setState(() {
-          _isLoading = false;
-        });
-        if (mounted) {
-          final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.contactsPermissionRequired),
-              duration: const Duration(seconds: 5),
-              action: SnackBarAction(
-                label: l10n.settings,
-                textColor: Colors.black,
-                onPressed: () async {
-                  // Open app settings to allow user to enable permission
-                  await openAppSettings();
-                },
-              ),
-            ),
-          );
-        }
-        return;
-      }
-
-      // Load contacts on background thread
-      final contacts = await FlutterContacts.getContacts(
-        withProperties: true,
-        withThumbnail: false,
-      );
-
-      // Convert to serializable format for isolate
-      final contactsData = contacts
-          .map((contact) => {
-                'displayName': contact.displayName,
-                'phones': contact.phones
-                    .map((phone) => {'value': phone.number})
-                    .toList(),
-              })
-          .toList();
-
-      // Process contacts in background isolate
-      final processedData = await compute(_processContacts, contactsData);
-
-      // Convert to StoredContact
-      final storedContacts = processedData
-          .map((data) => StoredContact(
-                name: data['name'] as String,
-                color: data['color'] as int,
-              ))
-          .toList();
-
-      // Save to storage
-      final prefs = await SharedPreferences.getInstance();
-      final jsonList =
-          storedContacts.map((contact) => contact.toJson()).toList();
-      await prefs.setString('stored_contacts', json.encode(jsonList));
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Close settings screen and reload contacts in ContactsPage
-      if (mounted) {
-        if (widget.onClose != null) {
-          _handleClose();
-        } else {
-          // Fallback to navigation if onClose is not provided (for InitialScreen)
-          Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const ContactsPage(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.ease;
-
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
-              },
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-      });
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorLoadingContacts(e.toString())),
-          ),
-        );
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
