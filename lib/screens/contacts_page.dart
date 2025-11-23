@@ -853,6 +853,27 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _pickAndAddContactFromDevice(
       {required ScrollController targetController,
       bool addAtStart = false}) async {
+    // Check contact limit
+    if (_contacts.length >= 10) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contactLimitReached),
+            content: Text(l10n.contactLimitMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+
     try {
       // Request permission if needed
       if (!await FlutterContacts.requestPermission(readonly: true)) {
@@ -1234,6 +1255,27 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _addContactManually(
       {required ScrollController targetController,
       bool addAtStart = false}) async {
+    // Check contact limit
+    if (_contacts.length >= 10) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contactLimitReached),
+            content: Text(l10n.contactLimitMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;

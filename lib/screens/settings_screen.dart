@@ -236,6 +236,27 @@ class SettingsScreenState extends State<SettingsScreen>
             jsonList.map((json) => StoredContact.fromJson(json)).toList();
       }
 
+      // Check contact limit
+      if (existingContacts.length >= 10) {
+        if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
+          await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text(l10n.contactLimitReached),
+              content: Text(l10n.contactLimitMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+
       // Check for duplicates
       if (existingContacts.any((c) => c.name == contactName)) {
         if (mounted) {
@@ -376,6 +397,27 @@ class SettingsScreenState extends State<SettingsScreen>
       final List<dynamic> jsonList = json.decode(storedData);
       existingContacts =
           jsonList.map((json) => StoredContact.fromJson(json)).toList();
+    }
+
+    // Check contact limit
+    if (existingContacts.length >= 10) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.contactLimitReached),
+            content: Text(l10n.contactLimitMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.ok),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
     }
 
     // Check for duplicates
