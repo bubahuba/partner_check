@@ -1082,8 +1082,10 @@ class ContactsPageState extends State<ContactsPage>
         if (mounted) {
           // Find the contact in displayed contacts to ensure we have the correct reference
           final displayedContactsAfter = _displayedContacts;
-          final contactIndex = displayedContactsAfter.indexWhere((c) => c.name == contactName);
-          if (contactIndex != -1 && contactIndex < displayedContactsAfter.length) {
+          final contactIndex =
+              displayedContactsAfter.indexWhere((c) => c.name == contactName);
+          if (contactIndex != -1 &&
+              contactIndex < displayedContactsAfter.length) {
             final contactToLock = displayedContactsAfter[contactIndex];
             // Lock the pane with the newly added contact and reorder by match
             _reorderContactsByMatch(contactToLock, targetController);
@@ -1210,11 +1212,11 @@ class ContactsPageState extends State<ContactsPage>
           isFavorite: _favoriteNames.contains(newName),
         );
         _updateFavoritesFromContacts();
-        
+
         // Update original contact order if it exists and name changed
         if (_originalContactOrder != null && nameChanged) {
-          final originalIndex = _originalContactOrder!
-              .indexWhere((c) => c.name == contact.name);
+          final originalIndex =
+              _originalContactOrder!.indexWhere((c) => c.name == contact.name);
           if (originalIndex != -1) {
             _originalContactOrder![originalIndex] = StoredContact(
               name: newName,
@@ -1223,7 +1225,7 @@ class ContactsPageState extends State<ContactsPage>
             );
           }
         }
-        
+
         // Update ordering contact if its name changed
         if (isOrderingContact && nameChanged) {
           _orderingContact = StoredContact(
@@ -1237,7 +1239,7 @@ class ContactsPageState extends State<ContactsPage>
 
     // Save to storage
     await _saveContacts();
-    
+
     // Update locked state and original contact order in storage if needed
     if (isOrderingContact && nameChanged) {
       await _saveLockedState();
@@ -1376,8 +1378,9 @@ class ContactsPageState extends State<ContactsPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Find the actual index of the newly added contact in displayed contacts
       final displayedContacts = _displayedContacts;
-      final newIndex = displayedContacts.indexWhere((c) => c.name == contactName);
-      
+      final newIndex =
+          displayedContacts.indexWhere((c) => c.name == contactName);
+
       // If contact is not in displayed contacts (e.g., favorites mode and not a favorite),
       // use the addAtStart logic to determine position
       if (newIndex == -1) {
@@ -1388,7 +1391,9 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       if (targetController == _scrollController1) {
-        if (_scrollController1.hasClients && newIndex >= 0 && newIndex < displayedContacts.length) {
+        if (_scrollController1.hasClients &&
+            newIndex >= 0 &&
+            newIndex < displayedContacts.length) {
           final width = _scrollController1.position.viewportDimension;
           if (width > 0) {
             _scrollController1.animateTo(
@@ -1408,7 +1413,9 @@ class ContactsPageState extends State<ContactsPage>
           }
         }
       } else if (targetController == _scrollController2) {
-        if (_scrollController2.hasClients && newIndex >= 0 && newIndex < displayedContacts.length) {
+        if (_scrollController2.hasClients &&
+            newIndex >= 0 &&
+            newIndex < displayedContacts.length) {
           final width = _scrollController2.position.viewportDimension;
           if (width > 0) {
             _scrollController2.animateTo(
@@ -1587,8 +1594,9 @@ class ContactsPageState extends State<ContactsPage>
       num bestMatchCount = -1;
 
       for (final contact in _contacts) {
-        if (contact.name == currentContact.name)
+        if (contact.name == currentContact.name) {
           continue; // Skip current contact
+        }
 
         final matchCount = _calculateMatchCount(currentContact, contact);
         if (matchCount > bestMatchCount) {
@@ -1732,16 +1740,17 @@ class ContactsPageState extends State<ContactsPage>
     setState(() {
       _contacts.removeWhere((contact) => contact.name == contactName);
       _updateFavoritesFromContacts();
-      
+
       // Update original contact order if it exists
       if (_originalContactOrder != null) {
-        _originalContactOrder!.removeWhere((contact) => contact.name == contactName);
+        _originalContactOrder!
+            .removeWhere((contact) => contact.name == contactName);
         // If original order is now empty or the ordering contact was deleted, clear it
         if (_originalContactOrder!.isEmpty || isOrderingContact) {
           _originalContactOrder = null;
         }
       }
-      
+
       // If the deleted contact was the ordering contact, unlock the pane
       if (isOrderingContact) {
         _lockedPaneController = null;
@@ -1751,9 +1760,10 @@ class ContactsPageState extends State<ContactsPage>
 
     // Save updated contacts
     await _saveContacts();
-    
+
     // Update locked state and original contact order in storage
-    if (isOrderingContact || (_originalContactOrder == null && _lockedPaneController != null)) {
+    if (isOrderingContact ||
+        (_originalContactOrder == null && _lockedPaneController != null)) {
       // If ordering contact was deleted or original order was cleared, update storage
       await _saveLockedState();
     } else if (_originalContactOrder != null) {

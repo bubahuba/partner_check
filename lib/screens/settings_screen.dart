@@ -546,7 +546,6 @@ class SettingsScreenState extends State<SettingsScreen>
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     // App icon colors: indigo (#6366F1), pink (#EC4899), blue (#3B82F6)
@@ -779,27 +778,10 @@ class SettingsScreenState extends State<SettingsScreen>
                               ],
                             ),
                             SizedBox(height: isPortrait ? 24 : 16),
-                            TextButton(
-                              onPressed: _deleteAllContacts,
-                              child: Text(
-                                l10n.deleteAllContacts,
-                                style: TextStyle(
-                                  fontSize: buttonFontSize * 0.9,
-                                  color: Colors.red.withValues(alpha: 0.9),
-                                  decoration: TextDecoration.underline,
-                                  shadows: const [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      blurRadius: 8,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: isPortrait ? 24 : 16),
                             ElevatedButton.icon(
                               onPressed: _deleteAllContacts,
-                              icon: const Icon(Icons.delete, color: Colors.white),
+                              icon:
+                                  const Icon(Icons.delete, color: Colors.white),
                               label: Text(
                                 l10n.deleteAllContacts,
                                 style: TextStyle(
@@ -810,6 +792,53 @@ class SettingsScreenState extends State<SettingsScreen>
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.red,
                                 foregroundColor: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: isPortrait ? 24 : 16),
+                            TextButton(
+                              onPressed: () {
+                                if (widget.onClose != null) {
+                                  _handleClose();
+                                } else {
+                                  // Fallback to navigation if onClose is not provided (for InitialScreen)
+                                  Navigator.of(context).pushReplacement(
+                                    PageRouteBuilder(
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          const ContactsPage(),
+                                      transitionsBuilder: (context, animation,
+                                          secondaryAnimation, child) {
+                                        const begin = Offset(1.0, 0.0);
+                                        const end = Offset.zero;
+                                        const curve = Curves.ease;
+
+                                        var tween =
+                                            Tween(begin: begin, end: end).chain(
+                                          CurveTween(curve: curve),
+                                        );
+
+                                        return SlideTransition(
+                                          position: animation.drive(tween),
+                                          child: child,
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Text(
+                                l10n.close,
+                                style: TextStyle(
+                                  fontSize: buttonFontSize * 0.9,
+                                  color: Colors.white.withValues(alpha: 0.9),
+                                  decoration: TextDecoration.underline,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
