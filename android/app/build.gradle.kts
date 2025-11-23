@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "cz.shadow_hub.partner_check"
+    namespace = "cz.shadow_hub.partner_check_free"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "cz.shadow_hub.partner_check"
+        applicationId = "cz.shadow_hub.partner_check_free"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
