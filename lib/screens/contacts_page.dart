@@ -1116,54 +1116,70 @@ class ContactsPageState extends State<ContactsPage>
     final l10n = AppLocalizations.of(context)!;
     final result = await showDialog<Map<String, String>>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.editContact),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: l10n.name,
-                hintText: l10n.enterContactName,
-              ),
-              autofocus: true,
+      builder: (context) {
+        final mediaQuery = MediaQuery.of(context);
+        return AlertDialog(
+          content: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: mediaQuery.size.height,
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: phoneController,
-              decoration: InputDecoration(
-                labelText: l10n.phoneNumberOptional,
-                hintText: l10n.enterPhoneNumberToChangeColor,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.editContact,
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText: l10n.name,
+                      hintText: l10n.enterContactName,
+                    ),
+                    autofocus: true,
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    controller: phoneController,
+                    decoration: InputDecoration(
+                      labelText: l10n.phoneNumberOptional,
+                      hintText: l10n.enterPhoneNumberToChangeColor,
+                    ),
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.leavePhoneEmptyKeepColor,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
               ),
-              keyboardType: TextInputType.phone,
             ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.leavePhoneEmptyKeepColor,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                final name = nameController.text.trim();
+                if (name.isNotEmpty) {
+                  Navigator.of(context).pop({
+                    'name': name,
+                    'phone': phoneController.text.trim(),
+                  });
+                }
+              },
+              child: Text(l10n.save),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              final name = nameController.text.trim();
-              if (name.isNotEmpty) {
-                Navigator.of(context).pop({
-                  'name': name,
-                  'phone': phoneController.text.trim(),
-                });
-              }
-            },
-            child: Text(l10n.save),
-          ),
-        ],
-      ),
+        );
+      },
     );
 
     if (result == null) return;
