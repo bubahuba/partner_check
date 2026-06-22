@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import '../services/contacts_permission.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import '../l10n/app_localizations.dart';
@@ -855,7 +856,7 @@ class ContactsPageState extends State<ContactsPage>
       bool addAtStart = false}) async {
     try {
       // Request permission if needed
-      if (!await FlutterContacts.requestPermission(readonly: true)) {
+      if (!await ensureContactsReadPermission()) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -877,7 +878,7 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       // Open native contact picker
-      final Contact? contact = await FlutterContacts.openExternalPick();
+      final Contact? contact = await pickContactWithNameAndPhone();
 
       if (contact == null) {
         // User cancelled
@@ -885,7 +886,7 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       // Get the contact name
-      final contactName = contact.displayName;
+      final contactName = contact.displayName ?? '';
 
       if (contactName.isEmpty) {
         if (mounted) {

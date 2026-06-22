@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
+import '../utils/directionality_utils.dart';
 
 class AboutScreen extends StatefulWidget {
   final VoidCallback? onClose;
@@ -71,8 +72,7 @@ class AboutScreenState extends State<AboutScreen>
       animation: _slideAnimation,
       builder: (context, child) {
         return Transform.translate(
-          offset: Offset(
-              _slideAnimation.value * MediaQuery.of(context).size.width, 0),
+          offset: horizontalPanelSlideOffset(context, _slideAnimation.value),
           child: child,
         );
       },
@@ -191,7 +191,7 @@ class AboutScreenState extends State<AboutScreen>
                                     final l10n = AppLocalizations.of(context)!;
                                     return Text(
                                       l10n.aboutText,
-                                      textAlign: TextAlign.left,
+                                      textAlign: TextAlign.start,
                                       style: TextStyle(
                                         fontSize: fontSize,
                                         color: Colors.white,

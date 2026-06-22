@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/contacts_permission.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
 import 'dart:convert';
 import '../models.dart';
 import '../services/contact_storage_service.dart';
+import '../utils/directionality_utils.dart';
 import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -166,7 +168,7 @@ class SettingsScreenState extends State<SettingsScreen>
   Future<void> _pickAndAddContactFromDevice() async {
     try {
       // Request permission if needed
-      if (!await FlutterContacts.requestPermission(readonly: true)) {
+      if (!await ensureContactsReadPermission()) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -187,7 +189,7 @@ class SettingsScreenState extends State<SettingsScreen>
       }
 
       // Open native contact picker
-      final Contact? contact = await FlutterContacts.openExternalPick();
+      final Contact? contact = await pickContactWithNameAndPhone();
 
       if (contact == null) {
         // User cancelled
@@ -195,7 +197,7 @@ class SettingsScreenState extends State<SettingsScreen>
       }
 
       // Get the contact name
-      final contactName = contact.displayName;
+      final contactName = contact.displayName ?? '';
 
       if (contactName.isEmpty) {
         if (mounted) {
@@ -285,16 +287,8 @@ class SettingsScreenState extends State<SettingsScreen>
                   const ContactsPage(),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.ease;
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
+                return buildHorizontalSlideTransition(
+                    context, animation, child);
               },
             ),
           );
@@ -434,16 +428,8 @@ class SettingsScreenState extends State<SettingsScreen>
                 const ContactsPage(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.ease;
-              var tween = Tween(begin: begin, end: end).chain(
-                CurveTween(curve: curve),
-              );
-              return SlideTransition(
-                position: animation.drive(tween),
-                child: child,
-              );
+              return buildHorizontalSlideTransition(
+                  context, animation, child);
             },
           ),
         );
@@ -516,16 +502,8 @@ class SettingsScreenState extends State<SettingsScreen>
                 const ContactsPage(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              const begin = Offset(1.0, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.ease;
-              var tween = Tween(begin: begin, end: end).chain(
-                CurveTween(curve: curve),
-              );
-              return SlideTransition(
-                position: animation.drive(tween),
-                child: child,
-              );
+              return buildHorizontalSlideTransition(
+                  context, animation, child);
             },
           ),
         );
@@ -540,7 +518,7 @@ class SettingsScreenState extends State<SettingsScreen>
 
     try {
       // Request permission using flutter_contacts (works on both iOS and Android)
-      if (!await FlutterContacts.requestPermission(readonly: true)) {
+      if (!await ensureContactsReadPermission()) {
         setState(() {
           _isLoading = false;
         });
@@ -565,9 +543,8 @@ class SettingsScreenState extends State<SettingsScreen>
       }
 
       // Load contacts on background thread
-      final contacts = await FlutterContacts.getContacts(
-        withProperties: true,
-        withThumbnail: false,
+      final contacts = await FlutterContacts.getAll(
+        properties: contactsNameAndPhoneProperties,
       );
 
       // Convert to serializable format for isolate
@@ -613,18 +590,8 @@ class SettingsScreenState extends State<SettingsScreen>
                   const ContactsPage(),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                const begin = Offset(1.0, 0.0);
-                const end = Offset.zero;
-                const curve = Curves.ease;
-
-                var tween = Tween(begin: begin, end: end).chain(
-                  CurveTween(curve: curve),
-                );
-
-                return SlideTransition(
-                  position: animation.drive(tween),
-                  child: child,
-                );
+                return buildHorizontalSlideTransition(
+                    context, animation, child);
               },
             ),
           );
@@ -656,8 +623,7 @@ class SettingsScreenState extends State<SettingsScreen>
       animation: _slideAnimation,
       builder: (context, child) {
         return Transform.translate(
-          offset: Offset(
-              _slideAnimation.value * MediaQuery.of(context).size.width, 0),
+          offset: horizontalPanelSlideOffset(context, _slideAnimation.value),
           child: child,
         );
       },
@@ -906,19 +872,8 @@ class SettingsScreenState extends State<SettingsScreen>
                                           const ContactsPage(),
                                       transitionsBuilder: (context, animation,
                                           secondaryAnimation, child) {
-                                        const begin = Offset(1.0, 0.0);
-                                        const end = Offset.zero;
-                                        const curve = Curves.ease;
-
-                                        var tween =
-                                            Tween(begin: begin, end: end).chain(
-                                          CurveTween(curve: curve),
-                                        );
-
-                                        return SlideTransition(
-                                          position: animation.drive(tween),
-                                          child: child,
-                                        );
+                                        return buildHorizontalSlideTransition(
+                                            context, animation, child);
                                       },
                                     ),
                                   );
