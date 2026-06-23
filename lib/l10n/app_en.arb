@@ -198,7 +198,7 @@
   "@aboutTitle": {
     "description": "Title for the about screen"
   },
-  "aboutText": "Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?",
+  "aboutText": "Every person has a phone number (or more)\n\nevery phone number has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?",
   "@aboutText": {
     "description": "About text explaining the app concept"
   },
