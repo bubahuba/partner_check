@@ -75,12 +75,7 @@ class SettingsScreenState extends State<SettingsScreen>
   }
 
   Color _interpolateColor(Color a, Color b, double t) {
-    return Color.fromRGBO(
-      (a.red + (b.red - a.red) * t).round(),
-      (a.green + (b.green - a.green) * t).round(),
-      (a.blue + (b.blue - a.blue) * t).round(),
-      (a.opacity + (b.opacity - a.opacity) * t),
-    );
+    return Color.lerp(a, b, t)!;
   }
 
   void _handleClose() {

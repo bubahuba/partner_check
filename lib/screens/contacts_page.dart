@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import '../services/contacts_permission.dart';
@@ -2051,7 +2052,7 @@ class ContactsPageState extends State<ContactsPage>
           : const PageScrollPhysics(),
       itemExtent: width,
       itemCount: itemCount,
-      cacheExtent: width * 2, // Cache at least 2 items to ensure rendering
+      scrollCacheExtent: ScrollCacheExtent.pixels(width * 2), // Cache at least 2 items to ensure rendering
       addAutomaticKeepAlives: true, // Keep items alive to ensure rendering
       addRepaintBoundaries: true, // Add repaint boundaries for better rendering
       itemBuilder: (context, index) {
