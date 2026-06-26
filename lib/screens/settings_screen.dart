@@ -107,12 +107,26 @@ class SettingsScreenState extends State<SettingsScreen>
     return Color.lerp(a, b, t)!;
   }
 
+  void _openContactsPage() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const ContactsPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return buildHorizontalSlideTransition(context, animation, child);
+        },
+      ),
+    );
+  }
+
   void _handleClose() {
-    _slideController.reverse().then((_) {
-      if (widget.onClose != null) {
+    if (widget.onClose != null) {
+      _slideController.reverse().then((_) {
         widget.onClose!();
-      }
-    });
+      });
+    } else {
+      _openContactsPage();
+    }
   }
 
   Future<void> _purchasePro() async {
@@ -126,7 +140,7 @@ class SettingsScreenState extends State<SettingsScreen>
       return;
     }
 
-    await proService.purchasePro();
+    await showUpgradeSheet(context);
   }
 
   Future<void> _restorePurchases() async {
@@ -201,18 +215,18 @@ class SettingsScreenState extends State<SettingsScreen>
                         style: TextStyle(fontSize: buttonFontSize * 0.9),
                       ),
               ),
-            ],
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: proService.isLoading ? null : _restorePurchases,
-              child: Text(
-                l10n.restorePurchases,
-                style: TextStyle(
-                  fontSize: buttonFontSize * 0.85,
-                  color: Colors.white70,
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: proService.isLoading ? null : _restorePurchases,
+                child: Text(
+                  l10n.restorePurchases,
+                  style: TextStyle(
+                    fontSize: buttonFontSize * 0.85,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
-            ),
+            ],
           ],
         );
       },
@@ -411,6 +425,7 @@ class SettingsScreenState extends State<SettingsScreen>
 
   Future<void> _pickAndAddContactFromDevice() async {
     final contactCount = (await _storageService.loadContacts()).length;
+    if (!mounted) return;
     if (!await ensureCanAddContact(context, contactCount)) {
       return;
     }
@@ -558,9 +573,11 @@ class SettingsScreenState extends State<SettingsScreen>
 
   Future<void> _addContactManually() async {
     final contactCount = (await _storageService.loadContacts()).length;
+    if (!mounted) return;
     if (!await ensureCanAddContact(context, contactCount)) {
       return;
     }
+    if (!mounted) return;
 
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
@@ -1124,19 +1141,7 @@ class SettingsScreenState extends State<SettingsScreen>
                                 if (widget.onClose != null) {
                                   _handleClose();
                                 } else {
-                                  // Fallback to navigation if onClose is not provided (for InitialScreen)
-                                  Navigator.of(context).pushReplacement(
-                                    PageRouteBuilder(
-                                      pageBuilder: (context, animation,
-                                              secondaryAnimation) =>
-                                          const ContactsPage(),
-                                      transitionsBuilder: (context, animation,
-                                          secondaryAnimation, child) {
-                                        return buildHorizontalSlideTransition(
-                                            context, animation, child);
-                                      },
-                                    ),
-                                  );
+                                  _openContactsPage();
                                 }
                               },
                               child: Text(

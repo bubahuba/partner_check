@@ -17,6 +17,8 @@ import '../widgets/add_contact_card.dart';
 import '../widgets/contacts_hud.dart';
 import 'settings_screen.dart';
 import '../utils/pro_gate.dart';
+import '../services/pro_subscription_service.dart';
+import 'package:provider/provider.dart';
 import 'about_screen.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -78,6 +80,8 @@ class ContactsPageState extends State<ContactsPage>
   double? _savedScrollOffset1;
   double? _savedScrollOffset2;
   bool _shouldPromptSelfContactPick = false;
+  ProSubscriptionService? _proService;
+  bool _wasPro = false;
 
   @override
   void initState() {
@@ -101,6 +105,12 @@ class ContactsPageState extends State<ContactsPage>
     );
     _addScrollListeners();
     _initializeData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _proService = context.read<ProSubscriptionService>();
+      _wasPro = _proService!.isPro;
+      _proService!.addListener(_onProStatusChanged);
+    });
     // Ensure ListView is visible on initial launch with no contacts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_contacts.isEmpty) {
@@ -471,6 +481,7 @@ class ContactsPageState extends State<ContactsPage>
 
   @override
   void dispose() {
+    _proService?.removeListener(_onProStatusChanged);
     // Cancel any pending save timers
     _scrollSaveTimer1?.cancel();
     _scrollSaveTimer2?.cancel();
@@ -484,6 +495,24 @@ class ContactsPageState extends State<ContactsPage>
     _flashAnimationController1.dispose();
     _flashAnimationController2.dispose();
     super.dispose();
+  }
+
+  void _onProStatusChanged() {
+    if (!mounted || _proService == null) return;
+    if (_proService!.isPro && !_wasPro) {
+      _handleProUnlocked();
+    }
+    _wasPro = _proService!.isPro;
+  }
+
+  Future<void> _handleProUnlocked() async {
+    await _loadContactsWithoutRestoringScroll();
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _restoreScrollPositions();
+      });
+    });
   }
 
   @override
@@ -578,36 +607,63 @@ class ContactsPageState extends State<ContactsPage>
     return displayed[pageIndex].name;
   }
 
-  void _scrollPaneToContactName(ScrollController controller, String? contactName) {
-    if (contactName == null || !controller.hasClients) return;
-    final index =
-        _displayedContacts.indexWhere((contact) => contact.name == contactName);
-    if (index < 0) return;
-
-    final width = controller.position.viewportDimension;
-    if (width <= 0) return;
-
-    controller.jumpTo((index + 1) * width);
-
-    if (controller == _scrollController1) {
-      setState(() {
-        _currentPage1 = index;
-        if (_favoritesMode) {
-          _currentPage1Favorites = index;
-        } else {
-          _currentPage1All = index;
-        }
-      });
-    } else if (controller == _scrollController2) {
-      setState(() {
-        _currentPage2 = index;
-        if (_favoritesMode) {
-          _currentPage2Favorites = index;
-        } else {
-          _currentPage2All = index;
-        }
-      });
+  void _scrollPaneToContactName(
+    ScrollController controller,
+    String? contactName, {
+    VoidCallback? onComplete,
+  }) {
+    if (contactName == null) {
+      onComplete?.call();
+      return;
     }
+
+    void attemptScroll() {
+      if (!mounted) return;
+
+      if (!controller.hasClients) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => attemptScroll());
+        return;
+      }
+
+      final index = _displayedContacts
+          .indexWhere((contact) => contact.name == contactName);
+      if (index < 0) {
+        onComplete?.call();
+        return;
+      }
+
+      final width = controller.position.viewportDimension;
+      if (width <= 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => attemptScroll());
+        return;
+      }
+
+      controller.jumpTo((index + 1) * width);
+
+      if (controller == _scrollController1) {
+        setState(() {
+          _currentPage1 = index;
+          if (_favoritesMode) {
+            _currentPage1Favorites = index;
+          } else {
+            _currentPage1All = index;
+          }
+        });
+      } else if (controller == _scrollController2) {
+        setState(() {
+          _currentPage2 = index;
+          if (_favoritesMode) {
+            _currentPage2Favorites = index;
+          } else {
+            _currentPage2All = index;
+          }
+        });
+      }
+
+      onComplete?.call();
+    }
+
+    attemptScroll();
   }
 
   Future<bool> _handleDuplicateContactName(
@@ -676,29 +732,40 @@ class ContactsPageState extends State<ContactsPage>
     required String anchorContactName,
   }) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollPaneToContactName(targetController, anchorContactName);
-
-      final otherController = targetController == _scrollController1
-          ? _scrollController2
-          : _scrollController1;
-      final otherCurrentPage = otherController == _scrollController1
-          ? _currentPage1
-          : _currentPage2;
-      final otherContactName = _contactNameAtPage(otherCurrentPage);
-
-      String? otherTarget = otherContactName;
-      if (otherTarget == null ||
-          !_displayedContacts.any((contact) => contact.name == otherTarget)) {
-        otherTarget = _bestDisplayedMatchName(anchorContactName) ??
-            anchorContactName;
+      void finishRefresh() {
+        _saveScrollPositions();
+        _checkForMatch();
       }
 
-      if (_displayedContacts.any((contact) => contact.name == otherTarget)) {
-        _scrollPaneToContactName(otherController, otherTarget);
+      void scrollOtherPane() {
+        final otherController = targetController == _scrollController1
+            ? _scrollController2
+            : _scrollController1;
+        final otherCurrentPage = otherController == _scrollController1
+            ? _currentPage1
+            : _currentPage2;
+        final otherContactName = _contactNameAtPage(otherCurrentPage);
+
+        String? otherTarget = otherContactName;
+        if (otherTarget == null ||
+            !_displayedContacts.any((contact) => contact.name == otherTarget)) {
+          otherTarget =
+              _bestDisplayedMatchName(anchorContactName) ?? anchorContactName;
+        }
+
+        if (_displayedContacts.any((contact) => contact.name == otherTarget)) {
+          _scrollPaneToContactName(otherController, otherTarget,
+              onComplete: finishRefresh);
+        } else {
+          finishRefresh();
+        }
       }
 
-      _saveScrollPositions();
-      _checkForMatch();
+      _scrollPaneToContactName(
+        targetController,
+        anchorContactName,
+        onComplete: scrollOtherPane,
+      );
     });
   }
 
@@ -762,7 +829,9 @@ class ContactsPageState extends State<ContactsPage>
     }
 
     if (_savedScrollOffset1 != null) {
-      _scrollController1.jumpTo(_savedScrollOffset1!);
+      final maxOffset1 = _scrollController1.position.maxScrollExtent;
+      _scrollController1
+          .jumpTo(_savedScrollOffset1!.clamp(0.0, maxOffset1));
       // Update page index from scroll position
       final displayedContacts = _displayedContacts;
       final totalItems = displayedContacts.length + 2;
@@ -781,7 +850,9 @@ class ContactsPageState extends State<ContactsPage>
       }
     }
     if (_savedScrollOffset2 != null) {
-      _scrollController2.jumpTo(_savedScrollOffset2!);
+      final maxOffset2 = _scrollController2.position.maxScrollExtent;
+      _scrollController2
+          .jumpTo(_savedScrollOffset2!.clamp(0.0, maxOffset2));
       // Update page index from scroll position
       final displayedContacts = _displayedContacts;
       final totalItems = displayedContacts.length + 2;
@@ -827,13 +898,7 @@ class ContactsPageState extends State<ContactsPage>
     }
 
     if (displayedContacts.isEmpty) {
-      // If no contacts, jump to position 0 (add contact card)
-      _scrollController1.jumpTo(0);
-      _scrollController2.jumpTo(0);
-      setState(() {
-        _currentPage1 = 0;
-        _currentPage2 = 0;
-      });
+      _prepareEmptyContactsView();
       return;
     }
 
@@ -1333,6 +1398,7 @@ class ContactsPageState extends State<ContactsPage>
     if (!await ensureCanAddContact(context, _contacts.length)) {
       return;
     }
+    if (!mounted) return;
 
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
@@ -1789,6 +1855,13 @@ class ContactsPageState extends State<ContactsPage>
 
     // Restore scroll offsets after deletion, adjusting if needed
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (displayedContacts.isEmpty) {
+        _prepareEmptyContactsView();
+        _saveScrollPositions();
+        _checkForMatch();
+        return;
+      }
+
       if (deletedIndex != -1) {
         // Adjust pane 1 scroll offset
         if (savedOffset1 != null && width1 != null && width1 > 0) {
@@ -1948,6 +2021,11 @@ class ContactsPageState extends State<ContactsPage>
     // Restore scroll positions after layout
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final displayedContacts = _displayedContacts;
+      if (displayedContacts.isEmpty) {
+        _prepareEmptyContactsView();
+        return;
+      }
+
       final halfWidth = MediaQuery.of(context).size.width / 2;
 
       // Clamp positions to valid range
@@ -1984,6 +2062,41 @@ class ContactsPageState extends State<ContactsPage>
     }
     return _contacts;
   }
+
+  void _applyEmptyContactsState() {
+    _isHudVisible = true;
+    _currentPage1 = 0;
+    _currentPage2 = 0;
+    _currentPage1All = 0;
+    _currentPage2All = 0;
+    _currentPage1Favorites = 0;
+    _currentPage2Favorites = 0;
+    _clearVirtualSortState();
+  }
+
+  void _scrollPanesToEmptyStart() {
+    void attemptScroll() {
+      if (!mounted) return;
+
+      if (!_scrollController1.hasClients || !_scrollController2.hasClients) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => attemptScroll());
+        return;
+      }
+
+      _scrollController1.jumpTo(0);
+      _scrollController2.jumpTo(0);
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => attemptScroll());
+  }
+
+  void _prepareEmptyContactsView() {
+    setState(_applyEmptyContactsState);
+    _saveHudState();
+    _scrollPanesToEmptyStart();
+  }
+
+  bool get _shouldShowHud => _isHudVisible || _displayedContacts.isEmpty;
 
   void _toggleHudVisibility() {
     setState(() {
@@ -2047,7 +2160,7 @@ class ContactsPageState extends State<ContactsPage>
     final isLocked = _lockedPaneController == controller;
 
     return ListView.builder(
-      key: ValueKey('listview_${controller.hashCode}_$itemCount'),
+      key: ValueKey('listview_${controller.hashCode}'),
       controller: controller,
       scrollDirection: Axis.horizontal,
       physics: isLocked
@@ -2238,18 +2351,10 @@ class ContactsPageState extends State<ContactsPage>
             });
           }
 
-          // Ensure ListView is visible on initial build when no contacts
+          // Ensure ListView shows add cards when there are no contacts
           if (displayedContacts.isEmpty && halfWidth > 0) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) {
-                // Ensure scroll controllers are at position 0 when no contacts
-                if (_scrollController1.hasClients) {
-                  _scrollController1.jumpTo(0);
-                }
-                if (_scrollController2.hasClients) {
-                  _scrollController2.jumpTo(0);
-                }
-              }
+              _scrollPanesToEmptyStart();
             });
           }
 
@@ -2284,7 +2389,7 @@ class ContactsPageState extends State<ContactsPage>
                     ),
                   ],
                 ),
-                if (_isHudVisible)
+                if (_shouldShowHud)
                   ContactsHud(
                     favoritesMode: _favoritesMode,
                     onSettings: () {
@@ -2335,13 +2440,10 @@ class ContactsPageState extends State<ContactsPage>
                           return;
                         }
 
-                        // Restore the saved scroll positions after layout and locked state restoration
-                        // Use multiple nested callbacks to ensure everything is ready
+                        // Restore scroll positions after reload (page-based, handles list changes)
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              _restoreCurrentScrollPositions();
-                            });
+                            _restoreScrollPositions();
                           });
                         });
                       },

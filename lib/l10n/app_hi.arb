@@ -55,12 +55,12 @@
   "pickYourselfButton": "संपर्क चुनें",
   "notNow": "अभी नहीं",
   "pickYourselfNotInList": "{contactName} आपके लोड किए गए संपर्कों में नहीं मिला। सूची में मौजूद किसी को चुनें।",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "PRO में अपग्रेड करें",
+  "restorePurchases": "खरीदारी पुनर्स्थापित करें",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "डिवाइस से सभी संपर्क लोड करना PRO सुविधा है। अपनी पूरी एड्रेस बुक एक साथ आयात करने के लिए अपग्रेड करें।",
+  "purchaseInProgress": "खरीदारी प्रगति में...",
+  "purchaseSuccess": "PRO अनलॉक हो गया! आपकी खरीदारी के लिए धन्यवाद।",
+  "purchaseFailed": "खरीदारी विफल। कृपया पुनः प्रयास करें।",
+  "alreadyPro": "आपके पास पहले से PRO है।"
 }

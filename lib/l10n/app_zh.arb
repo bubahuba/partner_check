@@ -55,13 +55,13 @@
   "pickYourselfButton": "选择联系人",
   "notNow": "以后再说",
   "pickYourselfNotInList": "在已加载的联系人中未找到 {contactName}。请选择列表中的联系人。",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "升级到 PRO",
+  "restorePurchases": "恢复购买",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "从设备加载所有联系人是 PRO 功能。升级后可一次性导入整个通讯录。",
+  "purchaseInProgress": "购买进行中...",
+  "purchaseSuccess": "PRO 已解锁！感谢您的购买。",
+  "purchaseFailed": "购买失败。请重试。",
+  "alreadyPro": "您已拥有 PRO。"
 }
 

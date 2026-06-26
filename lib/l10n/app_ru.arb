@@ -55,13 +55,13 @@
   "pickYourselfButton": "Выбрать контакт",
   "notNow": "Не сейчас",
   "pickYourselfNotInList": "{contactName} не найден в загруженных контактах. Выберите кого-то из списка.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "Перейти на PRO",
+  "restorePurchases": "Восстановить покупки",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "Загрузка всех контактов с устройства — функция PRO. Обновитесь, чтобы импортировать всю записную книгу сразу.",
+  "purchaseInProgress": "Покупка выполняется...",
+  "purchaseSuccess": "PRO разблокирован! Спасибо за покупку.",
+  "purchaseFailed": "Покупка не удалась. Попробуйте снова.",
+  "alreadyPro": "У вас уже есть PRO."
 }
 

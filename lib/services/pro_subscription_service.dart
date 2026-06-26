@@ -64,8 +64,13 @@ class ProSubscriptionService extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final purchaseParam = PurchaseParam(productDetails: product);
-    await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    try {
+      final purchaseParam = PurchaseParam(productDetails: product);
+      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    } catch (_) {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> restorePurchases({bool silent = false}) async {

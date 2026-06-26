@@ -75,17 +75,33 @@ Future<void> showUpgradeSheet(BuildContext context) async {
   );
 }
 
-class _UpgradeSheet extends StatelessWidget {
+class _UpgradeSheet extends StatefulWidget {
   const _UpgradeSheet({required this.parentContext});
 
   final BuildContext parentContext;
+
+  @override
+  State<_UpgradeSheet> createState() => _UpgradeSheetState();
+}
+
+class _UpgradeSheetState extends State<_UpgradeSheet> {
+  bool _wasPro = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _wasPro = context.read<ProSubscriptionService>().isPro;
+    });
+  }
 
   Future<void> _purchase(BuildContext context) async {
     final proService = context.read<ProSubscriptionService>();
     final l10n = AppLocalizations.of(context)!;
 
     if (proService.isPro) {
-      ScaffoldMessenger.of(parentContext).showSnackBar(
+      ScaffoldMessenger.of(widget.parentContext).showSnackBar(
         SnackBar(content: Text(l10n.alreadyPro)),
       );
       Navigator.of(context).pop();
@@ -103,7 +119,7 @@ class _UpgradeSheet extends StatelessWidget {
     if (!context.mounted) return;
 
     if (proService.isPro) {
-      ScaffoldMessenger.of(parentContext).showSnackBar(
+      ScaffoldMessenger.of(widget.parentContext).showSnackBar(
         SnackBar(content: Text(l10n.purchaseSuccess)),
       );
       Navigator.of(context).pop();
@@ -116,6 +132,15 @@ class _UpgradeSheet extends StatelessWidget {
 
     return Consumer<ProSubscriptionService>(
       builder: (context, proService, _) {
+        if (proService.isPro && !_wasPro) {
+          _wasPro = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          });
+        }
+
         final price = proService.proProduct?.price;
         final upgradeLabel = price != null
             ? '${l10n.upgradeToPro} ($price)'

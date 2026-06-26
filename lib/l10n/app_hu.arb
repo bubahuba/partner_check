@@ -55,13 +55,13 @@
   "pickYourselfButton": "Kapcsolat kiválasztása",
   "notNow": "Most nem",
   "pickYourselfNotInList": "A(z) {contactName} nem található a betöltött kapcsolatok között. Válassz valakit, aki szerepel a listában.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "Frissítés PRO-ra",
+  "restorePurchases": "Vásárlások visszaállítása",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "Az összes kapcsolat betöltése az eszközről PRO funkció. Frissíts, hogy egyszerre importáld a teljes címjegyzékedet.",
+  "purchaseInProgress": "Vásárlás folyamatban...",
+  "purchaseSuccess": "PRO feloldva! Köszönjük a vásárlást.",
+  "purchaseFailed": "A vásárlás sikertelen. Próbáld újra.",
+  "alreadyPro": "Már van PRO-d."
 }
 

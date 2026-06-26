@@ -23,12 +23,12 @@ class AddContactCard extends StatelessWidget {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
           ),
-          color: Colors.black,
+          color: const Color(0xFF1A1A1A),
           child: Center(
             child: IconButton(
               icon: Icon(
                 Icons.add,
-                color: Colors.white.withValues(alpha: 0.5),
+                color: Colors.white.withValues(alpha: 0.85),
                 size: 48,
               ),
               onPressed: onTap,

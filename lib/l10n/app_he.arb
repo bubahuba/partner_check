@@ -55,12 +55,12 @@
   "pickYourselfButton": "בחר איש קשר",
   "notNow": "לא עכשיו",
   "pickYourselfNotInList": "{contactName} לא נמצא באנשי הקשר שנטענו. בחר מישהו שנמצא ברשימה.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "שדרג ל-PRO",
+  "restorePurchases": "שחזר רכישות",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "טעינת כל אנשי הקשר מהמכשיר היא תכונת PRO. שדרג כדי לייבא את כל אנשי הקשר בבת אחת.",
+  "purchaseInProgress": "הרכישה מתבצעת...",
+  "purchaseSuccess": "PRO נפתח! תודה על הרכישה.",
+  "purchaseFailed": "הרכישה נכשלה. נסה שוב.",
+  "alreadyPro": "כבר יש לך PRO."
 }

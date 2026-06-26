@@ -55,13 +55,13 @@
   "pickYourselfButton": "Vybrat kontakt",
   "notNow": "Teď ne",
   "pickYourselfNotInList": "{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "Upgradovat na PRO",
+  "restorePurchases": "Obnovit nákupy",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "Načtení všech kontaktů ze zařízení je funkce PRO. Upgradujte pro import celého adresáře najednou.",
+  "purchaseInProgress": "Nákup probíhá...",
+  "purchaseSuccess": "PRO odemčeno! Děkujeme za nákup.",
+  "purchaseFailed": "Nákup se nezdařil. Zkuste to znovu.",
+  "alreadyPro": "Již máte PRO."
 }
 

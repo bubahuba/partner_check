@@ -55,12 +55,12 @@
   "pickYourselfButton": "اختر جهة اتصال",
   "notNow": "ليس الآن",
   "pickYourselfNotInList": "لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "ترقية إلى PRO",
+  "restorePurchases": "استعادة المشتريات",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "تحميل جميع جهات الاتصال من جهازك ميزة PRO. قم بالترقية لاستيراد دفتر عناوينك بالكامل دفعة واحدة.",
+  "purchaseInProgress": "جاري الشراء...",
+  "purchaseSuccess": "تم فتح PRO! شكراً لشرائك.",
+  "purchaseFailed": "فشل الشراء. يرجى المحاولة مرة أخرى.",
+  "alreadyPro": "لديك PRO بالفعل."
 }

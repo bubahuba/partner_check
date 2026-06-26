@@ -55,13 +55,13 @@
   "pickYourselfButton": "Kontakt wählen",
   "notNow": "Nicht jetzt",
   "pickYourselfNotInList": "{contactName} wurde in deinen geladenen Kontakten nicht gefunden. Wähle jemanden, der in der Liste ist.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "Auf PRO upgraden",
+  "restorePurchases": "Käufe wiederherstellen",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "Alle Kontakte vom Gerät laden ist eine PRO-Funktion. Upgrade, um dein gesamtes Adressbuch auf einmal zu importieren.",
+  "purchaseInProgress": "Kauf wird durchgeführt...",
+  "purchaseSuccess": "PRO freigeschaltet! Danke für deinen Kauf.",
+  "purchaseFailed": "Kauf fehlgeschlagen. Bitte versuche es erneut.",
+  "alreadyPro": "Du hast bereits PRO."
 }
 

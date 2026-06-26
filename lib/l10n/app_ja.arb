@@ -55,13 +55,13 @@
   "pickYourselfButton": "連絡先を選ぶ",
   "notNow": "後で",
   "pickYourselfNotInList": "{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "PRO にアップグレード",
+  "restorePurchases": "購入を復元",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "デバイスからすべての連絡先を読み込むのは PRO 機能です。アップグレードしてアドレス帳全体を一度にインポートできます。",
+  "purchaseInProgress": "購入処理中...",
+  "purchaseSuccess": "PRO が解除されました！ご購入ありがとうございます。",
+  "purchaseFailed": "購入に失敗しました。もう一度お試しください。",
+  "alreadyPro": "すでに PRO をお持ちです。"
 }
 

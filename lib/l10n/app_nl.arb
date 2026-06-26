@@ -55,13 +55,13 @@
   "pickYourselfButton": "Contact kiezen",
   "notNow": "Niet nu",
   "pickYourselfNotInList": "{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat.",
-  "upgradeToPro": "Upgrade to PRO",
-  "restorePurchases": "Restore purchases",
+  "upgradeToPro": "Upgraden naar PRO",
+  "restorePurchases": "Aankopen herstellen",
   "proVersion": "PartnerCheck Pro",
-  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
-  "purchaseInProgress": "Purchase in progress...",
-  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
-  "purchaseFailed": "Purchase failed. Please try again.",
-  "alreadyPro": "You already have PRO."
+  "proFeatureLoadAllContacts": "Alle contacten van je apparaat laden is een PRO-functie. Upgrade om je hele adresboek in één keer te importeren.",
+  "purchaseInProgress": "Aankoop bezig...",
+  "purchaseSuccess": "PRO ontgrendeld! Bedankt voor je aankoop.",
+  "purchaseFailed": "Aankoop mislukt. Probeer het opnieuw.",
+  "alreadyPro": "Je hebt al PRO."
 }
 
