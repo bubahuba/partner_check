@@ -1,0 +1,62 @@
+---
+description: Dart/Flutter coding conventions for Partner Check
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Flutter/Dart Conventions
+
+## Naming
+
+- Files: `snake_case.dart`; classes: `PascalCase`; private: `_camelCase`
+- Services: `*Service`; utils: `*Utils`, `*Calculator`, `*Finder`, `*Gate`
+- Storage keys: `snake_case` strings in `ContactStorageService`
+
+## Imports
+
+```dart
+import '../models.dart';           // internal — relative
+import 'package:provider/provider.dart';  // external — package
+```
+
+## Async + BuildContext
+
+Guard every `context` use after `await`:
+
+```dart
+// ❌ BAD — context after async gap without guard
+await someAsyncWork();
+Navigator.of(context).pop();
+
+// ✅ GOOD
+await someAsyncWork();
+if (!mounted) return;
+Navigator.of(context).pop();
+
+// ✅ GOOD — helper receiving BuildContext
+if (upgrade == true && context.mounted) {
+  await showUpgradeSheet(context);
+}
+```
+
+`while (mounted)` alone is **not** enough before `showDialog` — add `if (!mounted) return;` immediately before each post-await context use.
+
+## State management
+
+- Screen state: fields on `State` + `setState`
+- Pro/IAP only: `context.read<ProSubscriptionService>()` or `Consumer`
+- Do **not** introduce new global state libraries without explicit request
+
+## Services
+
+Instantiate directly — no DI container:
+
+```dart
+final _storageService = ContactStorageService();
+```
+
+## API style
+
+- `Color.withValues(alpha: 0.5)` not `withOpacity`
+- Doc comments (`///`) on public utils and service methods
+- Extract helpers to `lib/utils/` rather than growing `contacts_page.dart`

@@ -1,0 +1,45 @@
+---
+description: SharedPreferences persistence keys and iOS/Android platform splits
+globs: lib/{services,screens}/**,lib/models.dart
+alwaysApply: false
+---
+
+# Persistence & Platform
+
+## Storage
+
+All via `ContactStorageService` + `SharedPreferences`. Manual `toJson`/`fromJson` on `StoredContact` in `models.dart`.
+
+| Key | Purpose |
+|-----|---------|
+| `stored_contacts` | Contact list JSON |
+| `favorite_contacts` | Favorite names |
+| `vibrations_enabled`, `hud_visible` | Settings toggles |
+| `scroll_pos_*` | Pane scroll indices |
+| `self_contact_name`, `self_contact_color` | Self-contact identity |
+| `pending_self_contact_pick` | iOS post-import prompt flag |
+| `is_pro_unlocked` | In `ProSubscriptionService` |
+
+Add new prefs as methods on `ContactStorageService`, not ad-hoc `SharedPreferences` calls in screens.
+
+## Platform splits
+
+```dart
+import 'dart:io' show Platform;
+
+if (Platform.isAndroid) {
+  // Auto-detect profile via FlutterContacts.profile
+} else if (Platform.isIOS) {
+  // Manual self-contact pick; set pending_self_contact_pick
+}
+```
+
+Self-contact matching: `SelfContactFinder` (by color, phone, or name).
+
+## Color/match changes
+
+Route through `PhoneUtils` → `ColorUtils` → `MatchCalculator`. Do not inline hue math in widgets.
+
+## Permissions
+
+Use `ensureContactsReadPermission()` from `contacts_permission.dart` before device picker/import.

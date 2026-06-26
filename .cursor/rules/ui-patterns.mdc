@@ -1,0 +1,54 @@
+---
+description: UI patterns — dark theme, dual-pane, modals, self-contact widgets
+globs: lib/{screens,widgets}/**
+alwaysApply: false
+---
+
+# UI Patterns
+
+## Theme
+
+Dark-only: black scaffold (`Colors.black`), white text, transparent status bar. Set in `main.dart`.
+
+## Dual-pane layout (`contacts_page.dart`)
+
+- `LayoutBuilder` → `Row` of two `Expanded` horizontal `ListView.builder`
+- `PageScrollPhysics`, `itemExtent: halfWidth`
+- `AddContactCard` at list edges; `ContactCard` for contacts
+
+## Modals
+
+**AlertDialog** — confirmations, limits, self-contact intro
+
+**Bottom sheet** — transparent scaffold, dark container:
+
+```dart
+showModalBottomSheet(
+  context: context,
+  backgroundColor: Colors.transparent,
+  builder: (ctx) => Container(
+    decoration: const BoxDecoration(
+      color: Colors.black87,
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    // ...
+  ),
+);
+```
+
+## Cards
+
+`BorderRadius.zero`, `margin: EdgeInsets.zero` on contact cards.
+
+## Panel overlays
+
+Settings/About slide from trailing edge (RTL-aware via `directionality_utils.dart`). Embedded in `ContactsPage` `Stack`, not separate routes when opened from main screen.
+
+## Self-contact widgets
+
+- `SelfContactHoldDetector` — short hold (500ms) jump to self; long hold (950ms) re-pick
+- `SelfContactAnimatedBackground` — gradient from `SelfContactGradientPalette` on Settings/About
+
+## Pro gating
+
+Use `ensureCanAddContact(context, count)` and `ensureProForBulkImport(context)` from `pro_gate.dart` — do not duplicate limit logic.

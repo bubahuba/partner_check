@@ -1,0 +1,40 @@
+---
+description: Partner Check app context — Flutter mobile, architecture, and scope
+alwaysApply: true
+---
+
+# Partner Check Overview
+
+Flutter mobile app (iOS/Android) for comparing contact "compatibility" via phone-number-derived colors in dual side-by-side panes.
+
+## Stack
+
+- **State**: `setState` in screens; `Provider` only for `ProSubscriptionService` (IAP)
+- **Persistence**: `SharedPreferences` via `ContactStorageService`
+- **Contacts**: `flutter_contacts` + `permission_handler`
+- **l10n**: Hand-maintained `AppLocalizations` (not `flutter gen-l10n`)
+- **Lint**: `package:flutter_lints/flutter.yaml`
+
+## Layout
+
+```
+lib/screens/   — UI + most state (contacts_page.dart is large; prefer targeted edits)
+lib/services/  — persistence, permissions, IAP
+lib/widgets/   — presentational components with callbacks
+lib/utils/     — static helpers (color, match, phone, pro gate, RTL)
+lib/models.dart — StoredContact only
+lib/l10n/      — app_localizations.dart + 17 .arb files
+```
+
+## Core domain
+
+- Color from last 6 phone digits → hex (`PhoneUtils`, `ColorUtils`)
+- Match = hue within ~30° (`MatchCalculator`)
+- Free tier: 10 contacts; bulk import requires Pro (`pro_gate.dart`)
+- Self-contact: Android auto-detects profile; iOS requires manual pick (`SelfContactFinder`)
+
+## Agent scope
+
+- This is a **Flutter/Dart** project — ignore Svelte/shadcn rules
+- Prefer minimal diffs; match existing naming and patterns
+- Platform splits use `dart:io` `Platform.isAndroid` / `Platform.isIOS`

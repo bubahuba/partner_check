@@ -1,0 +1,34 @@
+---
+description: Localization workflow — custom AppLocalizations, 17 locales
+globs: lib/l10n/**
+alwaysApply: false
+---
+
+# Localization
+
+Partner Check uses **hand-maintained** l10n — no code generation.
+
+## Locales (17)
+
+`en`, `ar`, `he`, `cs`, `sk`, `zh`, `ja`, `nl`, `de`, `es`, `fr`, `hi`, `it`, `pl`, `hu`, `ru`, `pt`
+
+RTL: `ar`, `he` — use `AppLocalizations.isRtl` / `directionality_utils.dart` for slide directions.
+
+## Adding a string (all 3 steps required)
+
+1. **`lib/l10n/app_en.arb`** — add key + `@key` description
+2. **All 16 other `app_*.arb` files** — add translated value (English fallback acceptable if user hasn't provided translations)
+3. **`lib/l10n/app_localizations.dart`**:
+   - Simple: `String get myKey => _localizedValues[locale.languageCode]?['myKey'] ?? 'English fallback';`
+   - Parameterized: `String myKey(String name) => (...).replaceAll('{name}', name);`
+   - Add `'myKey': '...'` to **every** language block in `_localizedValues`
+
+## Usage in UI
+
+```dart
+final l10n = AppLocalizations.of(context)!;
+Text(l10n.contactLimitMessage)
+Text(l10n.contactAlreadyInList(contactName))
+```
+
+Never hardcode user-visible strings in widgets or dialogs.
