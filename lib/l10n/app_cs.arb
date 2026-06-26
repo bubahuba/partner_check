@@ -54,6 +54,14 @@
   "pickYourselfMessage": "Vyberte svůj kontakt, abyste mohli začít se svými barvami. iOS to nemůže zjistit automaticky.",
   "pickYourselfButton": "Vybrat kontakt",
   "notNow": "Teď ne",
-  "pickYourselfNotInList": "{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu."
+  "pickYourselfNotInList": "{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu.",
+  "upgradeToPro": "Upgrade to PRO",
+  "restorePurchases": "Restore purchases",
+  "proVersion": "PartnerCheck Pro",
+  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
+  "purchaseInProgress": "Purchase in progress...",
+  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "alreadyPro": "You already have PRO."
 }
 

@@ -262,6 +262,38 @@
         "type": "String"
       }
     }
+  },
+  "upgradeToPro": "Upgrade to PRO",
+  "@upgradeToPro": {
+    "description": "Button to upgrade to PRO version"
+  },
+  "restorePurchases": "Restore purchases",
+  "@restorePurchases": {
+    "description": "Button to restore previous purchases"
+  },
+  "proVersion": "PartnerCheck Pro",
+  "@proVersion": {
+    "description": "Name of the PRO version"
+  },
+  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
+  "@proFeatureLoadAllContacts": {
+    "description": "Message explaining bulk import requires PRO"
+  },
+  "purchaseInProgress": "Purchase in progress...",
+  "@purchaseInProgress": {
+    "description": "Message while purchase is processing"
+  },
+  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
+  "@purchaseSuccess": {
+    "description": "Message when purchase succeeds"
+  },
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "@purchaseFailed": {
+    "description": "Message when purchase fails"
+  },
+  "alreadyPro": "You already have PRO.",
+  "@alreadyPro": {
+    "description": "Message when user already has PRO"
   }
 }
 

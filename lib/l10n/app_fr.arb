@@ -54,6 +54,14 @@
   "pickYourselfMessage": "Choisissez votre contact pour commencer avec vos couleurs. iOS ne peut pas le détecter automatiquement.",
   "pickYourselfButton": "Choisir un contact",
   "notNow": "Pas maintenant",
-  "pickYourselfNotInList": "{contactName} n'a pas été trouvé dans vos contacts chargés. Choisissez quelqu'un qui est dans la liste."
+  "pickYourselfNotInList": "{contactName} n'a pas été trouvé dans vos contacts chargés. Choisissez quelqu'un qui est dans la liste.",
+  "upgradeToPro": "Upgrade to PRO",
+  "restorePurchases": "Restore purchases",
+  "proVersion": "PartnerCheck Pro",
+  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
+  "purchaseInProgress": "Purchase in progress...",
+  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "alreadyPro": "You already have PRO."
 }
 

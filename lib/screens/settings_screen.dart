@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
@@ -11,6 +12,9 @@ import '../services/contact_storage_service.dart';
 import '../utils/directionality_utils.dart';
 import '../utils/self_contact_finder.dart';
 import '../utils/phone_utils.dart';
+import '../utils/pro_gate.dart';
+import '../services/pro_subscription_service.dart';
+import 'package:provider/provider.dart';
 import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -28,6 +32,8 @@ class SettingsScreenState extends State<SettingsScreen>
   int _loadProgress = 0;
   int _loadTotal = 0;
   bool _vibrationsEnabled = true;
+  bool _wasPro = false;
+  ProSubscriptionService? _proService;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
   late AnimationController _gradientController;
@@ -54,6 +60,24 @@ class SettingsScreenState extends State<SettingsScreen>
     )..repeat(reverse: true);
 
     _loadVibrationsSetting();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _proService = context.read<ProSubscriptionService>();
+      _wasPro = _proService!.isPro;
+      _proService!.addListener(_onProStatusChanged);
+    });
+  }
+
+  void _onProStatusChanged() {
+    if (!mounted || _proService == null) return;
+    if (_proService!.isPro && !_wasPro) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.purchaseSuccess)),
+      );
+    }
+    _wasPro = _proService!.isPro;
   }
 
   Future<void> _loadVibrationsSetting() async {
@@ -73,6 +97,7 @@ class SettingsScreenState extends State<SettingsScreen>
 
   @override
   void dispose() {
+    _proService?.removeListener(_onProStatusChanged);
     _slideController.dispose();
     _gradientController.dispose();
     super.dispose();
@@ -88,6 +113,110 @@ class SettingsScreenState extends State<SettingsScreen>
         widget.onClose!();
       }
     });
+  }
+
+  Future<void> _purchasePro() async {
+    final proService = context.read<ProSubscriptionService>();
+    final l10n = AppLocalizations.of(context)!;
+
+    if (proService.isPro) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.alreadyPro)),
+      );
+      return;
+    }
+
+    await proService.purchasePro();
+  }
+
+  Future<void> _restorePurchases() async {
+    final proService = context.read<ProSubscriptionService>();
+    final l10n = AppLocalizations.of(context)!;
+
+    await proService.restorePurchases();
+    if (!mounted) return;
+
+    if (proService.isPro) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.purchaseSuccess)),
+      );
+    }
+  }
+
+  Widget _buildProSection(double buttonFontSize) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Consumer<ProSubscriptionService>(
+      builder: (context, proService, _) {
+        final price = proService.proProduct?.price;
+        final upgradeLabel = price != null
+            ? '${l10n.upgradeToPro} ($price)'
+            : l10n.upgradeToPro;
+
+        return Column(
+          children: [
+            GestureDetector(
+              onLongPress: kDebugMode
+                  ? () => proService.debugTogglePro()
+                  : null,
+              child: Text(
+                proService.isPro ? l10n.proVersion : l10n.partnerCheckFree,
+                style: TextStyle(
+                  fontSize: buttonFontSize * 0.9,
+                  color: Colors.white,
+                  fontWeight:
+                      proService.isPro ? FontWeight.bold : FontWeight.normal,
+                  shadows: const [
+                    Shadow(
+                      color: Colors.black26,
+                      blurRadius: 8,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (!proService.isPro) ...[
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: proService.isLoading ? null : _purchasePro,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF6366F1),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: buttonFontSize * 2,
+                    vertical: buttonFontSize * 0.6,
+                  ),
+                ),
+                child: proService.isLoading
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: const Color(0xFF6366F1),
+                        ),
+                      )
+                    : Text(
+                        upgradeLabel,
+                        style: TextStyle(fontSize: buttonFontSize * 0.9),
+                      ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: proService.isLoading ? null : _restorePurchases,
+              child: Text(
+                l10n.restorePurchases,
+                style: TextStyle(
+                  fontSize: buttonFontSize * 0.85,
+                  color: Colors.white70,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   // Process a single device contact into stored form, or null if no phone.
@@ -213,6 +342,7 @@ class SettingsScreenState extends State<SettingsScreen>
 
   void _showAddContactMenu() {
     final l10n = AppLocalizations.of(context)!;
+    final isPro = context.read<ProSubscriptionService>().isPro;
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -246,11 +376,28 @@ class SettingsScreenState extends State<SettingsScreen>
               ),
               const Divider(color: Colors.grey),
               ListTile(
-                leading: const Icon(Icons.download, color: Colors.white),
-                title: Text(l10n.loadAllContacts,
-                    style: const TextStyle(color: Colors.white)),
-                onTap: () {
+                leading: Icon(
+                  isPro ? Icons.download : Icons.lock,
+                  color: isPro ? Colors.white : Colors.white54,
+                ),
+                title: Text(
+                  l10n.loadAllContacts,
+                  style: TextStyle(
+                    color: isPro ? Colors.white : Colors.white54,
+                  ),
+                ),
+                subtitle: isPro
+                    ? null
+                    : Text(
+                        l10n.proVersion,
+                        style: const TextStyle(color: Colors.white38),
+                      ),
+                onTap: () async {
                   Navigator.of(context).pop();
+                  if (!isPro) {
+                    await ensureProForBulkImport(this.context);
+                    return;
+                  }
                   _loadContacts();
                 },
               ),
@@ -263,6 +410,11 @@ class SettingsScreenState extends State<SettingsScreen>
   }
 
   Future<void> _pickAndAddContactFromDevice() async {
+    final contactCount = (await _storageService.loadContacts()).length;
+    if (!await ensureCanAddContact(context, contactCount)) {
+      return;
+    }
+
     try {
       // Request permission if needed
       if (!await ensureContactsReadPermission()) {
@@ -405,6 +557,11 @@ class SettingsScreenState extends State<SettingsScreen>
   }
 
   Future<void> _addContactManually() async {
+    final contactCount = (await _storageService.loadContacts()).length;
+    if (!await ensureCanAddContact(context, contactCount)) {
+      return;
+    }
+
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;
@@ -610,6 +767,10 @@ class SettingsScreenState extends State<SettingsScreen>
   }
 
   Future<void> _loadContacts() async {
+    if (!await ensureProForBulkImport(context)) {
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _resetLoadProgress();
@@ -940,6 +1101,8 @@ class SettingsScreenState extends State<SettingsScreen>
                               ],
                             ),
                             SizedBox(height: isPortrait ? 24 : 16),
+                            _buildProSection(buttonFontSize),
+                            SizedBox(height: isPortrait ? 24 : 16),
                             ElevatedButton.icon(
                               onPressed: _deleteAllContacts,
                               icon: const Icon(Icons.delete, color: Colors.white),
@@ -1006,8 +1169,20 @@ class SettingsScreenState extends State<SettingsScreen>
                                 iconWidget,
                                 SizedBox(height: spacing),
                                 Expanded(
-                                  child: Center(
-                                    child: textAndButton,
+                                  child: LayoutBuilder(
+                                    builder: (context, innerConstraints) {
+                                      return SingleChildScrollView(
+                                        child: ConstrainedBox(
+                                          constraints: BoxConstraints(
+                                            minHeight:
+                                                innerConstraints.maxHeight,
+                                          ),
+                                          child: Center(
+                                            child: textAndButton,
+                                          ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
@@ -1028,7 +1203,9 @@ class SettingsScreenState extends State<SettingsScreen>
                                     width:
                                         isPortrait ? spacing : spacing * 0.5),
                                 Expanded(
-                                  child: textAndButton,
+                                  child: SingleChildScrollView(
+                                    child: Center(child: textAndButton),
+                                  ),
                                 ),
                               ],
                             ),

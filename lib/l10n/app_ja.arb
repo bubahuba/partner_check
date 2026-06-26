@@ -54,6 +54,14 @@
   "pickYourselfMessage": "自分の色で始めるには、自分の連絡先を選んでください。iOS では自動検出できません。",
   "pickYourselfButton": "連絡先を選ぶ",
   "notNow": "後で",
-  "pickYourselfNotInList": "{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。"
+  "pickYourselfNotInList": "{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。",
+  "upgradeToPro": "Upgrade to PRO",
+  "restorePurchases": "Restore purchases",
+  "proVersion": "PartnerCheck Pro",
+  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
+  "purchaseInProgress": "Purchase in progress...",
+  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "alreadyPro": "You already have PRO."
 }
 

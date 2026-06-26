@@ -54,6 +54,14 @@
   "pickYourselfMessage": "Kies je contact zodat je kunt beginnen met je kleuren. iOS kan dit niet automatisch detecteren.",
   "pickYourselfButton": "Contact kiezen",
   "notNow": "Niet nu",
-  "pickYourselfNotInList": "{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat."
+  "pickYourselfNotInList": "{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat.",
+  "upgradeToPro": "Upgrade to PRO",
+  "restorePurchases": "Restore purchases",
+  "proVersion": "PartnerCheck Pro",
+  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
+  "purchaseInProgress": "Purchase in progress...",
+  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "alreadyPro": "You already have PRO."
 }
 

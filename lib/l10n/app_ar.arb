@@ -54,5 +54,13 @@
   "pickYourselfMessage": "اختر جهة اتصالك لبدء ألوانك. لا يمكن لـ iOS اكتشاف ذلك تلقائياً.",
   "pickYourselfButton": "اختر جهة اتصال",
   "notNow": "ليس الآن",
-  "pickYourselfNotInList": "لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة."
+  "pickYourselfNotInList": "لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة.",
+  "upgradeToPro": "Upgrade to PRO",
+  "restorePurchases": "Restore purchases",
+  "proVersion": "PartnerCheck Pro",
+  "proFeatureLoadAllContacts": "Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.",
+  "purchaseInProgress": "Purchase in progress...",
+  "purchaseSuccess": "PRO unlocked! Thank you for your purchase.",
+  "purchaseFailed": "Purchase failed. Please try again.",
+  "alreadyPro": "You already have PRO."
 }

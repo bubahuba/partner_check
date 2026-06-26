@@ -94,6 +94,14 @@ class AppLocalizations {
   String get pickYourselfButton => _localizedValues[locale.languageCode]?['pickYourselfButton'] ?? 'Choose contact';
   String get notNow => _localizedValues[locale.languageCode]?['notNow'] ?? 'Not now';
   String pickYourselfNotInList(String contactName) => (_localizedValues[locale.languageCode]?['pickYourselfNotInList'] ?? '{contactName} was not found in your loaded contacts. Pick someone who is in the list.').replaceAll('{contactName}', contactName);
+  String get upgradeToPro => _localizedValues[locale.languageCode]?['upgradeToPro'] ?? 'Upgrade to PRO';
+  String get restorePurchases => _localizedValues[locale.languageCode]?['restorePurchases'] ?? 'Restore purchases';
+  String get proVersion => _localizedValues[locale.languageCode]?['proVersion'] ?? 'PartnerCheck Pro';
+  String get proFeatureLoadAllContacts => _localizedValues[locale.languageCode]?['proFeatureLoadAllContacts'] ?? 'Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.';
+  String get purchaseInProgress => _localizedValues[locale.languageCode]?['purchaseInProgress'] ?? 'Purchase in progress...';
+  String get purchaseSuccess => _localizedValues[locale.languageCode]?['purchaseSuccess'] ?? 'PRO unlocked! Thank you for your purchase.';
+  String get purchaseFailed => _localizedValues[locale.languageCode]?['purchaseFailed'] ?? 'Purchase failed. Please try again.';
+  String get alreadyPro => _localizedValues[locale.languageCode]?['alreadyPro'] ?? 'You already have PRO.';
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -152,6 +160,14 @@ class AppLocalizations {
       'pickYourselfButton': 'Choose contact',
       'notNow': 'Not now',
       'pickYourselfNotInList': '{contactName} was not found in your loaded contacts. Pick someone who is in the list.',
+      'upgradeToPro': 'Upgrade to PRO',
+      'restorePurchases': 'Restore purchases',
+      'proVersion': 'PartnerCheck Pro',
+      'proFeatureLoadAllContacts': 'Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.',
+      'purchaseInProgress': 'Purchase in progress...',
+      'purchaseSuccess': 'PRO unlocked! Thank you for your purchase.',
+      'purchaseFailed': 'Purchase failed. Please try again.',
+      'alreadyPro': 'You already have PRO.',
     },
     'ar': {
       'appTitle': 'Partner Check',

@@ -16,6 +16,7 @@ import '../widgets/contact_card.dart';
 import '../widgets/add_contact_card.dart';
 import '../widgets/contacts_hud.dart';
 import 'settings_screen.dart';
+import '../utils/pro_gate.dart';
 import 'about_screen.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -1015,6 +1016,10 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _pickAndAddContactFromDevice(
       {required ScrollController targetController,
       bool addAtStart = false}) async {
+    if (!await ensureCanAddContact(context, _contacts.length)) {
+      return;
+    }
+
     try {
       // Request permission if needed
       if (!await ensureContactsReadPermission()) {
@@ -1325,6 +1330,10 @@ class ContactsPageState extends State<ContactsPage>
   Future<void> _addContactManually(
       {required ScrollController targetController,
       bool addAtStart = false}) async {
+    if (!await ensureCanAddContact(context, _contacts.length)) {
+      return;
+    }
+
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final l10n = AppLocalizations.of(context)!;

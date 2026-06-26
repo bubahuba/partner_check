@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/initial_screen.dart';
+import 'services/pro_subscription_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Set system UI overlay style for black background
+
+  final proService = ProSubscriptionService();
+  await proService.initialize();
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -16,7 +21,13 @@ void main() {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
-  runApp(const PartnerCheck());
+
+  runApp(
+    ChangeNotifierProvider.value(
+      value: proService,
+      child: const PartnerCheck(),
+    ),
+  );
 }
 
 class PartnerCheck extends StatelessWidget {
