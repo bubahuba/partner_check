@@ -16,6 +16,8 @@ class ContactStorageService {
   static const String _orderingContactKey = 'ordering_contact';
   static const String _originalContactOrderKey = 'original_contact_order';
   static const String _pendingSelfContactPickKey = 'pending_self_contact_pick';
+  static const String _selfContactNameKey = 'self_contact_name';
+  static const String _selfContactColorKey = 'self_contact_color';
   static const String _contactsBulkLoadedKey = 'contacts_bulk_loaded';
 
   /// Load contacts from storage
@@ -163,6 +165,29 @@ class ContactStorageService {
     await prefs.setBool(_pendingSelfContactPickKey, pending);
   }
 
+  /// Saved "me" contact identity (survives scroll position changes).
+  Future<StoredSelfContact?> loadSelfContact() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString(_selfContactNameKey);
+    if (name == null || name.isEmpty) return null;
+    return StoredSelfContact(
+      name: name,
+      color: prefs.getInt(_selfContactColorKey) ?? 0,
+    );
+  }
+
+  Future<void> saveSelfContact(StoredSelfContact contact) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_selfContactNameKey, contact.name);
+    await prefs.setInt(_selfContactColorKey, contact.color);
+  }
+
+  Future<void> clearSelfContact() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_selfContactNameKey);
+    await prefs.remove(_selfContactColorKey);
+  }
+
   Future<void> markContactsBulkLoaded() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_contactsBulkLoadedKey, true);
@@ -176,6 +201,14 @@ class ContactStorageService {
     }
     return value;
   }
+}
+
+/// Persisted identity of the user's own contact.
+class StoredSelfContact {
+  final String name;
+  final int color;
+
+  const StoredSelfContact({required this.name, required this.color});
 }
 
 /// Data class for scroll positions

@@ -13,21 +13,32 @@ import '../utils/directionality_utils.dart';
 import '../utils/self_contact_finder.dart';
 import '../utils/phone_utils.dart';
 import '../utils/pro_gate.dart';
+import '../utils/self_contact_gradient.dart';
 import '../services/pro_subscription_service.dart';
+import '../widgets/self_contact_animated_background.dart';
 import 'package:provider/provider.dart';
 import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onClose;
+  /// Called after bulk import saves contacts, while the loading overlay is still
+  /// visible, so the contacts page can refresh before the panel slides away.
+  final Future<void> Function()? onPrepareClose;
+  final int? selfContactColor;
 
-  const SettingsScreen({super.key, this.onClose});
+  const SettingsScreen({
+    super.key,
+    this.onClose,
+    this.onPrepareClose,
+    this.selfContactColor,
+  });
 
   @override
   SettingsScreenState createState() => SettingsScreenState();
 }
 
 class SettingsScreenState extends State<SettingsScreen>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   bool _isLoading = false;
   int _loadProgress = 0;
   int _loadTotal = 0;
@@ -36,7 +47,6 @@ class SettingsScreenState extends State<SettingsScreen>
   ProSubscriptionService? _proService;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
-  late AnimationController _gradientController;
   static const String _vibrationsKey = 'vibrations_enabled';
   final ContactStorageService _storageService = ContactStorageService();
 
@@ -52,12 +62,6 @@ class SettingsScreenState extends State<SettingsScreen>
     );
     // Animate in from the right when first shown
     _slideController.forward();
-
-    // Gradient animation controller - loops infinitely back and forth
-    _gradientController = AnimationController(
-      duration: const Duration(seconds: 5),
-      vsync: this,
-    )..repeat(reverse: true);
 
     _loadVibrationsSetting();
 
@@ -99,13 +103,13 @@ class SettingsScreenState extends State<SettingsScreen>
   void dispose() {
     _proService?.removeListener(_onProStatusChanged);
     _slideController.dispose();
-    _gradientController.dispose();
     super.dispose();
   }
 
-  Color _interpolateColor(Color a, Color b, double t) {
-    return Color.lerp(a, b, t)!;
-  }
+  Color get _accentColor => widget.selfContactColor != null
+      ? SelfContactGradientPalette.fromColorValue(widget.selfContactColor!)
+          .inner
+      : SelfContactGradientPalette.defaultInner;
 
   void _openContactsPage() {
     Navigator.of(context).pushReplacement(
@@ -195,7 +199,7 @@ class SettingsScreenState extends State<SettingsScreen>
                 onPressed: proService.isLoading ? null : _purchasePro,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFF6366F1),
+                  foregroundColor: _accentColor,
                   padding: EdgeInsets.symmetric(
                     horizontal: buttonFontSize * 2,
                     vertical: buttonFontSize * 0.6,
@@ -207,7 +211,7 @@ class SettingsScreenState extends State<SettingsScreen>
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: const Color(0xFF6366F1),
+                          color: _accentColor,
                         ),
                       )
                     : Text(
@@ -272,6 +276,10 @@ class SettingsScreenState extends State<SettingsScreen>
           );
           if (index != null) {
             page1All = index;
+            final self = storedContacts[index];
+            await _storageService.saveSelfContact(
+              StoredSelfContact(name: self.name, color: self.color),
+            );
           }
         }
       } catch (_) {
@@ -762,6 +770,7 @@ class SettingsScreenState extends State<SettingsScreen>
     await _storageService.saveOrderingContact(null);
     await _storageService.clearOriginalContactOrder();
     await _storageService.savePendingSelfContactPick(false);
+    await _storageService.clearSelfContact();
 
     // Close settings screen and navigate to contacts page
     if (mounted) {
@@ -847,6 +856,12 @@ class SettingsScreenState extends State<SettingsScreen>
       await _storageService.saveContacts(storedContacts);
       await _applyInitialSelfContactScroll(storedContacts);
 
+      if (mounted && widget.onPrepareClose != null) {
+        await widget.onPrepareClose!();
+      }
+
+      if (!mounted) return;
+
       setState(() {
         _isLoading = false;
         _resetLoadProgress();
@@ -889,10 +904,7 @@ class SettingsScreenState extends State<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    // App icon colors: indigo (#6366F1), pink (#EC4899), blue (#3B82F6)
-    const Color indigo = Color(0xFF6366F1);
-    const Color pink = Color(0xFFEC4899);
-    const Color blue = Color(0xFF3B82F6);
+    final accent = _accentColor;
 
     return AnimatedBuilder(
       animation: _slideAnimation,
@@ -904,77 +916,28 @@ class SettingsScreenState extends State<SettingsScreen>
       },
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: AnimatedBuilder(
-          animation: _gradientController,
-          builder: (context, child) {
-            // Calculate animated colors based on gradient animation
-            final t = _gradientController.value;
-            // Cycle through: indigo -> pink -> blue -> indigo
-            Color color1, color2, color3;
-            if (t < 0.33) {
-              // Transition from indigo to pink
-              final localT = t / 0.33;
-              color1 = _interpolateColor(indigo, pink, localT);
-              color2 = pink;
-              color3 = blue;
-            } else if (t < 0.66) {
-              // Transition from pink to blue
-              final localT = (t - 0.33) / 0.33;
-              color1 = pink;
-              color2 = _interpolateColor(pink, blue, localT);
-              color3 = blue;
-            } else {
-              // Transition from blue back to indigo
-              final localT = (t - 0.66) / 0.34;
-              color1 = pink;
-              color2 = blue;
-              color3 = _interpolateColor(blue, indigo, localT);
-            }
-
-            return Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [color1, color2, color3],
-                  stops: const [0.0, 0.5, 1.0],
+        body: SelfContactAnimatedBackground(
+          selfContactColor: widget.selfContactColor,
+          child: SafeArea(
+            child: Stack(
+              children: [
+                // Back arrow button at the same position as HUD settings button
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    onPressed: _handleClose,
+                    style: IconButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                    ),
+                  ),
                 ),
-              ),
-              child: SafeArea(
-                child: Stack(
-                  children: [
-                    // Smooth color overlay for blur effect
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.white.withValues(alpha: 0.1),
-                            Colors.transparent,
-                            Colors.white.withValues(alpha: 0.05),
-                          ],
-                          stops: const [0.0, 0.5, 1.0],
-                        ),
-                      ),
-                    ),
-                    // Back arrow button at the same position as HUD settings button
-                    Positioned(
-                      top: 10,
-                      left: 0,
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ),
-                        onPressed: _handleClose,
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                        ),
-                      ),
-                    ),
-                    // Content
-                    LayoutBuilder(
+                // Content
+                LayoutBuilder(
                       builder: (context, constraints) {
                         final isPortrait =
                             constraints.maxHeight > constraints.maxWidth;
@@ -1076,7 +1039,7 @@ class SettingsScreenState extends State<SettingsScreen>
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: indigo,
+                                foregroundColor: accent,
                                 padding: buttonPadding,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -1222,10 +1185,8 @@ class SettingsScreenState extends State<SettingsScreen>
                   ],
                 ),
               ),
-            );
-          },
-        ),
-      ),
+            ),
+          ),
     );
   }
 }

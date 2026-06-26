@@ -15,6 +15,7 @@ import '../services/contact_storage_service.dart';
 import '../widgets/contact_card.dart';
 import '../widgets/add_contact_card.dart';
 import '../widgets/contacts_hud.dart';
+import '../widgets/self_contact_hold_detector.dart';
 import 'settings_screen.dart';
 import '../utils/pro_gate.dart';
 import '../services/pro_subscription_service.dart';
@@ -80,6 +81,8 @@ class ContactsPageState extends State<ContactsPage>
   double? _savedScrollOffset1;
   double? _savedScrollOffset2;
   bool _shouldPromptSelfContactPick = false;
+  bool _isApplyingBulkLoad = false;
+  StoredSelfContact? _selfContact;
   ProSubscriptionService? _proService;
   bool _wasPro = false;
 
@@ -582,6 +585,7 @@ class ContactsPageState extends State<ContactsPage>
     _vibrationsEnabled = await _storageService.loadVibrationsEnabled();
     _shouldPromptSelfContactPick =
         await _storageService.loadPendingSelfContactPick();
+    _selfContact = await _storageService.loadSelfContact();
     await _clearLegacySortPersistence();
     await _loadContacts();
   }
@@ -796,6 +800,89 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
+  /// Refresh contacts and scroll state while settings is still open (bulk import).
+  Future<void> _prepareForBulkLoadClose() async {
+    final contacts = await _storageService.loadContacts();
+    final positions = await _storageService.loadScrollPositions();
+    _shouldPromptSelfContactPick =
+        await _storageService.loadPendingSelfContactPick();
+    _selfContact = await _storageService.loadSelfContact();
+    if (!mounted) return;
+    setState(() {
+      _isApplyingBulkLoad = true;
+      _contacts = contacts;
+      _updateFavoritesFromContacts();
+      _clearVirtualSortState();
+      _currentPage1All = positions.page1All;
+      _currentPage2All = positions.page2All;
+      _currentPage1Favorites = positions.page1Favorites;
+      _currentPage2Favorites = positions.page2Favorites;
+    });
+  }
+
+  void _finalizeAfterBulkLoad({int attemptsLeft = 40}) {
+    if (!mounted) return;
+
+    if (!_scrollController1.hasClients || !_scrollController2.hasClients) {
+      if (attemptsLeft <= 0) {
+        setState(() => _isApplyingBulkLoad = false);
+        _maybePromptPickSelfContact();
+        return;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _finalizeAfterBulkLoad(attemptsLeft: attemptsLeft - 1);
+      });
+      return;
+    }
+
+    final width1 = _scrollController1.position.viewportDimension;
+    final width2 = _scrollController2.position.viewportDimension;
+    if (width1 <= 0 || width2 <= 0) {
+      if (attemptsLeft <= 0) {
+        setState(() => _isApplyingBulkLoad = false);
+        _maybePromptPickSelfContact();
+        return;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _finalizeAfterBulkLoad(attemptsLeft: attemptsLeft - 1);
+      });
+      return;
+    }
+
+    final displayedContacts = _displayedContacts;
+    if (displayedContacts.isEmpty) {
+      setState(() => _isApplyingBulkLoad = false);
+      _prepareEmptyContactsView();
+      _maybePromptPickSelfContact();
+      return;
+    }
+
+    final targetPage1 =
+        _favoritesMode ? _currentPage1Favorites : _currentPage1All;
+    final targetPage2 =
+        _favoritesMode ? _currentPage2Favorites : _currentPage2All;
+    final maxIndex = displayedContacts.length - 1;
+    final clampedPage1 = targetPage1.clamp(0, maxIndex);
+    final clampedPage2 = targetPage2.clamp(0, maxIndex);
+
+    _scrollController1.jumpTo((clampedPage1 + 1) * width1);
+    _scrollController2.jumpTo((clampedPage2 + 1) * width2);
+
+    setState(() {
+      _isApplyingBulkLoad = false;
+      _currentPage1 = clampedPage1;
+      _currentPage2 = clampedPage2;
+    });
+
+    _saveScrollPositions();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _checkForMatch();
+      _maybePromptPickSelfContact();
+    });
+  }
+
   /// Save current scroll positions from scroll controllers
   void _saveCurrentScrollPositions() {
     if (_scrollController1.hasClients) {
@@ -957,57 +1044,106 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  void _scrollLeftPaneToIndex(int index) {
+  void _scrollPaneToSelfIndex(ScrollController controller, int index) {
     final displayedContacts = _displayedContacts;
     final maxIndex =
         displayedContacts.isNotEmpty ? displayedContacts.length - 1 : 0;
     final clamped = index.clamp(0, maxIndex);
 
     setState(() {
-      _currentPage1 = clamped;
-      _currentPage1All = clamped;
+      if (controller == _scrollController1) {
+        _currentPage1 = clamped;
+        if (_favoritesMode) {
+          _currentPage1Favorites = clamped;
+        } else {
+          _currentPage1All = clamped;
+        }
+      } else {
+        _currentPage2 = clamped;
+        if (_favoritesMode) {
+          _currentPage2Favorites = clamped;
+        } else {
+          _currentPage2All = clamped;
+        }
+      }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_scrollController1.hasClients) return;
-      final width = _scrollController1.position.viewportDimension;
+      if (!controller.hasClients) return;
+      final width = controller.position.viewportDimension;
       if (width <= 0) return;
-      _scrollController1.jumpTo((clamped + 1) * width);
+      controller.jumpTo((clamped + 1) * width);
       _saveScrollPositions();
       _checkForMatch();
     });
   }
 
-  Future<void> _promptPickSelfContact() async {
+  Future<void> _saveSelfContactAt(int index) async {
+    if (index < 0 || index >= _contacts.length) return;
+    final contact = _contacts[index];
+    final self = StoredSelfContact(name: contact.name, color: contact.color);
+    await _storageService.saveSelfContact(self);
+    _selfContact = self;
+  }
+
+  int? _indexForStoredSelfContact() {
+    if (_selfContact == null) return null;
+    return SelfContactFinder.findIndexForStoredSelf(_contacts, _selfContact!);
+  }
+
+  Future<void> _goToSelfContact(ScrollController controller) async {
+    final index = _indexForStoredSelfContact();
+    if (index != null) {
+      _scrollPaneToSelfIndex(controller, index);
+      return;
+    }
+
+    if (_selfContact != null) {
+      await _storageService.clearSelfContact();
+      _selfContact = null;
+    }
+
+    await _pickSelfContact(
+      showIntroDialog: false,
+      targetController: controller,
+    );
+  }
+
+  Future<void> _pickSelfContact({
+    required bool showIntroDialog,
+    ScrollController? targetController,
+  }) async {
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
 
     while (mounted) {
-      if (!mounted) return;
-      final shouldPick = await showDialog<bool>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AlertDialog(
-          title: Text(l10n.pickYourselfTitle),
-          content: Text(l10n.pickYourselfMessage),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.notNow),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.pickYourselfButton),
-            ),
-          ],
-        ),
-      );
+      if (showIntroDialog) {
+        if (!mounted) return;
+        final shouldPick = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.pickYourselfTitle),
+            content: Text(l10n.pickYourselfMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(l10n.notNow),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(l10n.pickYourselfButton),
+              ),
+            ],
+          ),
+        );
 
-      if (!mounted) return;
+        if (!mounted) return;
 
-      if (shouldPick != true) {
-        await _storageService.savePendingSelfContactPick(false);
-        return;
+        if (shouldPick != true) {
+          await _storageService.savePendingSelfContactPick(false);
+          return;
+        }
       }
 
       if (!await ensureContactsReadPermission()) {
@@ -1021,7 +1157,10 @@ class ContactsPageState extends State<ContactsPage>
 
       final contact = await pickContactWithNameAndPhone();
       if (contact == null) {
-        continue;
+        if (showIntroDialog) {
+          continue;
+        }
+        return;
       }
 
       final contactName = contact.displayName ?? '';
@@ -1031,7 +1170,10 @@ class ContactsPageState extends State<ContactsPage>
             SnackBar(content: Text(l10n.selectedContactNoName)),
           );
         }
-        continue;
+        if (showIntroDialog) {
+          continue;
+        }
+        return;
       }
 
       final index = SelfContactFinder.findIndexForContact(_contacts, contact);
@@ -1043,13 +1185,24 @@ class ContactsPageState extends State<ContactsPage>
             ),
           );
         }
-        continue;
+        if (showIntroDialog) {
+          continue;
+        }
+        return;
       }
 
       await _storageService.savePendingSelfContactPick(false);
-      _scrollLeftPaneToIndex(index);
+      await _saveSelfContactAt(index);
+      _scrollPaneToSelfIndex(
+        targetController ?? _scrollController1,
+        index,
+      );
       return;
     }
+  }
+
+  Future<void> _promptPickSelfContact() async {
+    await _pickSelfContact(showIntroDialog: true);
   }
 
   Future<void> _loadVibrationsSetting() async {
@@ -1828,6 +1981,13 @@ class ContactsPageState extends State<ContactsPage>
 
     // Check if the deleted contact is the ordering contact
     final isOrderingContact = _orderingContact?.name == contactName;
+    final isSelfContact = _selfContact != null &&
+        _contacts.any(
+          (c) =>
+              c.name == contactName &&
+              c.name == _selfContact!.name &&
+              c.color == _selfContact!.color,
+        );
 
     // Remove from contacts list and update base order used for virtual sorting
     setState(() {
@@ -1849,6 +2009,11 @@ class ContactsPageState extends State<ContactsPage>
 
     // Save updated contacts
     await _saveContacts();
+
+    if (isSelfContact) {
+      await _storageService.clearSelfContact();
+      _selfContact = null;
+    }
 
     // Get displayed contacts AFTER deletion
     final displayedContacts = _displayedContacts;
@@ -2129,6 +2294,17 @@ class ContactsPageState extends State<ContactsPage>
     );
   }
 
+  Widget _wrapSelfContactHold(ScrollController controller, Widget child) {
+    return SelfContactHoldDetector(
+      onShortHold: () => _goToSelfContact(controller),
+      onLongHold: () => _pickSelfContact(
+        showIntroDialog: false,
+        targetController: controller,
+      ),
+      child: child,
+    );
+  }
+
   Widget _buildListView(
       ScrollController controller,
       double height,
@@ -2174,26 +2350,35 @@ class ContactsPageState extends State<ContactsPage>
       itemBuilder: (context, index) {
         // First item is always the add contact card
         if (index == 0) {
-          return AddContactCard(
-            height: height,
-            onTap: () => _showAddContactMenu(controller, isStartCard: true),
+          return _wrapSelfContactHold(
+            controller,
+            AddContactCard(
+              height: height,
+              onTap: () => _showAddContactMenu(controller, isStartCard: true),
+            ),
           );
         }
 
         // Last item is also the add contact card (only if there are contacts)
         if (displayedContacts.isNotEmpty &&
             index == displayedContacts.length + 1) {
-          return AddContactCard(
-            height: height,
-            onTap: () => _showAddContactMenu(controller, isStartCard: false),
+          return _wrapSelfContactHold(
+            controller,
+            AddContactCard(
+              height: height,
+              onTap: () => _showAddContactMenu(controller, isStartCard: false),
+            ),
           );
         }
 
         // When no contacts, index 1 should also be the add contact card
         if (displayedContacts.isEmpty && index == 1) {
-          return AddContactCard(
-            height: height,
-            onTap: () => _showAddContactMenu(controller, isStartCard: false),
+          return _wrapSelfContactHold(
+            controller,
+            AddContactCard(
+              height: height,
+              onTap: () => _showAddContactMenu(controller, isStartCard: false),
+            ),
           );
         }
 
@@ -2201,9 +2386,12 @@ class ContactsPageState extends State<ContactsPage>
         final contactIndex = index - 1;
         if (contactIndex < 0 || contactIndex >= displayedContacts.length) {
           // Should not happen, but return add contact card as fallback
-          return AddContactCard(
-            height: height,
-            onTap: () => _showAddContactMenu(controller, isStartCard: false),
+          return _wrapSelfContactHold(
+            controller,
+            AddContactCard(
+              height: height,
+              onTap: () => _showAddContactMenu(controller, isStartCard: false),
+            ),
           );
         }
         final contact = displayedContacts[contactIndex];
@@ -2231,24 +2419,27 @@ class ContactsPageState extends State<ContactsPage>
         final isOrderingActive = _orderingContact?.name == contact.name &&
             _lockedPaneController == controller;
 
-        return ContactCard(
-          contact: contact,
-          height: height,
-          overlayHeight: _overlayHeight,
-          isCurrentPage: isCurrentPage,
-          isMatch: _isMatch,
-          isHudVisible: _isHudVisible,
-          showNameFlash: showNameFlash,
-          activeFlashType: activeFlashType,
-          heartAnimationController: heartAnimationController,
-          flashAnimationController: flashAnimationController,
-          onTap: _toggleHudVisibility,
-          onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
-          onEdit: _isHudVisible ? () => _editContact(contact) : null,
-          onToggleFavorite: () => _toggleFavorite(contact.name),
-          onReorder: () => _reorderContactsByMatch(contact, controller),
-          onDelete: () => _confirmDeleteContact(contact.name),
-          isOrderingActive: isOrderingActive,
+        return _wrapSelfContactHold(
+          controller,
+          ContactCard(
+            contact: contact,
+            height: height,
+            overlayHeight: _overlayHeight,
+            isCurrentPage: isCurrentPage,
+            isMatch: _isMatch,
+            isHudVisible: _isHudVisible,
+            showNameFlash: showNameFlash,
+            activeFlashType: activeFlashType,
+            heartAnimationController: heartAnimationController,
+            flashAnimationController: flashAnimationController,
+            onTap: _toggleHudVisibility,
+            onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
+            onEdit: _isHudVisible ? () => _editContact(contact) : null,
+            onToggleFavorite: () => _toggleFavorite(contact.name),
+            onReorder: () => _reorderContactsByMatch(contact, controller),
+            onDelete: () => _confirmDeleteContact(contact.name),
+            isOrderingActive: isOrderingActive,
+          ),
         );
       },
     );
@@ -2352,9 +2543,13 @@ class ContactsPageState extends State<ContactsPage>
           }
 
           // Ensure ListView shows add cards when there are no contacts
-          if (displayedContacts.isEmpty && halfWidth > 0) {
+          if (displayedContacts.isEmpty &&
+              halfWidth > 0 &&
+              !_isApplyingBulkLoad) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollPanesToEmptyStart();
+              if (!_isApplyingBulkLoad) {
+                _scrollPanesToEmptyStart();
+              }
             });
           }
 
@@ -2411,34 +2606,28 @@ class ContactsPageState extends State<ContactsPage>
                 if (_showSettings)
                   Positioned.fill(
                     child: SettingsScreen(
+                      selfContactColor: _selfContact?.color,
+                      onPrepareClose: _prepareForBulkLoadClose,
                       onClose: () async {
                         setState(() {
                           _showSettings = false;
                         });
-                        // Reload contacts in case they were loaded from settings
-                        await _loadContactsWithoutRestoringScroll();
-                        // Also reload vibrations setting
                         _loadVibrationsSetting();
 
-                        final bulkLoaded =
-                            await _storageService.loadAndClearContactsBulkLoaded();
+                        final bulkLoaded = await _storageService
+                            .loadAndClearContactsBulkLoaded();
                         if (bulkLoaded) {
-                          final positions =
-                              await _storageService.loadScrollPositions();
-                          _currentPage1All = positions.page1All;
-                          _currentPage2All = positions.page2All;
-                          _currentPage1Favorites = positions.page1Favorites;
-                          _currentPage2Favorites = positions.page2Favorites;
-                          _shouldPromptSelfContactPick = await _storageService
-                              .loadPendingSelfContactPick();
+                          if (_contacts.isEmpty) {
+                            await _prepareForBulkLoadClose();
+                          }
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              _restoreScrollPositions();
-                              _maybePromptPickSelfContact();
-                            });
+                            _finalizeAfterBulkLoad();
                           });
                           return;
                         }
+
+                        // Reload contacts in case they were changed in settings
+                        await _loadContactsWithoutRestoringScroll();
 
                         // Restore scroll positions after reload (page-based, handles list changes)
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -2452,6 +2641,7 @@ class ContactsPageState extends State<ContactsPage>
                 if (_showAbout)
                   Positioned.fill(
                     child: AboutScreen(
+                      selfContactColor: _selfContact?.color,
                       onClose: () {
                         setState(() {
                           _showAbout = false;
