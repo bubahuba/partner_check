@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter/services.dart';
+import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import '../services/contacts_permission.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,6 +10,7 @@ import '../l10n/app_localizations.dart';
 import '../models.dart';
 import '../utils/match_calculator.dart';
 import '../utils/phone_utils.dart';
+import '../utils/self_contact_finder.dart';
 import '../services/contact_storage_service.dart';
 import '../widgets/contact_card.dart';
 import '../widgets/add_contact_card.dart';
@@ -68,15 +70,13 @@ class ContactsPageState extends State<ContactsPage>
   ScrollController? _lockedPaneController;
   StoredContact? _orderingContact;
   List<StoredContact>? _originalContactOrder;
-  bool _isRestoringLockedState = false;
-
-  // Debounce timers for saving scroll positions
   Timer? _scrollSaveTimer1;
   Timer? _scrollSaveTimer2;
 
   // Saved scroll positions for restoring after closing settings/about
   double? _savedScrollOffset1;
   double? _savedScrollOffset2;
+  bool _shouldPromptSelfContactPick = false;
 
   @override
   void initState() {
@@ -550,7 +550,155 @@ class ContactsPageState extends State<ContactsPage>
     _currentPage2Favorites = positions.page2Favorites;
     _isHudVisible = await _storageService.loadHudVisible();
     _vibrationsEnabled = await _storageService.loadVibrationsEnabled();
+    _shouldPromptSelfContactPick =
+        await _storageService.loadPendingSelfContactPick();
+    await _clearLegacySortPersistence();
     await _loadContacts();
+  }
+
+  Future<void> _clearLegacySortPersistence() async {
+    await _storageService.clearOriginalContactOrder();
+    await _storageService.saveLockedPane(null);
+    await _storageService.saveOrderingContact(null);
+  }
+
+  void _clearVirtualSortState() {
+    _lockedPaneController = null;
+    _orderingContact = null;
+    _originalContactOrder = null;
+  }
+
+  List<StoredContact> get _contactsForStorage =>
+      _originalContactOrder ?? _contacts;
+
+  String? _contactNameAtPage(int pageIndex) {
+    final displayed = _displayedContacts;
+    if (pageIndex < 0 || pageIndex >= displayed.length) return null;
+    return displayed[pageIndex].name;
+  }
+
+  void _scrollPaneToContactName(ScrollController controller, String? contactName) {
+    if (contactName == null || !controller.hasClients) return;
+    final index =
+        _displayedContacts.indexWhere((contact) => contact.name == contactName);
+    if (index < 0) return;
+
+    final width = controller.position.viewportDimension;
+    if (width <= 0) return;
+
+    controller.jumpTo((index + 1) * width);
+
+    if (controller == _scrollController1) {
+      setState(() {
+        _currentPage1 = index;
+        if (_favoritesMode) {
+          _currentPage1Favorites = index;
+        } else {
+          _currentPage1All = index;
+        }
+      });
+    } else if (controller == _scrollController2) {
+      setState(() {
+        _currentPage2 = index;
+        if (_favoritesMode) {
+          _currentPage2Favorites = index;
+        } else {
+          _currentPage2All = index;
+        }
+      });
+    }
+  }
+
+  Future<bool> _handleDuplicateContactName(
+    String contactName,
+    ScrollController targetController,
+  ) async {
+    if (!_contacts.any((contact) => contact.name == contactName)) {
+      return false;
+    }
+
+    if (_favoritesMode && !_favoriteNames.contains(contactName)) {
+      setState(() {
+        _favoriteNames.add(contactName);
+        _updateFavoritesFromContacts();
+      });
+      await _saveFavorites();
+      await _saveContacts();
+      _refreshPanesAfterContactListChange(
+        targetController: targetController,
+        anchorContactName: contactName,
+      );
+      return true;
+    }
+
+    if (mounted) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.contactAlreadyInList(contactName)),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      if (_displayedContacts.any((contact) => contact.name == contactName)) {
+        _refreshPanesAfterContactListChange(
+          targetController: targetController,
+          anchorContactName: contactName,
+        );
+      }
+    }
+    return true;
+  }
+
+  String? _bestDisplayedMatchName(String referenceName) {
+    final referenceIndex =
+        _contacts.indexWhere((contact) => contact.name == referenceName);
+    if (referenceIndex == -1) return null;
+
+    final reference = _contacts[referenceIndex];
+    StoredContact? bestMatch;
+    num bestScore = -1;
+
+    for (final contact in _displayedContacts) {
+      if (contact.name == referenceName) continue;
+      final score = _calculateMatchCount(reference, contact);
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = contact;
+      }
+    }
+
+    return bestMatch?.name;
+  }
+
+  void _refreshPanesAfterContactListChange({
+    required ScrollController targetController,
+    required String anchorContactName,
+  }) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollPaneToContactName(targetController, anchorContactName);
+
+      final otherController = targetController == _scrollController1
+          ? _scrollController2
+          : _scrollController1;
+      final otherCurrentPage = otherController == _scrollController1
+          ? _currentPage1
+          : _currentPage2;
+      final otherContactName = _contactNameAtPage(otherCurrentPage);
+
+      String? otherTarget = otherContactName;
+      if (otherTarget == null ||
+          !_displayedContacts.any((contact) => contact.name == otherTarget)) {
+        otherTarget = _bestDisplayedMatchName(anchorContactName) ??
+            anchorContactName;
+      }
+
+      if (_displayedContacts.any((contact) => contact.name == otherTarget)) {
+        _scrollPaneToContactName(otherController, otherTarget);
+      }
+
+      _saveScrollPositions();
+      _checkForMatch();
+    });
   }
 
   Future<void> _loadContacts() async {
@@ -558,16 +706,14 @@ class ContactsPageState extends State<ContactsPage>
     setState(() {
       _contacts = contacts;
       _updateFavoritesFromContacts();
+      _clearVirtualSortState();
     });
 
-    // Restore locked state first (which may reorder contacts)
-    await _restoreLockedState();
-
-    // Then restore scroll positions from storage after locked state is restored
-    // Use multiple callbacks to ensure layout is ready
+    // Restore scroll positions from storage
     WidgetsBinding.instance.addPostFrameCallback((_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _restoreScrollPositions();
+        _maybePromptPickSelfContact();
       });
     });
   }
@@ -578,11 +724,8 @@ class ContactsPageState extends State<ContactsPage>
     setState(() {
       _contacts = contacts;
       _updateFavoritesFromContacts();
+      _clearVirtualSortState();
     });
-
-    // Don't restore locked state when closing settings - it might interfere with scroll restoration
-    // The locked state should already be preserved in the current state
-    // Only reload contacts to pick up any changes from settings
   }
 
   /// Save current scroll positions from scroll controllers
@@ -738,6 +881,111 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
+  void _maybePromptPickSelfContact() {
+    if (!_shouldPromptSelfContactPick || !Platform.isIOS) {
+      return;
+    }
+    _shouldPromptSelfContactPick = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _promptPickSelfContact();
+    });
+  }
+
+  void _scrollLeftPaneToIndex(int index) {
+    final displayedContacts = _displayedContacts;
+    final maxIndex =
+        displayedContacts.isNotEmpty ? displayedContacts.length - 1 : 0;
+    final clamped = index.clamp(0, maxIndex);
+
+    setState(() {
+      _currentPage1 = clamped;
+      _currentPage1All = clamped;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scrollController1.hasClients) return;
+      final width = _scrollController1.position.viewportDimension;
+      if (width <= 0) return;
+      _scrollController1.jumpTo((clamped + 1) * width);
+      _saveScrollPositions();
+      _checkForMatch();
+    });
+  }
+
+  Future<void> _promptPickSelfContact() async {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    while (mounted) {
+      if (!mounted) return;
+      final shouldPick = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.pickYourselfTitle),
+          content: Text(l10n.pickYourselfMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.notNow),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.pickYourselfButton),
+            ),
+          ],
+        ),
+      );
+
+      if (!mounted) return;
+
+      if (shouldPick != true) {
+        await _storageService.savePendingSelfContactPick(false);
+        return;
+      }
+
+      if (!await ensureContactsReadPermission()) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.contactsPermissionRequired)),
+          );
+        }
+        return;
+      }
+
+      final contact = await pickContactWithNameAndPhone();
+      if (contact == null) {
+        continue;
+      }
+
+      final contactName = contact.displayName ?? '';
+      if (contactName.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.selectedContactNoName)),
+          );
+        }
+        continue;
+      }
+
+      final index = SelfContactFinder.findIndexForContact(_contacts, contact);
+      if (index == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(l10n.pickYourselfNotInList(contactName)),
+            ),
+          );
+        }
+        continue;
+      }
+
+      await _storageService.savePendingSelfContactPick(false);
+      _scrollLeftPaneToIndex(index);
+      return;
+    }
+  }
+
   Future<void> _loadVibrationsSetting() async {
     _vibrationsEnabled = await _storageService.loadVibrationsEnabled();
     setState(() {});
@@ -752,7 +1000,7 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _saveContacts() async {
-    await _storageService.saveContacts(_contacts);
+    await _storageService.saveContacts(_contactsForStorage);
   }
 
   Future<void> _saveScrollPositions() async {
@@ -762,94 +1010,6 @@ class ContactsPageState extends State<ContactsPage>
       page1Favorites: _currentPage1Favorites,
       page2Favorites: _currentPage2Favorites,
     ));
-  }
-
-  Future<void> _saveLockedState() async {
-    int? lockedPane;
-    if (_lockedPaneController == _scrollController1) {
-      lockedPane = 1;
-    } else if (_lockedPaneController == _scrollController2) {
-      lockedPane = 2;
-    }
-    await _storageService.saveLockedPane(lockedPane);
-    await _storageService.saveOrderingContact(_orderingContact?.name);
-
-    // Save original order if locked, clear it if unlocked
-    if (_lockedPaneController != null && _originalContactOrder != null) {
-      await _storageService.saveOriginalContactOrder(_originalContactOrder!);
-    } else {
-      await _storageService.clearOriginalContactOrder();
-    }
-  }
-
-  Future<void> _restoreLockedState() async {
-    final lockedPane = await _storageService.loadLockedPane();
-    final orderingContactName = await _storageService.loadOrderingContact();
-    final originalOrder = await _storageService.loadOriginalContactOrder();
-
-    if (lockedPane != null &&
-        orderingContactName != null &&
-        orderingContactName.isNotEmpty &&
-        originalOrder.isNotEmpty &&
-        _contacts.isNotEmpty) {
-      // Find the ordering contact in the loaded contacts
-      final orderingContact = _contacts.firstWhere(
-        (contact) => contact.name == orderingContactName,
-        orElse: () => _contacts[0],
-      );
-
-      // Only restore if the contact exists
-      if (_contacts.any((c) => c.name == orderingContactName)) {
-        // Restore original order first
-        setState(() {
-          _originalContactOrder = originalOrder;
-          // If contacts are already in the correct reordered state, keep them
-          // Otherwise, restore original order and reorder
-          final currentOrderNames = _contacts.map((c) => c.name).toList();
-          final originalOrderNames = originalOrder.map((c) => c.name).toList();
-
-          // If current order doesn't match original, restore original first
-          if (currentOrderNames.toString() != originalOrderNames.toString()) {
-            _contacts = List.from(originalOrder);
-            _updateFavoritesFromContacts();
-          }
-        });
-
-        // Determine which controller to lock
-        final controller =
-            lockedPane == 1 ? _scrollController1 : _scrollController2;
-
-        // Restore the ordering state by calling _reorderContactsByMatch
-        // Use a delayed callback to ensure layout is ready
-        // But DON'T restore scroll positions here - let _loadContacts handle that
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            if (mounted && _contacts.isNotEmpty) {
-              // Save a flag to indicate we're restoring, so _reorderContactsByMatch
-              // doesn't overwrite scroll positions
-              _isRestoringLockedState = true;
-              _reorderContactsByMatch(orderingContact, controller).then((_) {
-                _isRestoringLockedState = false;
-                // After reordering, restore scroll positions again
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  _restoreScrollPositions();
-                });
-              });
-            }
-          });
-        });
-      }
-    } else {
-      // Clear locked state if contact doesn't exist or no locked state saved
-      setState(() {
-        _lockedPaneController = null;
-        _orderingContact = null;
-        _originalContactOrder = null;
-      });
-      await _storageService.clearOriginalContactOrder();
-      await _storageService.saveLockedPane(null);
-      await _storageService.saveOrderingContact(null);
-    }
   }
 
   Future<void> _pickAndAddContactFromDevice(
@@ -903,57 +1063,7 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       // Check for duplicates
-      if (_contacts.any((c) => c.name == contactName)) {
-        if (mounted) {
-          final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.contactAlreadyInList(contactName)),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-
-          // Scroll to the duplicate contact in the target ListView
-          final displayedContacts = _displayedContacts;
-          final duplicateIndex =
-              displayedContacts.indexWhere((c) => c.name == contactName);
-          if (duplicateIndex != -1 && targetController.hasClients) {
-            final width = targetController.position.viewportDimension;
-            if (width > 0) {
-              // Convert contact index to page index (add 1 for plus button at index 0)
-              final targetPage = duplicateIndex + 1;
-              targetController.animateTo(
-                targetPage * width,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.ease,
-              );
-
-              // Update current page state
-              if (targetController == _scrollController1) {
-                setState(() {
-                  _currentPage1 = duplicateIndex;
-                  if (_favoritesMode) {
-                    _currentPage1Favorites = duplicateIndex;
-                  } else {
-                    _currentPage1All = duplicateIndex;
-                  }
-                });
-              } else if (targetController == _scrollController2) {
-                setState(() {
-                  _currentPage2 = duplicateIndex;
-                  if (_favoritesMode) {
-                    _currentPage2Favorites = duplicateIndex;
-                  } else {
-                    _currentPage2All = duplicateIndex;
-                  }
-                });
-              }
-
-              // Save scroll positions
-              _saveScrollPositions();
-            }
-          }
-        }
+      if (await _handleDuplicateContactName(contactName, targetController)) {
         return;
       }
 
@@ -1009,67 +1119,23 @@ class ContactsPageState extends State<ContactsPage>
 
       // Add to contacts list at the beginning or end
       setState(() {
-        if (addAtStart) {
-          _contacts.insert(0, newContact);
-        } else {
-          _contacts.add(newContact);
+        if (_favoritesMode) {
+          _favoriteNames.add(contactName);
         }
+        _insertStoredContact(newContact, atStart: addAtStart);
         _updateFavoritesFromContacts();
-        // Clear original contact order since we've added a new contact
-        // This ensures reordering will use the current state including the new contact
-        _originalContactOrder = null;
       });
 
       // Save to storage
-      await _saveContacts();
-      // Clear original contact order from storage as well
-      await _storageService.clearOriginalContactOrder();
-
-      // Scroll to the new contact only in the target ListView
-      final displayedContacts = _displayedContacts;
-      final newIndex = addAtStart ? 0 : displayedContacts.length - 1;
-
-      if (targetController == _scrollController1) {
-        if (_scrollController1.hasClients && newIndex >= 0) {
-          final width = _scrollController1.position.viewportDimension;
-          if (width > 0) {
-            _scrollController1.animateTo(
-              (newIndex + 1) * width, // +1 because index 0 is plus button
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.ease,
-            );
-            setState(() {
-              _currentPage1 = newIndex;
-              // Update mode-specific position
-              if (_favoritesMode) {
-                _currentPage1Favorites = newIndex;
-              } else {
-                _currentPage1All = newIndex;
-              }
-            });
-          }
-        }
-      } else if (targetController == _scrollController2) {
-        if (_scrollController2.hasClients && newIndex >= 0) {
-          final width = _scrollController2.position.viewportDimension;
-          if (width > 0) {
-            _scrollController2.animateTo(
-              (newIndex + 1) * width, // +1 because index 0 is plus button
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.ease,
-            );
-            setState(() {
-              _currentPage2 = newIndex;
-              // Update mode-specific position
-              if (_favoritesMode) {
-                _currentPage2Favorites = newIndex;
-              } else {
-                _currentPage2All = newIndex;
-              }
-            });
-          }
-        }
+      if (_favoritesMode) {
+        await _saveFavorites();
       }
+      await _saveContacts();
+
+      _refreshPanesAfterContactListChange(
+        targetController: targetController,
+        anchorContactName: contactName,
+      );
 
       // Wait for scroll animation to complete, then lock and reorder
       Future.delayed(const Duration(milliseconds: 350), () {
@@ -1250,14 +1316,6 @@ class ContactsPageState extends State<ContactsPage>
     // Save to storage
     await _saveContacts();
 
-    // Update locked state and original contact order in storage if needed
-    if (isOrderingContact && nameChanged) {
-      await _saveLockedState();
-    } else if (_originalContactOrder != null && nameChanged) {
-      // Save updated original contact order
-      await _storageService.saveOriginalContactOrder(_originalContactOrder!);
-    }
-
     // Check for match after editing
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkForMatch();
@@ -1330,16 +1388,7 @@ class ContactsPageState extends State<ContactsPage>
     final phoneNumber = result['phone']!;
 
     // Check for duplicates
-    if (_contacts.any((c) => c.name == contactName)) {
-      if (mounted) {
-        final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.contactAlreadyInList(contactName)),
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      }
+    if (await _handleDuplicateContactName(contactName, targetController)) {
       return;
     }
 
@@ -1355,102 +1404,66 @@ class ContactsPageState extends State<ContactsPage>
 
     // Add to contacts list at the beginning or end
     setState(() {
-      if (addAtStart) {
-        _contacts.insert(0, newContact);
-      } else {
-        _contacts.add(newContact);
+      if (_favoritesMode) {
+        _favoriteNames.add(contactName);
       }
+      _insertStoredContact(newContact, atStart: addAtStart);
       _updateFavoritesFromContacts();
-      // Clear original contact order since we've added a new contact
-      // This ensures reordering will use the current state including the new contact
-      _originalContactOrder = null;
     });
 
     // Save to storage
+    if (_favoritesMode) {
+      await _saveFavorites();
+    }
     await _saveContacts();
-    // Clear original contact order from storage as well
-    await _storageService.clearOriginalContactOrder();
 
     // Wait for ListView to rebuild before scrolling to the new contact
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Find the actual index of the newly added contact in displayed contacts
       final displayedContacts = _displayedContacts;
       final newIndex =
           displayedContacts.indexWhere((c) => c.name == contactName);
 
-      // If contact is not in displayed contacts (e.g., favorites mode and not a favorite),
-      // use the addAtStart logic to determine position
       if (newIndex == -1) {
-        // Contact is not visible in current mode, so don't scroll
-        // But still check for match
         _checkForMatch();
         return;
       }
 
-      if (targetController == _scrollController1) {
-        if (_scrollController1.hasClients &&
-            newIndex >= 0 &&
-            newIndex < displayedContacts.length) {
-          final width = _scrollController1.position.viewportDimension;
-          if (width > 0) {
-            _scrollController1.animateTo(
-              (newIndex + 1) * width, // +1 because index 0 is plus button
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.ease,
-            );
-            setState(() {
-              _currentPage1 = newIndex;
-              // Update mode-specific position
-              if (_favoritesMode) {
-                _currentPage1Favorites = newIndex;
-              } else {
-                _currentPage1All = newIndex;
-              }
-            });
-          }
-        }
-      } else if (targetController == _scrollController2) {
-        if (_scrollController2.hasClients &&
-            newIndex >= 0 &&
-            newIndex < displayedContacts.length) {
-          final width = _scrollController2.position.viewportDimension;
-          if (width > 0) {
-            _scrollController2.animateTo(
-              (newIndex + 1) * width, // +1 because index 0 is plus button
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.ease,
-            );
-            setState(() {
-              _currentPage2 = newIndex;
-              // Update mode-specific position
-              if (_favoritesMode) {
-                _currentPage2Favorites = newIndex;
-              } else {
-                _currentPage2All = newIndex;
-              }
-            });
-          }
-        }
-      }
+      _refreshPanesAfterContactListChange(
+        targetController: targetController,
+        anchorContactName: contactName,
+      );
 
       // Wait for scroll animation to complete, then lock and reorder
       Future.delayed(const Duration(milliseconds: 350), () {
-        if (mounted && newIndex != -1 && newIndex < displayedContacts.length) {
-          // Get the contact from displayed contacts to ensure we have the correct reference
+        if (mounted && newIndex < displayedContacts.length) {
           final contactToLock = displayedContacts[newIndex];
-          // Lock the pane with the newly added contact and reorder by match
           _reorderContactsByMatch(contactToLock, targetController);
         }
       });
     });
   }
 
+  void _insertStoredContact(StoredContact contact, {required bool atStart}) {
+    if (atStart) {
+      _contacts.insert(0, contact);
+      _originalContactOrder?.insert(0, contact);
+    } else {
+      _contacts.add(contact);
+      _originalContactOrder?.add(contact);
+    }
+  }
+
   void _updateFavoritesFromContacts() {
-    // Update contacts with favorite status
     _contacts = _contacts.map((contact) {
       return contact.copyWith(
           isFavorite: _favoriteNames.contains(contact.name));
     }).toList();
+    if (_originalContactOrder != null) {
+      _originalContactOrder = _originalContactOrder!.map((contact) {
+        return contact.copyWith(
+            isFavorite: _favoriteNames.contains(contact.name));
+      }).toList();
+    }
   }
 
   // Calculate match score between two contacts with granularity based on diff
@@ -1464,18 +1477,24 @@ class ContactsPageState extends State<ContactsPage>
     // Check if the same contact is already being used for ordering (toggle off)
     if (_lockedPaneController == controller &&
         _orderingContact?.name == currentContact.name) {
-      // Unlock without changing contact order or scroll positions
+      final pane1Name = _contactNameAtPage(_currentPage1);
+      final pane2Name = _contactNameAtPage(_currentPage2);
+      final baseOrder = _originalContactOrder;
+
       setState(() {
+        if (baseOrder != null) {
+          _contacts = List.from(baseOrder);
+          _updateFavoritesFromContacts();
+        }
         _lockedPaneController = null;
         _orderingContact = null;
-        // Keep _originalContactOrder in memory but don't restore it
-        // This allows us to restore it later if needed, but for now just unlock
+        _originalContactOrder = null;
       });
-      _saveLockedState();
-      // Don't save contacts - keep the current order
-      // Don't touch scroll positions - keep them as they are
-      // Just check for match
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollPaneToContactName(_scrollController1, pane1Name);
+        _scrollPaneToContactName(_scrollController2, pane2Name);
+        _saveScrollPositions();
         _checkForMatch();
       });
       return;
@@ -1490,12 +1509,8 @@ class ContactsPageState extends State<ContactsPage>
       });
     }
 
-    // Store original order if not already stored
-    if (_originalContactOrder == null) {
-      _originalContactOrder = List.from(_contacts);
-      // Save original order to storage
-      await _storageService.saveOriginalContactOrder(_originalContactOrder!);
-    }
+    // Store base order in memory if not already stored (never persisted)
+    _originalContactOrder ??= List.from(_contacts);
 
     // Create list of all contacts with their match counts
     final contactsWithMatches = _contacts.map((contact) {
@@ -1536,18 +1551,12 @@ class ContactsPageState extends State<ContactsPage>
       _orderingContact = currentContact;
     });
 
-    // Save to storage
-    _saveContacts();
-    _saveLockedState();
+    // Find the new displayed index after reordering
+    final newDisplayedIndex =
+        _displayedContacts.indexWhere((c) => c.name == currentContact.name);
 
-    // Only scroll if we're not restoring locked state (to preserve saved scroll positions)
-    if (!_isRestoringLockedState) {
-      // Find the new displayed index after reordering
-      final newDisplayedIndex =
-          _displayedContacts.indexWhere((c) => c.name == currentContact.name);
-
-      // Maintain scroll position on the current contact in the clicked pane
-      if (controller.hasClients && newDisplayedIndex >= 0) {
+    // Maintain scroll position on the current contact in the clicked pane
+    if (controller.hasClients && newDisplayedIndex >= 0) {
         final width = controller.position.viewportDimension;
         if (width > 0) {
           // Convert contact index to page index (add 1 for plus button at index 0)
@@ -1650,8 +1659,7 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       // Save scroll positions
-      _saveScrollPositions();
-    }
+    _saveScrollPositions();
 
     // Check for match after reordering
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1746,40 +1754,26 @@ class ContactsPageState extends State<ContactsPage>
     // Check if the deleted contact is the ordering contact
     final isOrderingContact = _orderingContact?.name == contactName;
 
-    // Remove from contacts list and update original contact order
+    // Remove from contacts list and update base order used for virtual sorting
     setState(() {
       _contacts.removeWhere((contact) => contact.name == contactName);
-      _updateFavoritesFromContacts();
-
-      // Update original contact order if it exists
       if (_originalContactOrder != null) {
         _originalContactOrder!
             .removeWhere((contact) => contact.name == contactName);
-        // If original order is now empty or the ordering contact was deleted, clear it
-        if (_originalContactOrder!.isEmpty || isOrderingContact) {
-          _originalContactOrder = null;
-        }
       }
 
-      // If the deleted contact was the ordering contact, unlock the pane
       if (isOrderingContact) {
-        _lockedPaneController = null;
-        _orderingContact = null;
+        if (_originalContactOrder != null && _originalContactOrder!.isNotEmpty) {
+          _contacts = List.from(_originalContactOrder!);
+        }
+        _clearVirtualSortState();
       }
+
+      _updateFavoritesFromContacts();
     });
 
     // Save updated contacts
     await _saveContacts();
-
-    // Update locked state and original contact order in storage
-    if (isOrderingContact ||
-        (_originalContactOrder == null && _lockedPaneController != null)) {
-      // If ordering contact was deleted or original order was cleared, update storage
-      await _saveLockedState();
-    } else if (_originalContactOrder != null) {
-      // Save updated original contact order
-      await _storageService.saveOriginalContactOrder(_originalContactOrder!);
-    }
 
     // Get displayed contacts AFTER deletion
     final displayedContacts = _displayedContacts;
@@ -2311,6 +2305,27 @@ class ContactsPageState extends State<ContactsPage>
                         await _loadContactsWithoutRestoringScroll();
                         // Also reload vibrations setting
                         _loadVibrationsSetting();
+
+                        final bulkLoaded =
+                            await _storageService.loadAndClearContactsBulkLoaded();
+                        if (bulkLoaded) {
+                          final positions =
+                              await _storageService.loadScrollPositions();
+                          _currentPage1All = positions.page1All;
+                          _currentPage2All = positions.page2All;
+                          _currentPage1Favorites = positions.page1Favorites;
+                          _currentPage2Favorites = positions.page2Favorites;
+                          _shouldPromptSelfContactPick = await _storageService
+                              .loadPendingSelfContactPick();
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              _restoreScrollPositions();
+                              _maybePromptPickSelfContact();
+                            });
+                          });
+                          return;
+                        }
+
                         // Restore the saved scroll positions after layout and locked state restoration
                         // Use multiple nested callbacks to ensure everything is ready
                         WidgetsBinding.instance.addPostFrameCallback((_) {

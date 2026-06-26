@@ -41,12 +41,19 @@
   "errorLoadingContacts": "Fout bij laden contacten: {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "Laden...",
+  "loadingContactsFromDevice": "Contacten van apparaat lezen...",
+  "loadingContactsProgress": "{current} van {total}",
   "aboutTitle": "Over",
   "aboutText": "Elke persoon heeft een telefoon (of meer)\n\nelke telefoon heeft de laatste 6 cijfers\n\nelke 6 cijfers hebben een kleur (in hexadecimale code)\n\nelke kleur heeft een persoon (?)\n\nEr is geen toeval!\n\nDeze app biedt een unieke kans om anders te kijken naar de wereld van telefoonnummers die bij specifieke mensen horen. Ga door alle mogelijke combinaties en ontdek dat toeval niet bestaat.\n\nMatcht het of niet?",
   "heartIconDescription": "Contact als favoriet markeren",
   "chartIconDescription": "Contacten sorteren op aantal matches",
   "trashIconDescription": "Contact verwijderen",
   "deleteAllContacts": "Alle contacten verwijderen",
-  "deleteAllContactsConfirm": "Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt."
+  "deleteAllContactsConfirm": "Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+  "pickYourselfTitle": "Selecteer jezelf",
+  "pickYourselfMessage": "Kies je contact zodat je kunt beginnen met je kleuren. iOS kan dit niet automatisch detecteren.",
+  "pickYourselfButton": "Contact kiezen",
+  "notNow": "Niet nu",
+  "pickYourselfNotInList": "{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat."
 }
 

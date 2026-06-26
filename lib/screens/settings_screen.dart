@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
+import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/contacts_permission.dart';
@@ -9,6 +9,8 @@ import 'dart:convert';
 import '../models.dart';
 import '../services/contact_storage_service.dart';
 import '../utils/directionality_utils.dart';
+import '../utils/self_contact_finder.dart';
+import '../utils/phone_utils.dart';
 import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -23,6 +25,8 @@ class SettingsScreen extends StatefulWidget {
 class SettingsScreenState extends State<SettingsScreen>
     with TickerProviderStateMixin {
   bool _isLoading = false;
+  int _loadProgress = 0;
+  int _loadTotal = 0;
   bool _vibrationsEnabled = true;
   late AnimationController _slideController;
   late Animation<double> _slideAnimation;
@@ -86,27 +90,125 @@ class SettingsScreenState extends State<SettingsScreen>
     });
   }
 
-  // Process contacts in background isolate
-  static List<Map<String, dynamic>> _processContacts(
-      List<Map<String, dynamic>> contactsData) {
-    return contactsData
-        .where((data) =>
-            data['phones'] != null && (data['phones'] as List).isNotEmpty)
-        .map((data) {
-      final phone = (data['phones'] as List).first['value'] ?? '';
-      final digits = phone.replaceAll(RegExp(r'\D'), '');
-      int colorValue = 0;
-      if (digits.isNotEmpty) {
-        final hexDigits = digits.length >= 6
-            ? digits.substring(digits.length - 6)
-            : digits.padLeft(6, '0');
-        colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
+  // Process a single device contact into stored form, or null if no phone.
+  static StoredContact? _storedContactFromDeviceContact(Contact contact) {
+    if (contact.phones.isEmpty) return null;
+    final name = contact.displayName ?? '';
+    return StoredContact(
+      name: name.isNotEmpty ? name : 'No Name',
+      color: PhoneUtils.colorFromPhoneNumber(contact.phones.first.number),
+    );
+  }
+
+  void _resetLoadProgress() {
+    _loadProgress = 0;
+    _loadTotal = 0;
+  }
+
+  void _updateLoadProgress(int current, int total) {
+    if (!mounted) return;
+    setState(() {
+      _loadProgress = current;
+      _loadTotal = total;
+    });
+  }
+
+  Future<void> _applyInitialSelfContactScroll(
+      List<StoredContact> storedContacts) async {
+    var page1All = 0;
+
+    if (Platform.isAndroid) {
+      try {
+        final me = await FlutterContacts.profile.get(
+          properties: contactsNameAndPhoneProperties,
+        );
+        if (me != null) {
+          final index = SelfContactFinder.findIndexForContact(
+            storedContacts,
+            me,
+          );
+          if (index != null) {
+            page1All = index;
+          }
+        }
+      } catch (_) {
+        // Profile unavailable on this device; keep default scroll.
       }
-      return {
-        'name': data['displayName'] ?? 'No Name',
-        'color': colorValue,
-      };
-    }).toList();
+      await _storageService.savePendingSelfContactPick(false);
+    } else if (Platform.isIOS) {
+      await _storageService.savePendingSelfContactPick(true);
+    }
+
+    await _storageService.saveScrollPositions(ScrollPositions(
+      page1All: page1All,
+      page2All: 0,
+      page1Favorites: 0,
+      page2Favorites: 0,
+    ));
+    await _storageService.markContactsBulkLoaded();
+  }
+
+  Widget _buildLoadContactsOverlay() {
+    final l10n = AppLocalizations.of(context)!;
+    final hasTotal = _loadTotal > 0;
+    final progressValue =
+        hasTotal ? (_loadProgress / _loadTotal).clamp(0.0, 1.0) : null;
+
+    return AbsorbPointer(
+      child: Material(
+        color: Colors.black54,
+        child: Center(
+          child: Container(
+            width: 280,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.black87,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white24),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (hasTotal)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: progressValue,
+                      minHeight: 8,
+                      backgroundColor: Colors.white24,
+                      valueColor:
+                          const AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                else
+                  const SizedBox(
+                    width: 36,
+                    height: 36,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                Text(
+                  hasTotal
+                      ? l10n.loadingContactsProgress(
+                          _loadProgress, _loadTotal)
+                      : l10n.loadingContactsFromDevice,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void _showAddContactMenu() {
@@ -485,6 +587,7 @@ class SettingsScreenState extends State<SettingsScreen>
     await _storageService.saveLockedPane(null);
     await _storageService.saveOrderingContact(null);
     await _storageService.clearOriginalContactOrder();
+    await _storageService.savePendingSelfContactPick(false);
 
     // Close settings screen and navigate to contacts page
     if (mounted) {
@@ -509,6 +612,7 @@ class SettingsScreenState extends State<SettingsScreen>
   Future<void> _loadContacts() async {
     setState(() {
       _isLoading = true;
+      _resetLoadProgress();
     });
 
     try {
@@ -516,6 +620,7 @@ class SettingsScreenState extends State<SettingsScreen>
       if (!await ensureContactsReadPermission()) {
         setState(() {
           _isLoading = false;
+          _resetLoadProgress();
         });
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
@@ -537,40 +642,36 @@ class SettingsScreenState extends State<SettingsScreen>
         return;
       }
 
-      // Load contacts on background thread
+      // Load contacts from device (no count available until complete)
       final contacts = await FlutterContacts.getAll(
         properties: contactsNameAndPhoneProperties,
       );
 
-      // Convert to serializable format for isolate
-      final contactsData = contacts
-          .map((contact) => {
-                'displayName': contact.displayName,
-                'phones': contact.phones
-                    .map((phone) => {'value': phone.number})
-                    .toList(),
-              })
-          .toList();
+      final total = contacts.length;
+      _updateLoadProgress(0, total);
 
-      // Process contacts in background isolate
-      final processedData = await compute(_processContacts, contactsData);
+      final storedContacts = <StoredContact>[];
+      const batchSize = 50;
+      for (var i = 0; i < contacts.length; i++) {
+        final stored = _storedContactFromDeviceContact(contacts[i]);
+        if (stored != null) {
+          storedContacts.add(stored);
+        }
 
-      // Convert to StoredContact
-      final storedContacts = processedData
-          .map((data) => StoredContact(
-                name: data['name'] as String,
-                color: data['color'] as int,
-              ))
-          .toList();
+        final processed = i + 1;
+        if (processed % batchSize == 0 || processed == total) {
+          _updateLoadProgress(processed, total);
+          await Future<void>.delayed(Duration.zero);
+        }
+      }
 
       // Save to storage
-      final prefs = await SharedPreferences.getInstance();
-      final jsonList =
-          storedContacts.map((contact) => contact.toJson()).toList();
-      await prefs.setString('stored_contacts', json.encode(jsonList));
+      await _storageService.saveContacts(storedContacts);
+      await _applyInitialSelfContactScroll(storedContacts);
 
       setState(() {
         _isLoading = false;
+        _resetLoadProgress();
       });
 
       // Close settings screen and reload contacts in ContactsPage
@@ -595,6 +696,7 @@ class SettingsScreenState extends State<SettingsScreen>
     } catch (e) {
       setState(() {
         _isLoading = false;
+        _resetLoadProgress();
       });
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
@@ -934,6 +1036,7 @@ class SettingsScreenState extends State<SettingsScreen>
                         }
                       },
                     ),
+                    if (_isLoading) _buildLoadContactsOverlay(),
                   ],
                 ),
               ),

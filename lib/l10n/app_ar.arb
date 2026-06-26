@@ -41,11 +41,18 @@
   "errorLoadingContacts": "خطأ في تحميل جهات الاتصال: {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "جاري التحميل...",
+  "loadingContactsFromDevice": "جاري قراءة جهات الاتصال من الجهاز...",
+  "loadingContactsProgress": "{current} من {total}",
   "aboutTitle": "حول",
   "aboutText": "لكل شخص هاتف (أو أكثر)\n\nلكل هاتف آخر 6 أرقام\n\nلكل 6 أرقام لون (في الترميز الست عشري)\n\nلكل لون شخص (?)\n\nلا وجود للمصادفة!\n\nيوفر هذا التطبيق فرصة فريدة للنظر إلى عالم أرقام الهاتف التابعة لأشخاص محددين بمنظور مختلف. استكشف جميع التركيبات الممكنة واكتشف أن المصادفة غير موجودة.\n\nهل يتطابق أم لا؟",
   "heartIconDescription": "تعليم جهة الاتصال كمفضلة",
   "chartIconDescription": "إعادة ترتيب جهات الاتصال حسب عدد التطابقات",
   "trashIconDescription": "حذف جهة الاتصال",
   "deleteAllContacts": "حذف جميع جهات الاتصال",
-  "deleteAllContactsConfirm": "هل أنت متأكد أنك تريد حذف جميع جهات الاتصال؟ لا يمكن التراجع عن هذا الإجراء."
+  "deleteAllContactsConfirm": "هل أنت متأكد أنك تريد حذف جميع جهات الاتصال؟ لا يمكن التراجع عن هذا الإجراء.",
+  "pickYourselfTitle": "اختر نفسك",
+  "pickYourselfMessage": "اختر جهة اتصالك لبدء ألوانك. لا يمكن لـ iOS اكتشاف ذلك تلقائياً.",
+  "pickYourselfButton": "اختر جهة اتصال",
+  "notNow": "ليس الآن",
+  "pickYourselfNotInList": "لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة."
 }

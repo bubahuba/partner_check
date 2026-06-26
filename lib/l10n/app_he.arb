@@ -41,11 +41,18 @@
   "errorLoadingContacts": "שגיאה בטעינת אנשי קשר: {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "טוען...",
+  "loadingContactsFromDevice": "קורא אנשי קשר מהמכשיר...",
+  "loadingContactsProgress": "{current} מתוך {total}",
   "aboutTitle": "אודות",
   "aboutText": "לכל אדם יש טלפון (או יותר)\n\nלכל טלפון יש 6 הספרות האחרונות\n\nלכל 6 ספרות יש צבע (בקוד hexadecimal)\n\nלכל צבע יש אדם (?)\n\nאין מקריות!\n\nהאפליקציה הזו מציעה הזדמנות ייחודית להסתכל אחרת על עולם מספרי הטלפון של אנשים מסוימים. עבור על כל הצירופים האפשריים וגלה שמקריות לא קיימת.\n\nהאם זה מתאים או לא?",
   "heartIconDescription": "סמן איש קשר כמועדף",
   "chartIconDescription": "סדר מחדש אנשי קשר לפי מספר ההתאמות",
   "trashIconDescription": "מחק איש קשר",
   "deleteAllContacts": "מחק את כל אנשי הקשר",
-  "deleteAllContactsConfirm": "האם אתה בטוח שברצונך למחוק את כל אנשי הקשר? לא ניתן לבטל פעולה זו."
+  "deleteAllContactsConfirm": "האם אתה בטוח שברצונך למחוק את כל אנשי הקשר? לא ניתן לבטל פעולה זו.",
+  "pickYourselfTitle": "בחר את עצמך",
+  "pickYourselfMessage": "בחר את איש הקשר שלך כדי להתחיל עם הצבעים שלך. iOS לא יכול לזהות זאת אוטומטית.",
+  "pickYourselfButton": "בחר איש קשר",
+  "notNow": "לא עכשיו",
+  "pickYourselfNotInList": "{contactName} לא נמצא באנשי הקשר שנטענו. בחר מישהו שנמצא ברשימה."
 }

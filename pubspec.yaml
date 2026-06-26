@@ -1,7 +1,7 @@
 name: partner_check
 description: "Partner check compatibility"
 publish_to: 'none'
-version: 0.1.12
+version: 0.2.0+1
 
 environment:
   sdk: ^3.5.4

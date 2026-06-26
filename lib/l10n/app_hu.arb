@@ -41,12 +41,19 @@
   "errorLoadingContacts": "Hiba a kapcsolatok betöltésekor: {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "Betöltés...",
+  "loadingContactsFromDevice": "Kapcsolatok olvasása az eszközről...",
+  "loadingContactsProgress": "{current} / {total}",
   "aboutTitle": "Névjegy",
   "aboutText": "Minden embernek van telefonja (vagy több)\n\nminden telefonnak van az utolsó 6 számjegye\n\nminden 6 számjegynek van színe (hexadecimális kódban)\n\nminden színnek van embere (?)\n\nNincs véletlen!\n\nEz az alkalmazás egyedi lehetőséget nyújt, hogy másképp nézzük meg az adott emberekhez tartozó telefonszámok világát. Tekintse át az összes lehetséges kombinációt és fedezze fel, hogy a véletlen nem létezik.\n\nEgyezik vagy nem?",
   "heartIconDescription": "Kapcsolat megjelölése kedvencként",
   "chartIconDescription": "Kapcsolatok újrarendezése egyezések száma szerint",
   "trashIconDescription": "Kapcsolat törlése",
   "deleteAllContacts": "Összes kapcsolat törlése",
-  "deleteAllContactsConfirm": "Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza."
+  "deleteAllContactsConfirm": "Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza.",
+  "pickYourselfTitle": "Válaszd ki magad",
+  "pickYourselfMessage": "Válaszd ki a kapcsolatodat, hogy a színeiddel kezdhess. Az iOS nem tudja ezt automatikusan felismerni.",
+  "pickYourselfButton": "Kapcsolat kiválasztása",
+  "notNow": "Most nem",
+  "pickYourselfNotInList": "A(z) {contactName} nem található a betöltött kapcsolatok között. Válassz valakit, aki szerepel a listában."
 }
 

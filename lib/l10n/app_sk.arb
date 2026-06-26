@@ -3,7 +3,7 @@
   "appTitle": "Partner Check",
   "contactsPermissionRequired": "Je potrebné povolenie ku kontaktom",
   "contactLimitReached": "Dosiahnutý limit kontaktov",
-  "contactLimitMessage": "Dosiahli ste maximálny počet 10 kontaktov vo bezplatnej verzii.\n\nInovujte na PartnerCheck Pro a pridávajte neobmedzené množstvo kontaktov.",
+  "contactLimitMessage": "Dosiahli ste maximálny počet 10 kontaktov v bezplatnej verzii.\n\nInovujte na PartnerCheck Pro a pridávajte neobmedzené množstvo kontaktov.",
   "ok": "OK",
   "cancel": "Zrušiť",
   "delete": "Vymazať",
@@ -41,11 +41,18 @@
   "errorLoadingContacts": "Chyba pri načítaní kontaktov: {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "Načítava sa...",
+  "loadingContactsFromDevice": "Načítavanie kontaktov zo zariadenia...",
+  "loadingContactsProgress": "{current} z {total}",
   "aboutTitle": "O aplikácii",
   "aboutText": "Každý človek má telefón (alebo viac)\n\nkaždý telefón má posledných 6 číslic\n\nkaždých 6 číslic má farbu (v hexadecimálnom kóde)\n\nkaždá farba má človeka (?)\n\nNáhoda neexistuje!\n\nTáto aplikácia prináša jedinečnú príležitosť pozrieť sa inak na svet telefónnych čísel patriacich konkrétnym ľuďom. Prejdite všetky možné kombinácie a zistite, že náhoda neexistuje.\n\nSedí to teda? Nesedí?",
   "heartIconDescription": "Označiť kontakt ako obľúbený",
   "chartIconDescription": "Zoradiť kontakty podľa počtu zhôd",
   "trashIconDescription": "Vymazať kontakt",
   "deleteAllContacts": "Vymazať všetky kontakty",
-  "deleteAllContactsConfirm": "Naozaj chcete vymazať všetky kontakty? Túto akciu nie je možné vrátiť späť."
+  "deleteAllContactsConfirm": "Naozaj chcete vymazať všetky kontakty? Túto akciu nie je možné vrátiť späť.",
+  "pickYourselfTitle": "Vyberte seba",
+  "pickYourselfMessage": "Vyberte svoj kontakt, aby ste mohli začať so svojimi farbami. iOS to nemôže zistiť automaticky.",
+  "pickYourselfButton": "Vybrať kontakt",
+  "notNow": "Teraz nie",
+  "pickYourselfNotInList": "{contactName} sa nenašiel vo vašich načítaných kontaktoch. Vyberte niekoho, kto je v zozname."
 }

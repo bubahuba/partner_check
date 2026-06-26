@@ -41,12 +41,19 @@
   "errorLoadingContacts": "連絡先の読み込み中にエラーが発生しました：{error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "読み込み中...",
+  "loadingContactsFromDevice": "デバイスから連絡先を読み込んでいます...",
+  "loadingContactsProgress": "{current} / {total}",
   "aboutTitle": "について",
   "aboutText": "すべての人が電話（またはそれ以上）を持っています\n\nすべての電話には最後の6桁があります\n\nすべての6桁には色（16進コード）があります\n\nすべての色には人がいます（？）\n\n偶然はありません！\n\nこのアプリは、特定の人に属する電話番号の世界を異なる視点で見る独特の機会を提供します。すべての可能な組み合わせを調べて、偶然が存在しないことを発見してください。\n\n一致しますか、それとも一致しませんか？",
   "heartIconDescription": "連絡先をお気に入りとしてマーク",
   "chartIconDescription": "一致数で連絡先を並べ替え",
   "trashIconDescription": "連絡先を削除",
   "deleteAllContacts": "すべての連絡先を削除",
-  "deleteAllContactsConfirm": "すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。"
+  "deleteAllContactsConfirm": "すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。",
+  "pickYourselfTitle": "自分を選択",
+  "pickYourselfMessage": "自分の色で始めるには、自分の連絡先を選んでください。iOS では自動検出できません。",
+  "pickYourselfButton": "連絡先を選ぶ",
+  "notNow": "後で",
+  "pickYourselfNotInList": "{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。"
 }
 

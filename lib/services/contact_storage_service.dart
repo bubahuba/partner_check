@@ -15,6 +15,8 @@ class ContactStorageService {
   static const String _lockedPaneKey = 'locked_pane';
   static const String _orderingContactKey = 'ordering_contact';
   static const String _originalContactOrderKey = 'original_contact_order';
+  static const String _pendingSelfContactPickKey = 'pending_self_contact_pick';
+  static const String _contactsBulkLoadedKey = 'contacts_bulk_loaded';
 
   /// Load contacts from storage
   Future<List<StoredContact>> loadContacts() async {
@@ -148,6 +150,31 @@ class ContactStorageService {
   Future<void> clearOriginalContactOrder() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_originalContactOrderKey);
+  }
+
+  /// Whether the user still needs to pick their own contact (iOS after bulk import).
+  Future<bool> loadPendingSelfContactPick() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_pendingSelfContactPickKey) ?? false;
+  }
+
+  Future<void> savePendingSelfContactPick(bool pending) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_pendingSelfContactPickKey, pending);
+  }
+
+  Future<void> markContactsBulkLoaded() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_contactsBulkLoadedKey, true);
+  }
+
+  Future<bool> loadAndClearContactsBulkLoaded() async {
+    final prefs = await SharedPreferences.getInstance();
+    final value = prefs.getBool(_contactsBulkLoadedKey) ?? false;
+    if (value) {
+      await prefs.remove(_contactsBulkLoadedKey);
+    }
+    return value;
   }
 }
 

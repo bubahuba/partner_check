@@ -41,12 +41,19 @@
   "errorLoadingContacts": "Erro ao carregar contatos: {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "Carregando...",
+  "loadingContactsFromDevice": "Lendo contatos do dispositivo...",
+  "loadingContactsProgress": "{current} de {total}",
   "aboutTitle": "Sobre",
   "aboutText": "Cada pessoa tem um telefone (ou mais)\n\ncada telefone tem os últimos 6 dígitos\n\ncada 6 dígitos tem uma cor (em código hexadecimal)\n\ncada cor tem uma pessoa (?)\n\nNão há coincidência!\n\nEste aplicativo oferece uma oportunidade única de olhar de forma diferente para o mundo dos números de telefone pertencentes a pessoas específicas. Percorra todas as combinações possíveis e descubra que a coincidência não existe.\n\nCombina ou não?",
   "heartIconDescription": "Marcar contato como favorito",
   "chartIconDescription": "Reordenar contatos por número de correspondências",
   "trashIconDescription": "Excluir contato",
   "deleteAllContacts": "Excluir todos os contatos",
-  "deleteAllContactsConfirm": "Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita."
+  "deleteAllContactsConfirm": "Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita.",
+  "pickYourselfTitle": "Selecione-se",
+  "pickYourselfMessage": "Escolha seu contato para começar com suas cores. O iOS não pode detectar isso automaticamente.",
+  "pickYourselfButton": "Escolher contato",
+  "notNow": "Agora não",
+  "pickYourselfNotInList": "{contactName} não foi encontrado nos seus contatos carregados. Escolha alguém que esteja na lista."
 }
 

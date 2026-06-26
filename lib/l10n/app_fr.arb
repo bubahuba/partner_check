@@ -41,12 +41,19 @@
   "errorLoadingContacts": "Erreur lors du chargement des contacts : {error}",
   "partnerCheckFree": "PartnerCheck Free",
   "loading": "Chargement...",
+  "loadingContactsFromDevice": "Lecture des contacts depuis l'appareil...",
+  "loadingContactsProgress": "{current} sur {total}",
   "aboutTitle": "À propos",
   "aboutText": "Chaque personne a un téléphone (ou plus)\n\nchaque téléphone a les 6 derniers chiffres\n\nchaque 6 chiffres a une couleur (en code hexadécimal)\n\nchaque couleur a une personne (?)\n\nIl n'y a pas de coïncidence !\n\nCette application offre une opportunité unique de regarder différemment le monde des numéros de téléphone appartenant à des personnes spécifiques. Parcourez toutes les combinaisons possibles et découvrez que la coïncidence n'existe pas.\n\nEst-ce que ça correspond ou pas ?",
   "heartIconDescription": "Marquer le contact comme favori",
   "chartIconDescription": "Réorganiser les contacts par nombre de correspondances",
   "trashIconDescription": "Supprimer le contact",
   "deleteAllContacts": "Supprimer tous les contacts",
-  "deleteAllContactsConfirm": "Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée."
+  "deleteAllContactsConfirm": "Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée.",
+  "pickYourselfTitle": "Sélectionnez-vous",
+  "pickYourselfMessage": "Choisissez votre contact pour commencer avec vos couleurs. iOS ne peut pas le détecter automatiquement.",
+  "pickYourselfButton": "Choisir un contact",
+  "notNow": "Pas maintenant",
+  "pickYourselfNotInList": "{contactName} n'a pas été trouvé dans vos contacts chargés. Choisissez quelqu'un qui est dans la liste."
 }
 

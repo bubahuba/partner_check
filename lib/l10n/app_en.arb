@@ -194,6 +194,22 @@
   "@loading": {
     "description": "Loading text"
   },
+  "loadingContactsFromDevice": "Reading contacts from device...",
+  "@loadingContactsFromDevice": {
+    "description": "Message while reading contacts from the device before count is known"
+  },
+  "loadingContactsProgress": "{current} of {total}",
+  "@loadingContactsProgress": {
+    "description": "Bulk load progress showing current and total contact count",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "aboutTitle": "About",
   "@aboutTitle": {
     "description": "Title for the about screen"
@@ -221,6 +237,31 @@
   "deleteAllContactsConfirm": "Are you sure you want to delete all contacts? This action cannot be undone.",
   "@deleteAllContactsConfirm": {
     "description": "Confirmation message for deleting all contacts"
+  },
+  "pickYourselfTitle": "Select yourself",
+  "@pickYourselfTitle": {
+    "description": "Title for dialog asking user to pick their own contact on iOS"
+  },
+  "pickYourselfMessage": "Choose your contact so you can start with your colors. iOS cannot detect this automatically.",
+  "@pickYourselfMessage": {
+    "description": "Message explaining why user should pick their contact on iOS"
+  },
+  "pickYourselfButton": "Choose contact",
+  "@pickYourselfButton": {
+    "description": "Button to open contact picker for self selection"
+  },
+  "notNow": "Not now",
+  "@notNow": {
+    "description": "Button to dismiss optional prompt"
+  },
+  "pickYourselfNotInList": "{contactName} was not found in your loaded contacts. Pick someone who is in the list.",
+  "@pickYourselfNotInList": {
+    "description": "Error when picked self contact is not in imported list",
+    "placeholders": {
+      "contactName": {
+        "type": "String"
+      }
+    }
   }
 }
 
