@@ -51,11 +51,11 @@
   "deleteAllContacts": "すべての連絡先を削除",
   "deleteAllContactsConfirm": "すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。",
   "pickYourselfTitle": "自分を選択",
-  "pickYourselfMessage": "自分の色で始めるには、自分の連絡先を選んでください。iOS では自動検出できません。",
+  "pickYourselfMessage": "自分の色で始めるには、自分の連絡先を選んでください。iOS では自動検出できません。\n\nどちらかのペインで連絡先を長押しして「自分」を設定することもできます。",
   "pickYourselfButton": "連絡先を選ぶ",
   "notNow": "後で",
   "pickYourselfNotInList": "{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "このペインで連絡先を長押しして「自分」を設定します。",
   "upgradeToPro": "PRO にアップグレード",
   "restorePurchases": "購入を復元",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "購入処理中...",
   "purchaseSuccess": "PRO が解除されました！ご購入ありがとうございます。",
   "purchaseFailed": "購入に失敗しました。もう一度お試しください。",
-  "alreadyPro": "すでに PRO をお持ちです。"
+  "alreadyPro": "すでに PRO をお持ちです。",
+  "selfContactSelectedToast": "{contactName} が「自分」として選択されました。",
+  "doubleTapSelfDescription": "ペインをダブルタップすると自分までスクロール",
+  "longPressSelfDescription": "連絡先を長押しして新しい「自分」を選択"
 }
-

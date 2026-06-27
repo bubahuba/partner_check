@@ -24,7 +24,7 @@ class ContactStorageService {
   Future<List<StoredContact>> loadContacts() async {
     final prefs = await SharedPreferences.getInstance();
     final storedData = prefs.getString(_storageKey);
-    
+
     if (storedData != null) {
       final List<dynamic> jsonList = json.decode(storedData);
       return jsonList.map((json) => StoredContact.fromJson(json)).toList();
@@ -133,7 +133,7 @@ class ContactStorageService {
   Future<List<StoredContact>> loadOriginalContactOrder() async {
     final prefs = await SharedPreferences.getInstance();
     final storedData = prefs.getString(_originalContactOrderKey);
-    
+
     if (storedData != null) {
       final List<dynamic> jsonList = json.decode(storedData);
       return jsonList.map((json) => StoredContact.fromJson(json)).toList();
@@ -225,4 +225,3 @@ class ScrollPositions {
     required this.page2Favorites,
   });
 }
-

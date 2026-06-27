@@ -51,11 +51,11 @@
   "deleteAllContacts": "सभी संपर्क हटाएँ",
   "deleteAllContactsConfirm": "क्या आप वाकई सभी संपर्क हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
   "pickYourselfTitle": "अपना चयन करें",
-  "pickYourselfMessage": "अपने रंगों के साथ शुरू करने के लिए अपना संपर्क चुनें। iOS इसे स्वचालित रूप से नहीं पहचान सकता।",
+  "pickYourselfMessage": "अपने रंगों के साथ शुरू करने के लिए अपना संपर्क चुनें। iOS इसे स्वचालित रूप से नहीं पहचान सकता।\n\nआप किसी भी पैन में संपर्क को दबाकर रखकर себ को \"मैं\" के रूप में भी सेट कर सकते हैं।",
   "pickYourselfButton": "संपर्क चुनें",
   "notNow": "अभी नहीं",
   "pickYourselfNotInList": "{contactName} आपके लोड किए गए संपर्कों में नहीं मिला। सूची में मौजूद किसी को चुनें।",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "इस पैन में संपर्क को दबाकर रखें और себ को \"मैं\" के रूप में सेट करें।",
   "upgradeToPro": "PRO में अपग्रेड करें",
   "restorePurchases": "खरीदारी पुनर्स्थापित करें",
   "proVersion": "PartnerCheck Pro",
@@ -63,5 +63,8 @@
   "purchaseInProgress": "खरीदारी प्रगति में...",
   "purchaseSuccess": "PRO अनलॉक हो गया! आपकी खरीदारी के लिए धन्यवाद।",
   "purchaseFailed": "खरीदारी विफल। कृपया पुनः प्रयास करें।",
-  "alreadyPro": "आपके पास पहले से PRO है।"
+  "alreadyPro": "आपके पास पहले से PRO है।",
+  "selfContactSelectedToast": "{contactName} अब \"मैं\" के रूप में चुना गया है।",
+  "doubleTapSelfDescription": "अपने तक स्क्रॉल करने के लिए पैन पर दो बार टैप करें",
+  "longPressSelfDescription": "नया \"मैं\" चुनने के लिए संपर्क को दबाकर रखें"
 }

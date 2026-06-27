@@ -51,11 +51,11 @@
   "deleteAllContacts": "Összes kapcsolat törlése",
   "deleteAllContactsConfirm": "Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza.",
   "pickYourselfTitle": "Válaszd ki magad",
-  "pickYourselfMessage": "Válaszd ki a kapcsolatodat, hogy a színeiddel kezdhess. Az iOS nem tudja ezt automatikusan felismerni.",
+  "pickYourselfMessage": "Válaszd ki a kapcsolatodat, hogy a színeiddel kezdhess. Az iOS nem tudja ezt automatikusan felismerni.\n\nBármelyik panelen nyomva tarthatod egy kapcsolatot is, hogy \"én\"-ként beállítsd magad.",
   "pickYourselfButton": "Kapcsolat kiválasztása",
   "notNow": "Most nem",
   "pickYourselfNotInList": "A(z) {contactName} nem található a betöltött kapcsolatok között. Válassz valakit, aki szerepel a listában.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Tartsd nyomva a kapcsolatot ezen a panelen, hogy \"én\"-ként beállítsd magad.",
   "upgradeToPro": "Frissítés PRO-ra",
   "restorePurchases": "Vásárlások visszaállítása",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Vásárlás folyamatban...",
   "purchaseSuccess": "PRO feloldva! Köszönjük a vásárlást.",
   "purchaseFailed": "A vásárlás sikertelen. Próbáld újra.",
-  "alreadyPro": "Már van PRO-d."
+  "alreadyPro": "Már van PRO-d.",
+  "selfContactSelectedToast": "{contactName} most \"én\"-ként van kiválasztva.",
+  "doubleTapSelfDescription": "Dupla koppintás egy panelen, hogy magadhoz görgess",
+  "longPressSelfDescription": "Tartsd nyomva a kapcsolatot új \"én\" választásához"
 }
-

@@ -511,6 +511,12 @@ class ContactsPageState extends State<ContactsPage>
   void _onProStatusChanged() {
     if (!mounted || _proService == null) return;
     if (_proService!.isPro && !_wasPro) {
+      if (!_showSettings) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.purchaseSuccess)),
+        );
+      }
       _handleProUnlocked();
     }
     _wasPro = _proService!.isPro;
@@ -808,9 +814,11 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
-  /// Refresh contacts and scroll state while settings is still open (bulk import).
+  /// Refresh contacts and scroll state while settings is still open (bulk import
+  /// or delete-all).
   Future<void> _prepareForBulkLoadClose() async {
     final contacts = await _storageService.loadContacts();
+    _favoriteNames = await _storageService.loadFavorites();
     final positions = await _storageService.loadScrollPositions();
     _shouldPromptSelfContactPick =
         await _storageService.loadPendingSelfContactPick();
@@ -925,8 +933,7 @@ class ContactsPageState extends State<ContactsPage>
 
     if (_savedScrollOffset1 != null) {
       final maxOffset1 = _scrollController1.position.maxScrollExtent;
-      _scrollController1
-          .jumpTo(_savedScrollOffset1!.clamp(0.0, maxOffset1));
+      _scrollController1.jumpTo(_savedScrollOffset1!.clamp(0.0, maxOffset1));
       // Update page index from scroll position
       final displayedContacts = _displayedContacts;
       final totalItems = displayedContacts.length + 2;
@@ -946,8 +953,7 @@ class ContactsPageState extends State<ContactsPage>
     }
     if (_savedScrollOffset2 != null) {
       final maxOffset2 = _scrollController2.position.maxScrollExtent;
-      _scrollController2
-          .jumpTo(_savedScrollOffset2!.clamp(0.0, maxOffset2));
+      _scrollController2.jumpTo(_savedScrollOffset2!.clamp(0.0, maxOffset2));
       // Update page index from scroll position
       final displayedContacts = _displayedContacts;
       final totalItems = displayedContacts.length + 2;
@@ -1095,6 +1101,14 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
+  void _showSelfContactSelectedToast(String contactName) {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.selfContactSelectedToast(contactName))),
+    );
+  }
+
   Future<void> _saveSelfContactAt(int index) async {
     if (index < 0 || index >= _contacts.length) return;
     final contact = _contacts[index];
@@ -1139,6 +1153,7 @@ class ContactsPageState extends State<ContactsPage>
     await _storageService.savePendingSelfContactPick(false);
     await _saveSelfContactAt(fullIndex);
     if (!mounted) return;
+    _showSelfContactSelectedToast(contact.name);
     _suppressNextHudToggle = true;
     await _selfContactHighlightController.reverse();
     if (mounted) {
@@ -1213,7 +1228,9 @@ class ContactsPageState extends State<ContactsPage>
           barrierDismissible: false,
           builder: (context) => AlertDialog(
             title: Text(l10n.pickYourselfTitle),
-            content: Text(l10n.pickYourselfMessage),
+            content: SingleChildScrollView(
+              child: Text(l10n.pickYourselfMessage),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -1286,6 +1303,9 @@ class ContactsPageState extends State<ContactsPage>
         targetController ?? _scrollController1,
         index,
       );
+      if (mounted) {
+        _showSelfContactSelectedToast(_contacts[index].name);
+      }
       return;
     }
   }
@@ -1874,108 +1894,108 @@ class ContactsPageState extends State<ContactsPage>
 
     // Maintain scroll position on the current contact in the clicked pane
     if (controller.hasClients && newDisplayedIndex >= 0) {
-        final width = controller.position.viewportDimension;
-        if (width > 0) {
-          // Convert contact index to page index (add 1 for plus button at index 0)
-          final targetPage = newDisplayedIndex + 1;
-          controller.animateTo(
-            targetPage * width,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.ease,
-          );
+      final width = controller.position.viewportDimension;
+      if (width > 0) {
+        // Convert contact index to page index (add 1 for plus button at index 0)
+        final targetPage = newDisplayedIndex + 1;
+        controller.animateTo(
+          targetPage * width,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
 
-          // Update current page state for the clicked pane
-          if (controller == _scrollController1) {
-            setState(() {
-              _currentPage1 = newDisplayedIndex;
-              if (_favoritesMode) {
-                _currentPage1Favorites = newDisplayedIndex;
-              } else {
-                _currentPage1All = newDisplayedIndex;
-              }
-            });
-          } else if (controller == _scrollController2) {
-            setState(() {
-              _currentPage2 = newDisplayedIndex;
-              if (_favoritesMode) {
-                _currentPage2Favorites = newDisplayedIndex;
-              } else {
-                _currentPage2All = newDisplayedIndex;
-              }
-            });
-          }
+        // Update current page state for the clicked pane
+        if (controller == _scrollController1) {
+          setState(() {
+            _currentPage1 = newDisplayedIndex;
+            if (_favoritesMode) {
+              _currentPage1Favorites = newDisplayedIndex;
+            } else {
+              _currentPage1All = newDisplayedIndex;
+            }
+          });
+        } else if (controller == _scrollController2) {
+          setState(() {
+            _currentPage2 = newDisplayedIndex;
+            if (_favoritesMode) {
+              _currentPage2Favorites = newDisplayedIndex;
+            } else {
+              _currentPage2All = newDisplayedIndex;
+            }
+          });
         }
       }
+    }
 
-      // Scroll the OTHER pane to the best matched contact
-      final otherController = controller == _scrollController1
-          ? _scrollController2
-          : _scrollController1;
+    // Scroll the OTHER pane to the best matched contact
+    final otherController = controller == _scrollController1
+        ? _scrollController2
+        : _scrollController1;
 
-      // Find the best matched contact (highest match score, excluding current contact)
-      StoredContact? bestMatchContact;
-      num bestMatchCount = -1;
+    // Find the best matched contact (highest match score, excluding current contact)
+    StoredContact? bestMatchContact;
+    num bestMatchCount = -1;
 
-      for (final contact in _contacts) {
-        if (contact.name == currentContact.name) {
-          continue; // Skip current contact
-        }
-
-        final matchCount = _calculateMatchCount(currentContact, contact);
-        if (matchCount > bestMatchCount) {
-          bestMatchCount = matchCount;
-          bestMatchContact = contact;
-        }
+    for (final contact in _contacts) {
+      if (contact.name == currentContact.name) {
+        continue; // Skip current contact
       }
 
-      // Find the best match contact's index in displayed contacts
-      int? bestMatchIndex;
-      if (bestMatchContact != null) {
-        bestMatchIndex = _displayedContacts
-            .indexWhere((c) => c.name == bestMatchContact!.name);
-        if (bestMatchIndex == -1) {
-          bestMatchIndex = null; // Not in displayed contacts
+      final matchCount = _calculateMatchCount(currentContact, contact);
+      if (matchCount > bestMatchCount) {
+        bestMatchCount = matchCount;
+        bestMatchContact = contact;
+      }
+    }
+
+    // Find the best match contact's index in displayed contacts
+    int? bestMatchIndex;
+    if (bestMatchContact != null) {
+      bestMatchIndex = _displayedContacts
+          .indexWhere((c) => c.name == bestMatchContact!.name);
+      if (bestMatchIndex == -1) {
+        bestMatchIndex = null; // Not in displayed contacts
+      }
+    }
+
+    // Scroll to best match if found and valid
+    if (bestMatchIndex != null &&
+        otherController.hasClients &&
+        bestMatchIndex < _displayedContacts.length) {
+      final width = otherController.position.viewportDimension;
+      if (width > 0) {
+        // Convert contact index to page index (add 1 for plus button at index 0)
+        final targetPage = bestMatchIndex + 1;
+        otherController.animateTo(
+          targetPage * width,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.ease,
+        );
+
+        // Update current page state for the other pane
+        if (otherController == _scrollController1) {
+          setState(() {
+            _currentPage1 = bestMatchIndex!;
+            if (_favoritesMode) {
+              _currentPage1Favorites = bestMatchIndex;
+            } else {
+              _currentPage1All = bestMatchIndex;
+            }
+          });
+        } else if (otherController == _scrollController2) {
+          setState(() {
+            _currentPage2 = bestMatchIndex!;
+            if (_favoritesMode) {
+              _currentPage2Favorites = bestMatchIndex;
+            } else {
+              _currentPage2All = bestMatchIndex;
+            }
+          });
         }
       }
+    }
 
-      // Scroll to best match if found and valid
-      if (bestMatchIndex != null &&
-          otherController.hasClients &&
-          bestMatchIndex < _displayedContacts.length) {
-        final width = otherController.position.viewportDimension;
-        if (width > 0) {
-          // Convert contact index to page index (add 1 for plus button at index 0)
-          final targetPage = bestMatchIndex + 1;
-          otherController.animateTo(
-            targetPage * width,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.ease,
-          );
-
-          // Update current page state for the other pane
-          if (otherController == _scrollController1) {
-            setState(() {
-              _currentPage1 = bestMatchIndex!;
-              if (_favoritesMode) {
-                _currentPage1Favorites = bestMatchIndex;
-              } else {
-                _currentPage1All = bestMatchIndex;
-              }
-            });
-          } else if (otherController == _scrollController2) {
-            setState(() {
-              _currentPage2 = bestMatchIndex!;
-              if (_favoritesMode) {
-                _currentPage2Favorites = bestMatchIndex;
-              } else {
-                _currentPage2All = bestMatchIndex;
-              }
-            });
-          }
-        }
-      }
-
-      // Save scroll positions
+    // Save scroll positions
     _saveScrollPositions();
 
     // Check for match after reordering
@@ -2087,7 +2107,8 @@ class ContactsPageState extends State<ContactsPage>
       }
 
       if (isOrderingContact) {
-        if (_originalContactOrder != null && _originalContactOrder!.isNotEmpty) {
+        if (_originalContactOrder != null &&
+            _originalContactOrder!.isNotEmpty) {
           _contacts = List.from(_originalContactOrder!);
         }
         _clearVirtualSortState();
@@ -2442,7 +2463,8 @@ class ContactsPageState extends State<ContactsPage>
           : const PageScrollPhysics(),
       itemExtent: width,
       itemCount: itemCount,
-      scrollCacheExtent: ScrollCacheExtent.pixels(width * 2), // Cache at least 2 items to ensure rendering
+      scrollCacheExtent: ScrollCacheExtent.pixels(
+          width * 2), // Cache at least 2 items to ensure rendering
       addAutomaticKeepAlives: true, // Keep items alive to ensure rendering
       addRepaintBoundaries: true, // Add repaint boundaries for better rendering
       itemBuilder: (context, index) {
@@ -2713,9 +2735,7 @@ class ContactsPageState extends State<ContactsPage>
                         final bulkLoaded = await _storageService
                             .loadAndClearContactsBulkLoaded();
                         if (bulkLoaded) {
-                          if (_contacts.isEmpty) {
-                            await _prepareForBulkLoadClose();
-                          }
+                          await _prepareForBulkLoadClose();
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             _finalizeAfterBulkLoad();
                           });

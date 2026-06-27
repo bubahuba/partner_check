@@ -5,12 +5,11 @@ class PhoneUtils {
   static int colorFromPhoneNumber(String phoneNumber) {
     final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
     if (digits.isEmpty) return 0;
-    
+
     final hexDigits = digits.length >= 6
         ? digits.substring(digits.length - 6)
         : digits.padLeft(6, '0');
-    
+
     return int.tryParse(hexDigits, radix: 16) ?? 0;
   }
 }
-

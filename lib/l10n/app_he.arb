@@ -51,11 +51,11 @@
   "deleteAllContacts": "מחק את כל אנשי הקשר",
   "deleteAllContactsConfirm": "האם אתה בטוח שברצונך למחוק את כל אנשי הקשר? לא ניתן לבטל פעולה זו.",
   "pickYourselfTitle": "בחר את עצמך",
-  "pickYourselfMessage": "בחר את איש הקשר שלך כדי להתחיל עם הצבעים שלך. iOS לא יכול לזהות זאת אוטומטית.",
+  "pickYourselfMessage": "בחר את איש הקשר שלך כדי להתחיל עם הצבעים שלך. iOS לא יכול לזהות זאת אוטומטית.\n\nניתן גם ללחוץ לחיצה ארוכה על איש קשר באחת הלוחות כדי לסמן את עצמך כ\"אני\".",
   "pickYourselfButton": "בחר איש קשר",
   "notNow": "לא עכשיו",
   "pickYourselfNotInList": "{contactName} לא נמצא באנשי הקשר שנטענו. בחר מישהו שנמצא ברשימה.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "לחץ לחיצה ארוכה על איש קשר בלוח זה כדי לסמן את עצמך כ\"אני\".",
   "upgradeToPro": "שדרג ל-PRO",
   "restorePurchases": "שחזר רכישות",
   "proVersion": "PartnerCheck Pro",
@@ -63,5 +63,8 @@
   "purchaseInProgress": "הרכישה מתבצעת...",
   "purchaseSuccess": "PRO נפתח! תודה על הרכישה.",
   "purchaseFailed": "הרכישה נכשלה. נסה שוב.",
-  "alreadyPro": "כבר יש לך PRO."
+  "alreadyPro": "כבר יש לך PRO.",
+  "selfContactSelectedToast": "{contactName} נבחר/ת עכשיו כ\"אני\".",
+  "doubleTapSelfDescription": "הקשה כפולה על לוח כדי לגלול אליך",
+  "longPressSelfDescription": "לחיצה ארוכה על איש קשר כדי לבחור \"אני\" חדש"
 }

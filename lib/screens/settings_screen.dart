@@ -21,6 +21,7 @@ import 'contacts_page.dart';
 
 class SettingsScreen extends StatefulWidget {
   final VoidCallback? onClose;
+
   /// Called after bulk import saves contacts, while the loading overlay is still
   /// visible, so the contacts page can refresh before the panel slides away.
   final Future<void> Function()? onPrepareClose;
@@ -167,16 +168,14 @@ class SettingsScreenState extends State<SettingsScreen>
     return Consumer<ProSubscriptionService>(
       builder: (context, proService, _) {
         final price = proService.proProduct?.price;
-        final upgradeLabel = price != null
-            ? '${l10n.upgradeToPro} ($price)'
-            : l10n.upgradeToPro;
+        final upgradeLabel =
+            price != null ? '${l10n.upgradeToPro} ($price)' : l10n.upgradeToPro;
 
         return Column(
           children: [
             GestureDetector(
-              onLongPress: kDebugMode
-                  ? () => proService.debugTogglePro()
-                  : null,
+              onLongPress:
+                  kDebugMode ? () => proService.debugTogglePro() : null,
               child: Text(
                 proService.isPro ? l10n.proVersion : l10n.partnerCheckFree,
                 style: TextStyle(
@@ -337,15 +336,13 @@ class SettingsScreenState extends State<SettingsScreen>
                     height: 36,
                     child: CircularProgressIndicator(
                       strokeWidth: 3,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(Colors.white),
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   ),
                 const SizedBox(height: 20),
                 Text(
                   hasTotal
-                      ? l10n.loadingContactsProgress(
-                          _loadProgress, _loadTotal)
+                      ? l10n.loadingContactsProgress(_loadProgress, _loadTotal)
                       : l10n.loadingContactsFromDevice,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
@@ -601,7 +598,8 @@ class SettingsScreenState extends State<SettingsScreen>
             children: [
               Text(
                 l10n.addContactManually,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -707,8 +705,7 @@ class SettingsScreenState extends State<SettingsScreen>
                 const ContactsPage(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return buildHorizontalSlideTransition(
-                  context, animation, child);
+              return buildHorizontalSlideTransition(context, animation, child);
             },
           ),
         );
@@ -730,7 +727,8 @@ class SettingsScreenState extends State<SettingsScreen>
             children: [
               Text(
                 l10n.deleteAllContacts,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               Text(l10n.deleteAllContactsConfirm),
@@ -785,8 +783,7 @@ class SettingsScreenState extends State<SettingsScreen>
                 const ContactsPage(),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return buildHorizontalSlideTransition(
-                  context, animation, child);
+              return buildHorizontalSlideTransition(context, animation, child);
             },
           ),
         );
@@ -940,255 +937,247 @@ class SettingsScreenState extends State<SettingsScreen>
                 ),
                 // Content
                 LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isPortrait =
-                            constraints.maxHeight > constraints.maxWidth;
-                        final screenWidth = constraints.maxWidth;
-                        final screenHeight = constraints.maxHeight;
-                        final minDimension = screenWidth < screenHeight
-                            ? screenWidth
-                            : screenHeight;
+                  builder: (context, constraints) {
+                    final isPortrait =
+                        constraints.maxHeight > constraints.maxWidth;
+                    final screenWidth = constraints.maxWidth;
+                    final screenHeight = constraints.maxHeight;
+                    final minDimension =
+                        screenWidth < screenHeight ? screenWidth : screenHeight;
 
-                        // Responsive sizing based on screen dimensions
-                        final padding = isPortrait
-                            ? (minDimension * 0.04).clamp(16.0, 24.0)
-                            : (minDimension * 0.04).clamp(16.0, 24.0);
-                        final iconSize = isPortrait
-                            ? (minDimension * 0.3).clamp(100.0, 150.0)
-                            : (minDimension * 0.2).clamp(80.0, 120.0);
-                        final fontSize = isPortrait
-                            ? (screenWidth * 0.08).clamp(20.0, 32.0)
-                            : (screenHeight * 0.05).clamp(18.0, 24.0);
-                        final spacing = isPortrait
-                            ? (screenHeight * 0.04).clamp(16.0, 32.0)
-                            : (screenWidth * 0.04).clamp(16.0, 32.0);
-                        final buttonPadding = isPortrait
-                            ? EdgeInsets.symmetric(
-                                horizontal:
-                                    (screenWidth * 0.08).clamp(24.0, 32.0),
-                                vertical:
-                                    (screenHeight * 0.02).clamp(12.0, 16.0),
-                              )
-                            : const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 10);
-                        final buttonFontSize = isPortrait
-                            ? (screenWidth * 0.035).clamp(14.0, 16.0)
-                            : (screenHeight * 0.025).clamp(16.0, 18.0);
+                    // Responsive sizing based on screen dimensions
+                    final padding = isPortrait
+                        ? (minDimension * 0.04).clamp(16.0, 24.0)
+                        : (minDimension * 0.04).clamp(16.0, 24.0);
+                    final iconSize = isPortrait
+                        ? (minDimension * 0.3).clamp(100.0, 150.0)
+                        : (minDimension * 0.2).clamp(80.0, 120.0);
+                    final fontSize = isPortrait
+                        ? (screenWidth * 0.08).clamp(20.0, 32.0)
+                        : (screenHeight * 0.05).clamp(18.0, 24.0);
+                    final spacing = isPortrait
+                        ? (screenHeight * 0.04).clamp(16.0, 32.0)
+                        : (screenWidth * 0.04).clamp(16.0, 32.0);
+                    final buttonPadding = isPortrait
+                        ? EdgeInsets.symmetric(
+                            horizontal: (screenWidth * 0.08).clamp(24.0, 32.0),
+                            vertical: (screenHeight * 0.02).clamp(12.0, 16.0),
+                          )
+                        : const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10);
+                    final buttonFontSize = isPortrait
+                        ? (screenWidth * 0.035).clamp(14.0, 16.0)
+                        : (screenHeight * 0.025).clamp(16.0, 18.0);
 
-                        Widget iconWidget = Container(
+                    Widget iconWidget = Container(
+                      width: iconSize,
+                      height: iconSize,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 30,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/app_icon.png',
                           width: iconSize,
                           height: iconSize,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.3),
-                                blurRadius: 30,
-                                spreadRadius: 10,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    );
+
+                    final l10n = AppLocalizations.of(context)!;
+                    Widget textAndButton = Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          l10n.appTitle,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            height: 1.2,
+                            shadows: const [
+                              Shadow(
+                                color: Colors.black26,
+                                blurRadius: 10,
                               ),
                             ],
                           ),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/app_icon.png',
-                              width: iconSize,
-                              height: iconSize,
-                              fit: BoxFit.cover,
-                            ),
+                        ),
+                        SizedBox(height: isPortrait ? 32 : 24),
+                        ElevatedButton.icon(
+                          onPressed: _isLoading ? null : _showAddContactMenu,
+                          icon: _isLoading
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : const Icon(Icons.contacts, size: 24),
+                          label: Text(
+                            _isLoading ? l10n.loading : l10n.addContact,
+                            style: TextStyle(fontSize: buttonFontSize),
                           ),
-                        );
-
-                        final l10n = AppLocalizations.of(context)!;
-                        Widget textAndButton = Column(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: accent,
+                            padding: buttonPadding,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            elevation: 8,
+                            shadowColor: Colors.black.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        SizedBox(height: isPortrait ? 24 : 16),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              l10n.appTitle,
-                              textAlign: TextAlign.center,
+                              l10n.vibrations,
                               style: TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.bold,
+                                fontSize: buttonFontSize * 0.9,
                                 color: Colors.white,
-                                height: 1.2,
                                 shadows: const [
                                   Shadow(
                                     color: Colors.black26,
-                                    blurRadius: 10,
+                                    blurRadius: 8,
                                   ),
                                 ],
                               ),
                             ),
-                            SizedBox(height: isPortrait ? 32 : 24),
-                            ElevatedButton.icon(
-                              onPressed:
-                                  _isLoading ? null : _showAddContactMenu,
-                              icon: _isLoading
-                                  ? SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
-                                      ),
-                                    )
-                                  : const Icon(Icons.contacts, size: 24),
-                              label: Text(
-                                _isLoading ? l10n.loading : l10n.addContact,
-                                style: TextStyle(fontSize: buttonFontSize),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: accent,
-                                padding: buttonPadding,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                elevation: 8,
-                                shadowColor:
-                                    Colors.black.withValues(alpha: 0.3),
-                              ),
+                            const SizedBox(width: 12),
+                            Switch(
+                              value: _vibrationsEnabled,
+                              onChanged: _toggleVibrations,
+                              activeThumbColor: Colors.white,
+                              activeTrackColor:
+                                  Colors.white.withValues(alpha: 0.7),
+                              inactiveThumbColor:
+                                  Colors.white.withValues(alpha: 0.5),
+                              inactiveTrackColor:
+                                  Colors.white.withValues(alpha: 0.3),
                             ),
-                            SizedBox(height: isPortrait ? 24 : 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  l10n.vibrations,
-                                  style: TextStyle(
-                                    fontSize: buttonFontSize * 0.9,
-                                    color: Colors.white,
-                                    shadows: const [
-                                      Shadow(
-                                        color: Colors.black26,
-                                        blurRadius: 8,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Switch(
-                                  value: _vibrationsEnabled,
-                                  onChanged: _toggleVibrations,
-                                  activeThumbColor: Colors.white,
-                                  activeTrackColor:
-                                      Colors.white.withValues(alpha: 0.7),
-                                  inactiveThumbColor:
-                                      Colors.white.withValues(alpha: 0.5),
-                                  inactiveTrackColor:
-                                      Colors.white.withValues(alpha: 0.3),
+                          ],
+                        ),
+                        SizedBox(height: isPortrait ? 24 : 16),
+                        _buildProSection(buttonFontSize),
+                        SizedBox(height: isPortrait ? 24 : 16),
+                        ElevatedButton.icon(
+                          onPressed: _deleteAllContacts,
+                          icon: const Icon(Icons.delete, color: Colors.white),
+                          label: Text(
+                            l10n.deleteAllContacts,
+                            style: TextStyle(
+                              fontSize: buttonFontSize * 0.9,
+                              color: Colors.white,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: isPortrait ? 24 : 16),
+                        TextButton(
+                          onPressed: () {
+                            if (widget.onClose != null) {
+                              _handleClose();
+                            } else {
+                              _openContactsPage();
+                            }
+                          },
+                          child: Text(
+                            l10n.close,
+                            style: TextStyle(
+                              fontSize: buttonFontSize * 0.9,
+                              color: Colors.white.withValues(alpha: 0.9),
+                              decoration: TextDecoration.underline,
+                              shadows: const [
+                                Shadow(
+                                  color: Colors.black26,
+                                  blurRadius: 8,
                                 ),
                               ],
                             ),
-                            SizedBox(height: isPortrait ? 24 : 16),
-                            _buildProSection(buttonFontSize),
-                            SizedBox(height: isPortrait ? 24 : 16),
-                            ElevatedButton.icon(
-                              onPressed: _deleteAllContacts,
-                              icon: const Icon(Icons.delete, color: Colors.white),
-                              label: Text(
-                                l10n.deleteAllContacts,
-                                style: TextStyle(
-                                  fontSize: buttonFontSize * 0.9,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: isPortrait ? 24 : 16),
-                            TextButton(
-                              onPressed: () {
-                                if (widget.onClose != null) {
-                                  _handleClose();
-                                } else {
-                                  _openContactsPage();
-                                }
-                              },
-                              child: Text(
-                                l10n.close,
-                                style: TextStyle(
-                                  fontSize: buttonFontSize * 0.9,
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  decoration: TextDecoration.underline,
-                                  shadows: const [
-                                    Shadow(
-                                      color: Colors.black26,
-                                      blurRadius: 8,
+                          ),
+                        ),
+                      ],
+                    );
+
+                    if (isPortrait) {
+                      // Portrait layout: Column
+                      return Padding(
+                        padding: EdgeInsets.all(padding),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(height: 40),
+                            iconWidget,
+                            SizedBox(height: spacing),
+                            Expanded(
+                              child: LayoutBuilder(
+                                builder: (context, innerConstraints) {
+                                  return SingleChildScrollView(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: innerConstraints.maxHeight,
+                                      ),
+                                      child: Center(
+                                        child: textAndButton,
+                                      ),
                                     ),
-                                  ],
-                                ),
+                                  );
+                                },
                               ),
                             ),
                           ],
-                        );
-
-                        if (isPortrait) {
-                          // Portrait layout: Column
-                          return Padding(
-                            padding: EdgeInsets.all(padding),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SizedBox(height: 40),
-                                iconWidget,
-                                SizedBox(height: spacing),
-                                Expanded(
-                                  child: LayoutBuilder(
-                                    builder: (context, innerConstraints) {
-                                      return SingleChildScrollView(
-                                        child: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            minHeight:
-                                                innerConstraints.maxHeight,
-                                          ),
-                                          child: Center(
-                                            child: textAndButton,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
+                        ),
+                      );
+                    } else {
+                      // Landscape layout: Row
+                      return Padding(
+                        padding: EdgeInsets.all(padding),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Center(child: iconWidget),
                             ),
-                          );
-                        } else {
-                          // Landscape layout: Row
-                          return Padding(
-                            padding: EdgeInsets.all(padding),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Center(child: iconWidget),
-                                ),
-                                SizedBox(
-                                    width:
-                                        isPortrait ? spacing : spacing * 0.5),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Center(child: textAndButton),
-                                  ),
-                                ),
-                              ],
+                            SizedBox(
+                                width: isPortrait ? spacing : spacing * 0.5),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Center(child: textAndButton),
+                              ),
                             ),
-                          );
-                        }
-                      },
-                    ),
-                    if (_isLoading) _buildLoadContactsOverlay(),
-                  ],
+                          ],
+                        ),
+                      );
+                    }
+                  },
                 ),
-              ),
+                if (_isLoading) _buildLoadContactsOverlay(),
+              ],
             ),
           ),
+        ),
+      ),
     );
   }
 }

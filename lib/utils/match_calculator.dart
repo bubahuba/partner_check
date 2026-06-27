@@ -7,7 +7,8 @@ class MatchCalculator {
   /// Returns a score where higher values indicate better matches
   /// Prioritizes number of match types (vibrations) over granular score
   /// Uses the diff value (0-36) to create granular scoring within the match range
-  static num calculateMatchCount(StoredContact contact1, StoredContact contact2) {
+  static num calculateMatchCount(
+      StoredContact contact1, StoredContact contact2) {
     if (contact1.color == contact2.color) {
       return 0; // Same color means no match
     }
@@ -137,4 +138,3 @@ class MatchDetails {
     return types;
   }
 }
-

@@ -51,11 +51,11 @@
   "deleteAllContacts": "Удалить все контакты",
   "deleteAllContactsConfirm": "Вы уверены, что хотите удалить все контакты? Это действие нельзя отменить.",
   "pickYourselfTitle": "Выберите себя",
-  "pickYourselfMessage": "Выберите свой контакт, чтобы начать со своих цветов. iOS не может определить это автоматически.",
+  "pickYourselfMessage": "Выберите свой контакт, чтобы начать со своих цветов. iOS не может определить это автоматически.\n\nВы также можете нажать и удерживать контакт на любой панели, чтобы установить себя как «я».",
   "pickYourselfButton": "Выбрать контакт",
   "notNow": "Не сейчас",
   "pickYourselfNotInList": "{contactName} не найден в загруженных контактах. Выберите кого-то из списка.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Нажмите и удерживайте контакт на этой панели, чтобы установить себя как «я».",
   "upgradeToPro": "Перейти на PRO",
   "restorePurchases": "Восстановить покупки",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Покупка выполняется...",
   "purchaseSuccess": "PRO разблокирован! Спасибо за покупку.",
   "purchaseFailed": "Покупка не удалась. Попробуйте снова.",
-  "alreadyPro": "У вас уже есть PRO."
+  "alreadyPro": "У вас уже есть PRO.",
+  "selfContactSelectedToast": "{contactName} теперь выбран(а) как «я».",
+  "doubleTapSelfDescription": "Двойное нажатие на панель, чтобы прокрутить к себе",
+  "longPressSelfDescription": "Нажмите и удерживайте контакт, чтобы выбрать новое «я»"
 }
-

@@ -67,9 +67,8 @@ class AboutScreenState extends State<AboutScreen>
                         constraints.maxHeight > constraints.maxWidth;
                     final screenWidth = constraints.maxWidth;
                     final screenHeight = constraints.maxHeight;
-                    final minDimension = screenWidth < screenHeight
-                        ? screenWidth
-                        : screenHeight;
+                    final minDimension =
+                        screenWidth < screenHeight ? screenWidth : screenHeight;
 
                     final padding = isPortrait
                         ? (minDimension * 0.04).clamp(16.0, 24.0)
@@ -228,6 +227,66 @@ class AboutScreenState extends State<AboutScreen>
                                           Expanded(
                                             child: Text(
                                               l10n.trashIconDescription,
+                                              style: TextStyle(
+                                                fontSize:
+                                                    iconDescriptionFontSize,
+                                                color: Colors.white,
+                                                height: 1.4,
+                                                shadows: const [
+                                                  Shadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 8,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: spacing),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.touch_app,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              l10n.doubleTapSelfDescription,
+                                              style: TextStyle(
+                                                fontSize:
+                                                    iconDescriptionFontSize,
+                                                color: Colors.white,
+                                                height: 1.4,
+                                                shadows: const [
+                                                  Shadow(
+                                                    color: Colors.black26,
+                                                    blurRadius: 8,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: spacing),
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.back_hand_outlined,
+                                            color: Colors.white,
+                                            size: 24,
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              l10n.longPressSelfDescription,
                                               style: TextStyle(
                                                 fontSize:
                                                     iconDescriptionFontSize,

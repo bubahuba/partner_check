@@ -51,11 +51,11 @@
   "deleteAllContacts": "Excluir todos os contatos",
   "deleteAllContactsConfirm": "Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita.",
   "pickYourselfTitle": "Selecione-se",
-  "pickYourselfMessage": "Escolha seu contato para começar com suas cores. O iOS não pode detectar isso automaticamente.",
+  "pickYourselfMessage": "Escolha seu contato para começar com suas cores. O iOS não pode detectar isso automaticamente.\n\nVocê também pode tocar e segurar um contato em qualquer painel para se definir como \"eu\".",
   "pickYourselfButton": "Escolher contato",
   "notNow": "Agora não",
   "pickYourselfNotInList": "{contactName} não foi encontrado nos seus contatos carregados. Escolha alguém que esteja na lista.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Toque e segure um contato neste painel para se definir como \"eu\".",
   "upgradeToPro": "Atualizar para PRO",
   "restorePurchases": "Restaurar compras",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Compra em curso...",
   "purchaseSuccess": "PRO desbloqueado! Obrigado pela sua compra.",
   "purchaseFailed": "A compra falhou. Tente novamente.",
-  "alreadyPro": "Já tem PRO."
+  "alreadyPro": "Já tem PRO.",
+  "selfContactSelectedToast": "{contactName} agora está selecionado(a) como \"eu\".",
+  "doubleTapSelfDescription": "Toque duas vezes em um painel para rolar até você",
+  "longPressSelfDescription": "Toque e segure um contato para selecionar um novo \"eu\""
 }
-

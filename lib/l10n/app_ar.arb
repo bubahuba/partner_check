@@ -51,11 +51,11 @@
   "deleteAllContacts": "حذف جميع جهات الاتصال",
   "deleteAllContactsConfirm": "هل أنت متأكد أنك تريد حذف جميع جهات الاتصال؟ لا يمكن التراجع عن هذا الإجراء.",
   "pickYourselfTitle": "اختر نفسك",
-  "pickYourselfMessage": "اختر جهة اتصالك لبدء ألوانك. لا يمكن لـ iOS اكتشاف ذلك تلقائياً.",
+  "pickYourselfMessage": "اختر جهة اتصالك لبدء ألوانك. لا يمكن لـ iOS اكتشاف ذلك تلقائياً.\n\nيمكنك أيضاً الضغط مطولاً على جهة اتصال في أي لوحة لتعيين نفسك كـ \"أنا\".",
   "pickYourselfButton": "اختر جهة اتصال",
   "notNow": "ليس الآن",
   "pickYourselfNotInList": "لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "اضغط مطولاً على جهة اتصال في هذه اللوحة لتعيين نفسك كـ \"أنا\".",
   "upgradeToPro": "ترقية إلى PRO",
   "restorePurchases": "استعادة المشتريات",
   "proVersion": "PartnerCheck Pro",
@@ -63,5 +63,8 @@
   "purchaseInProgress": "جاري الشراء...",
   "purchaseSuccess": "تم فتح PRO! شكراً لشرائك.",
   "purchaseFailed": "فشل الشراء. يرجى المحاولة مرة أخرى.",
-  "alreadyPro": "لديك PRO بالفعل."
+  "alreadyPro": "لديك PRO بالفعل.",
+  "selfContactSelectedToast": "تم اختيار {contactName} الآن كـ \"أنا\".",
+  "doubleTapSelfDescription": "انقر مرتين على لوحة للتمرير إلى نفسك",
+  "longPressSelfDescription": "اضغط مطولاً على جهة اتصال لاختيار \"أنا\" جديد"
 }

@@ -39,77 +39,202 @@ class AppLocalizations {
   bool get isRtl => isRtlLanguage(locale.languageCode);
 
   // Translations
-  String get appTitle => _localizedValues[locale.languageCode]?['appTitle'] ?? 'Partner Check';
-  String get contactsPermissionRequired => _localizedValues[locale.languageCode]?['contactsPermissionRequired'] ?? 'Contacts permission is required';
-  String get contactLimitReached => _localizedValues[locale.languageCode]?['contactLimitReached'] ?? 'Contact Limit Reached';
-  String get contactLimitMessage => _localizedValues[locale.languageCode]?['contactLimitMessage'] ?? 'You have reached the maximum of 10 contacts in the free version.\n\nUpgrade to PartnerCheck Pro to add unlimited contacts.';
+  String get appTitle =>
+      _localizedValues[locale.languageCode]?['appTitle'] ?? 'Partner Check';
+  String get contactsPermissionRequired =>
+      _localizedValues[locale.languageCode]?['contactsPermissionRequired'] ??
+      'Contacts permission is required';
+  String get contactLimitReached =>
+      _localizedValues[locale.languageCode]?['contactLimitReached'] ??
+      'Contact Limit Reached';
+  String get contactLimitMessage =>
+      _localizedValues[locale.languageCode]?['contactLimitMessage'] ??
+      'You have reached the maximum of 10 contacts in the free version.\n\nUpgrade to PartnerCheck Pro to add unlimited contacts.';
   String get ok => _localizedValues[locale.languageCode]?['ok'] ?? 'OK';
-  String get cancel => _localizedValues[locale.languageCode]?['cancel'] ?? 'Cancel';
-  String get delete => _localizedValues[locale.languageCode]?['delete'] ?? 'Delete';
+  String get cancel =>
+      _localizedValues[locale.languageCode]?['cancel'] ?? 'Cancel';
+  String get delete =>
+      _localizedValues[locale.languageCode]?['delete'] ?? 'Delete';
   String get save => _localizedValues[locale.languageCode]?['save'] ?? 'Save';
   String get add => _localizedValues[locale.languageCode]?['add'] ?? 'Add';
-  String get close => _localizedValues[locale.languageCode]?['close'] ?? 'Close';
-  String get selectedContactNoName => _localizedValues[locale.languageCode]?['selectedContactNoName'] ?? 'Selected contact has no name';
-  String contactAlreadyInList(String contactName) => (_localizedValues[locale.languageCode]?['contactAlreadyInList'] ?? '{contactName} is already in the list').replaceAll('{contactName}', contactName);
-  String get noPhoneNumber => _localizedValues[locale.languageCode]?['noPhoneNumber'] ?? 'No Phone Number';
-  String noPhoneNumberMessage(String contactName) => (_localizedValues[locale.languageCode]?['noPhoneNumberMessage'] ?? '{contactName} does not have a phone number. Please select a contact with a phone number.').replaceAll('{contactName}', contactName);
-  String errorPickingContact(String error) => (_localizedValues[locale.languageCode]?['errorPickingContact'] ?? 'Error picking contact: {error}').replaceAll('{error}', error);
-  String get deleteContact => _localizedValues[locale.languageCode]?['deleteContact'] ?? 'Delete Contact';
-  String deleteContactConfirm(String contactName) => (_localizedValues[locale.languageCode]?['deleteContactConfirm'] ?? 'Are you sure you want to delete {contactName}?').replaceAll('{contactName}', contactName);
-  String get addContactManually => _localizedValues[locale.languageCode]?['addContactManually'] ?? 'Add Contact Manually';
-  String get editContact => _localizedValues[locale.languageCode]?['editContact'] ?? 'Edit Contact';
+  String get close =>
+      _localizedValues[locale.languageCode]?['close'] ?? 'Close';
+  String get selectedContactNoName =>
+      _localizedValues[locale.languageCode]?['selectedContactNoName'] ??
+      'Selected contact has no name';
+  String contactAlreadyInList(String contactName) =>
+      (_localizedValues[locale.languageCode]?['contactAlreadyInList'] ??
+              '{contactName} is already in the list')
+          .replaceAll('{contactName}', contactName);
+  String get noPhoneNumber =>
+      _localizedValues[locale.languageCode]?['noPhoneNumber'] ??
+      'No Phone Number';
+  String noPhoneNumberMessage(String contactName) => (_localizedValues[
+              locale.languageCode]?['noPhoneNumberMessage'] ??
+          '{contactName} does not have a phone number. Please select a contact with a phone number.')
+      .replaceAll('{contactName}', contactName);
+  String errorPickingContact(String error) =>
+      (_localizedValues[locale.languageCode]?['errorPickingContact'] ??
+              'Error picking contact: {error}')
+          .replaceAll('{error}', error);
+  String get deleteContact =>
+      _localizedValues[locale.languageCode]?['deleteContact'] ??
+      'Delete Contact';
+  String deleteContactConfirm(String contactName) =>
+      (_localizedValues[locale.languageCode]?['deleteContactConfirm'] ??
+              'Are you sure you want to delete {contactName}?')
+          .replaceAll('{contactName}', contactName);
+  String get addContactManually =>
+      _localizedValues[locale.languageCode]?['addContactManually'] ??
+      'Add Contact Manually';
+  String get editContact =>
+      _localizedValues[locale.languageCode]?['editContact'] ?? 'Edit Contact';
   String get name => _localizedValues[locale.languageCode]?['name'] ?? 'Name';
-  String get enterContactName => _localizedValues[locale.languageCode]?['enterContactName'] ?? 'Enter contact name';
-  String get phoneNumber => _localizedValues[locale.languageCode]?['phoneNumber'] ?? 'Phone Number';
-  String get enterPhoneNumber => _localizedValues[locale.languageCode]?['enterPhoneNumber'] ?? 'Enter phone number';
-  String get phoneNumberOptional => _localizedValues[locale.languageCode]?['phoneNumberOptional'] ?? 'Phone Number (optional)';
-  String get enterPhoneNumberToChangeColor => _localizedValues[locale.languageCode]?['enterPhoneNumberToChangeColor'] ?? 'Enter phone number to change color';
-  String get leavePhoneEmptyKeepColor => _localizedValues[locale.languageCode]?['leavePhoneEmptyKeepColor'] ?? 'Leave phone number empty to keep current color';
-  String get addFromDevice => _localizedValues[locale.languageCode]?['addFromDevice'] ?? 'Add from device';
-  String get addManually => _localizedValues[locale.languageCode]?['addManually'] ?? 'Add manually';
-  String get addContact => _localizedValues[locale.languageCode]?['addContact'] ?? 'Add Contact';
-  String get vibrations => _localizedValues[locale.languageCode]?['vibrations'] ?? 'Vibrations';
-  String get loadContacts => _localizedValues[locale.languageCode]?['loadContacts'] ?? 'Load Contacts';
-  String get loadAllContacts => _localizedValues[locale.languageCode]?['loadAllContacts'] ?? 'Load all contacts';
-  String get permissionRequired => _localizedValues[locale.languageCode]?['permissionRequired'] ?? 'Permission Required';
-  String get permissionRequiredMessage => _localizedValues[locale.languageCode]?['permissionRequiredMessage'] ?? 'This app needs access to your contacts to check partner compatibility. Please grant permission in settings.';
-  String get openSettings => _localizedValues[locale.languageCode]?['openSettings'] ?? 'Open Settings';
-  String get settings => _localizedValues[locale.languageCode]?['settings'] ?? 'Settings';
-  String get contactsPermissionDenied => _localizedValues[locale.languageCode]?['contactsPermissionDenied'] ?? 'Contacts permission denied';
-  String permissionDenied(String status) => (_localizedValues[locale.languageCode]?['permissionDenied'] ?? 'Permission denied: {status}').replaceAll('{status}', status);
-  String errorLoadingContacts(String error) => (_localizedValues[locale.languageCode]?['errorLoadingContacts'] ?? 'Error loading contacts: {error}').replaceAll('{error}', error);
-  String get partnerCheckFree => _localizedValues[locale.languageCode]?['partnerCheckFree'] ?? 'PartnerCheck Free';
-  String get loading => _localizedValues[locale.languageCode]?['loading'] ?? 'Loading...';
-  String get loadingContactsFromDevice => _localizedValues[locale.languageCode]?['loadingContactsFromDevice'] ?? 'Reading contacts from device...';
-  String loadingContactsProgress(int current, int total) => (_localizedValues[locale.languageCode]?['loadingContactsProgress'] ?? '{current} of {total}').replaceAll('{current}', '$current').replaceAll('{total}', '$total');
-  String get aboutTitle => _localizedValues[locale.languageCode]?['aboutTitle'] ?? 'About';
-  String get aboutText => _localizedValues[locale.languageCode]?['aboutText'] ?? 'Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?';
-  String get heartIconDescription => _localizedValues[locale.languageCode]?['heartIconDescription'] ?? 'Mark contact as favorite';
-  String get chartIconDescription => _localizedValues[locale.languageCode]?['chartIconDescription'] ?? 'Reorder contacts by match count';
-  String get trashIconDescription => _localizedValues[locale.languageCode]?['trashIconDescription'] ?? 'Delete contact';
-  String get deleteAllContacts => _localizedValues[locale.languageCode]?['deleteAllContacts'] ?? 'Delete all contacts';
-  String get deleteAllContactsConfirm => _localizedValues[locale.languageCode]?['deleteAllContactsConfirm'] ?? 'Are you sure you want to delete all contacts? This action cannot be undone.';
-  String get pickYourselfTitle => _localizedValues[locale.languageCode]?['pickYourselfTitle'] ?? 'Select yourself';
-  String get pickYourselfMessage => _localizedValues[locale.languageCode]?['pickYourselfMessage'] ?? 'Choose your contact so you can start with your colors. iOS cannot detect this automatically.';
-  String get pickYourselfButton => _localizedValues[locale.languageCode]?['pickYourselfButton'] ?? 'Choose contact';
-  String get notNow => _localizedValues[locale.languageCode]?['notNow'] ?? 'Not now';
-  String pickYourselfNotInList(String contactName) => (_localizedValues[locale.languageCode]?['pickYourselfNotInList'] ?? '{contactName} was not found in your loaded contacts. Pick someone who is in the list.').replaceAll('{contactName}', contactName);
-  String get setMeWithLongPressHint => _localizedValues[locale.languageCode]?['setMeWithLongPressHint'] ?? 'Long-press a contact on this pane to set yourself as "me".';
-  String get upgradeToPro => _localizedValues[locale.languageCode]?['upgradeToPro'] ?? 'Upgrade to PRO';
-  String get restorePurchases => _localizedValues[locale.languageCode]?['restorePurchases'] ?? 'Restore purchases';
-  String get proVersion => _localizedValues[locale.languageCode]?['proVersion'] ?? 'PartnerCheck Pro';
-  String get proFeatureLoadAllContacts => _localizedValues[locale.languageCode]?['proFeatureLoadAllContacts'] ?? 'Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.';
-  String get purchaseInProgress => _localizedValues[locale.languageCode]?['purchaseInProgress'] ?? 'Purchase in progress...';
-  String get purchaseSuccess => _localizedValues[locale.languageCode]?['purchaseSuccess'] ?? 'PRO unlocked! Thank you for your purchase.';
-  String get purchaseFailed => _localizedValues[locale.languageCode]?['purchaseFailed'] ?? 'Purchase failed. Please try again.';
-  String get alreadyPro => _localizedValues[locale.languageCode]?['alreadyPro'] ?? 'You already have PRO.';
+  String get enterContactName =>
+      _localizedValues[locale.languageCode]?['enterContactName'] ??
+      'Enter contact name';
+  String get phoneNumber =>
+      _localizedValues[locale.languageCode]?['phoneNumber'] ?? 'Phone Number';
+  String get enterPhoneNumber =>
+      _localizedValues[locale.languageCode]?['enterPhoneNumber'] ??
+      'Enter phone number';
+  String get phoneNumberOptional =>
+      _localizedValues[locale.languageCode]?['phoneNumberOptional'] ??
+      'Phone Number (optional)';
+  String get enterPhoneNumberToChangeColor =>
+      _localizedValues[locale.languageCode]?['enterPhoneNumberToChangeColor'] ??
+      'Enter phone number to change color';
+  String get leavePhoneEmptyKeepColor =>
+      _localizedValues[locale.languageCode]?['leavePhoneEmptyKeepColor'] ??
+      'Leave phone number empty to keep current color';
+  String get addFromDevice =>
+      _localizedValues[locale.languageCode]?['addFromDevice'] ??
+      'Add from device';
+  String get addManually =>
+      _localizedValues[locale.languageCode]?['addManually'] ?? 'Add manually';
+  String get addContact =>
+      _localizedValues[locale.languageCode]?['addContact'] ?? 'Add Contact';
+  String get vibrations =>
+      _localizedValues[locale.languageCode]?['vibrations'] ?? 'Vibrations';
+  String get loadContacts =>
+      _localizedValues[locale.languageCode]?['loadContacts'] ?? 'Load Contacts';
+  String get loadAllContacts =>
+      _localizedValues[locale.languageCode]?['loadAllContacts'] ??
+      'Load all contacts';
+  String get permissionRequired =>
+      _localizedValues[locale.languageCode]?['permissionRequired'] ??
+      'Permission Required';
+  String get permissionRequiredMessage =>
+      _localizedValues[locale.languageCode]?['permissionRequiredMessage'] ??
+      'This app needs access to your contacts to check partner compatibility. Please grant permission in settings.';
+  String get openSettings =>
+      _localizedValues[locale.languageCode]?['openSettings'] ?? 'Open Settings';
+  String get settings =>
+      _localizedValues[locale.languageCode]?['settings'] ?? 'Settings';
+  String get contactsPermissionDenied =>
+      _localizedValues[locale.languageCode]?['contactsPermissionDenied'] ??
+      'Contacts permission denied';
+  String permissionDenied(String status) =>
+      (_localizedValues[locale.languageCode]?['permissionDenied'] ??
+              'Permission denied: {status}')
+          .replaceAll('{status}', status);
+  String errorLoadingContacts(String error) =>
+      (_localizedValues[locale.languageCode]?['errorLoadingContacts'] ??
+              'Error loading contacts: {error}')
+          .replaceAll('{error}', error);
+  String get partnerCheckFree =>
+      _localizedValues[locale.languageCode]?['partnerCheckFree'] ??
+      'PartnerCheck Free';
+  String get loading =>
+      _localizedValues[locale.languageCode]?['loading'] ?? 'Loading...';
+  String get loadingContactsFromDevice =>
+      _localizedValues[locale.languageCode]?['loadingContactsFromDevice'] ??
+      'Reading contacts from device...';
+  String loadingContactsProgress(int current, int total) =>
+      (_localizedValues[locale.languageCode]?['loadingContactsProgress'] ??
+              '{current} of {total}')
+          .replaceAll('{current}', '$current')
+          .replaceAll('{total}', '$total');
+  String get aboutTitle =>
+      _localizedValues[locale.languageCode]?['aboutTitle'] ?? 'About';
+  String get aboutText =>
+      _localizedValues[locale.languageCode]?['aboutText'] ??
+      'Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?';
+  String get heartIconDescription =>
+      _localizedValues[locale.languageCode]?['heartIconDescription'] ??
+      'Mark contact as favorite';
+  String get chartIconDescription =>
+      _localizedValues[locale.languageCode]?['chartIconDescription'] ??
+      'Reorder contacts by match count';
+  String get trashIconDescription =>
+      _localizedValues[locale.languageCode]?['trashIconDescription'] ??
+      'Delete contact';
+  String get deleteAllContacts =>
+      _localizedValues[locale.languageCode]?['deleteAllContacts'] ??
+      'Delete all contacts';
+  String get deleteAllContactsConfirm =>
+      _localizedValues[locale.languageCode]?['deleteAllContactsConfirm'] ??
+      'Are you sure you want to delete all contacts? This action cannot be undone.';
+  String get pickYourselfTitle =>
+      _localizedValues[locale.languageCode]?['pickYourselfTitle'] ??
+      'Select yourself';
+  String get pickYourselfMessage =>
+      _localizedValues[locale.languageCode]?['pickYourselfMessage'] ??
+      'Choose your contact so you can start with your colors. iOS cannot detect this automatically.\n\nYou can also tap and hold a contact on either pane to set yourself as "me".';
+  String get pickYourselfButton =>
+      _localizedValues[locale.languageCode]?['pickYourselfButton'] ??
+      'Choose contact';
+  String get notNow =>
+      _localizedValues[locale.languageCode]?['notNow'] ?? 'Not now';
+  String pickYourselfNotInList(String contactName) => (_localizedValues[
+              locale.languageCode]?['pickYourselfNotInList'] ??
+          '{contactName} was not found in your loaded contacts. Pick someone who is in the list.')
+      .replaceAll('{contactName}', contactName);
+  String get setMeWithLongPressHint =>
+      _localizedValues[locale.languageCode]?['setMeWithLongPressHint'] ??
+      'Tap and hold a contact on this pane to set yourself as "me".';
+  String selfContactSelectedToast(String contactName) =>
+      (_localizedValues[locale.languageCode]?['selfContactSelectedToast'] ??
+              '{contactName} is now selected as "me".')
+          .replaceAll('{contactName}', contactName);
+  String get doubleTapSelfDescription =>
+      _localizedValues[locale.languageCode]?['doubleTapSelfDescription'] ??
+      'Double-tap a pane to scroll to yourself';
+  String get longPressSelfDescription =>
+      _localizedValues[locale.languageCode]?['longPressSelfDescription'] ??
+      'Tap and hold a contact to select a new "me"';
+  String get upgradeToPro =>
+      _localizedValues[locale.languageCode]?['upgradeToPro'] ??
+      'Upgrade to PRO';
+  String get restorePurchases =>
+      _localizedValues[locale.languageCode]?['restorePurchases'] ??
+      'Restore purchases';
+  String get proVersion =>
+      _localizedValues[locale.languageCode]?['proVersion'] ??
+      'PartnerCheck Pro';
+  String get proFeatureLoadAllContacts =>
+      _localizedValues[locale.languageCode]?['proFeatureLoadAllContacts'] ??
+      'Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.';
+  String get purchaseInProgress =>
+      _localizedValues[locale.languageCode]?['purchaseInProgress'] ??
+      'Purchase in progress...';
+  String get purchaseSuccess =>
+      _localizedValues[locale.languageCode]?['purchaseSuccess'] ??
+      'PRO unlocked! Thank you for your purchase.';
+  String get purchaseFailed =>
+      _localizedValues[locale.languageCode]?['purchaseFailed'] ??
+      'Purchase failed. Please try again.';
+  String get alreadyPro =>
+      _localizedValues[locale.languageCode]?['alreadyPro'] ??
+      'You already have PRO.';
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Contacts permission is required',
       'contactLimitReached': 'Contact Limit Reached',
-      'contactLimitMessage': 'You have reached the maximum of 10 contacts in the free version.\n\nUpgrade to PartnerCheck Pro to add unlimited contacts.',
+      'contactLimitMessage':
+          'You have reached the maximum of 10 contacts in the free version.\n\nUpgrade to PartnerCheck Pro to add unlimited contacts.',
       'ok': 'OK',
       'cancel': 'Cancel',
       'delete': 'Delete',
@@ -119,7 +244,8 @@ class AppLocalizations {
       'selectedContactNoName': 'Selected contact has no name',
       'contactAlreadyInList': '{contactName} is already in the list',
       'noPhoneNumber': 'No Phone Number',
-      'noPhoneNumberMessage': '{contactName} does not have a phone number. Please select a contact with a phone number.',
+      'noPhoneNumberMessage':
+          '{contactName} does not have a phone number. Please select a contact with a phone number.',
       'errorPickingContact': 'Error picking contact: {error}',
       'deleteContact': 'Delete Contact',
       'deleteContactConfirm': 'Are you sure you want to delete {contactName}?',
@@ -131,7 +257,8 @@ class AppLocalizations {
       'enterPhoneNumber': 'Enter phone number',
       'phoneNumberOptional': 'Phone Number (optional)',
       'enterPhoneNumberToChangeColor': 'Enter phone number to change color',
-      'leavePhoneEmptyKeepColor': 'Leave phone number empty to keep current color',
+      'leavePhoneEmptyKeepColor':
+          'Leave phone number empty to keep current color',
       'addFromDevice': 'Add from device',
       'addManually': 'Add manually',
       'addContact': 'Add Contact',
@@ -139,7 +266,8 @@ class AppLocalizations {
       'loadContacts': 'Load Contacts',
       'loadAllContacts': 'Load all contacts',
       'permissionRequired': 'Permission Required',
-      'permissionRequiredMessage': 'This app needs access to your contacts to check partner compatibility. Please grant permission in settings.',
+      'permissionRequiredMessage':
+          'This app needs access to your contacts to check partner compatibility. Please grant permission in settings.',
       'openSettings': 'Open Settings',
       'settings': 'Settings',
       'contactsPermissionDenied': 'Contacts permission denied',
@@ -150,22 +278,31 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Reading contacts from device...',
       'loadingContactsProgress': '{current} of {total}',
       'aboutTitle': 'About',
-      'aboutText': 'Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?',
+      'aboutText':
+          'Every person has a phone (or more)\n\nevery phone has the last 6 digits\n\nevery 6 digits has a color (in hexadecimal code)\n\nevery color has a person (?)\n\nThere is no coincidence!\n\nThis app brings an unique opportunity to take a different look at the world of phone numbers belonging to specific people. Go through all the possible combinations and find out that coincidence does not exist.\n\nDoes it match or not?',
       'heartIconDescription': 'Mark contact as favorite',
       'chartIconDescription': 'Reorder contacts by match count',
       'trashIconDescription': 'Delete contact',
       'deleteAllContacts': 'Delete all contacts',
-      'deleteAllContactsConfirm': 'Are you sure you want to delete all contacts? This action cannot be undone.',
+      'deleteAllContactsConfirm':
+          'Are you sure you want to delete all contacts? This action cannot be undone.',
       'pickYourselfTitle': 'Select yourself',
-      'pickYourselfMessage': 'Choose your contact so you can start with your colors. iOS cannot detect this automatically.',
+      'pickYourselfMessage':
+          'Choose your contact so you can start with your colors. iOS cannot detect this automatically.\n\nYou can also tap and hold a contact on either pane to set yourself as "me".',
       'pickYourselfButton': 'Choose contact',
       'notNow': 'Not now',
-      'pickYourselfNotInList': '{contactName} was not found in your loaded contacts. Pick someone who is in the list.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} was not found in your loaded contacts. Pick someone who is in the list.',
+      'setMeWithLongPressHint':
+          'Tap and hold a contact on this pane to set yourself as "me".',
+      'selfContactSelectedToast': '{contactName} is now selected as "me".',
+      'doubleTapSelfDescription': 'Double-tap a pane to scroll to yourself',
+      'longPressSelfDescription': 'Tap and hold a contact to select a new "me"',
       'upgradeToPro': 'Upgrade to PRO',
       'restorePurchases': 'Restore purchases',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.',
+      'proFeatureLoadAllContacts':
+          'Load all contacts from your device is a PRO feature. Upgrade to import your entire address book at once.',
       'purchaseInProgress': 'Purchase in progress...',
       'purchaseSuccess': 'PRO unlocked! Thank you for your purchase.',
       'purchaseFailed': 'Purchase failed. Please try again.',
@@ -175,7 +312,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'مطلوب إذن الوصول إلى جهات الاتصال',
       'contactLimitReached': 'تم بلوغ حد جهات الاتصال',
-      'contactLimitMessage': 'لقد وصلت إلى الحد الأقصى وهو 10 جهات اتصال في النسخة المجانية.\n\nقم بالترقية إلى PartnerCheck Pro لإضافة جهات اتصال بلا حدود.',
+      'contactLimitMessage':
+          'لقد وصلت إلى الحد الأقصى وهو 10 جهات اتصال في النسخة المجانية.\n\nقم بالترقية إلى PartnerCheck Pro لإضافة جهات اتصال بلا حدود.',
       'ok': 'موافق',
       'cancel': 'إلغاء',
       'delete': 'حذف',
@@ -185,7 +323,8 @@ class AppLocalizations {
       'selectedContactNoName': 'جهة الاتصال المحددة ليس لها اسم',
       'contactAlreadyInList': '{contactName} موجودة بالفعل في القائمة',
       'noPhoneNumber': 'لا يوجد رقم هاتف',
-      'noPhoneNumberMessage': '{contactName} ليس لديه رقم هاتف. يرجى اختيار جهة اتصال برقم هاتف.',
+      'noPhoneNumberMessage':
+          '{contactName} ليس لديه رقم هاتف. يرجى اختيار جهة اتصال برقم هاتف.',
       'errorPickingContact': 'خطأ في اختيار جهة الاتصال: {error}',
       'deleteContact': 'حذف جهة الاتصال',
       'deleteContactConfirm': 'هل أنت متأكد أنك تريد حذف {contactName}؟',
@@ -197,7 +336,8 @@ class AppLocalizations {
       'enterPhoneNumber': 'أدخل رقم الهاتف',
       'phoneNumberOptional': 'رقم الهاتف (اختياري)',
       'enterPhoneNumberToChangeColor': 'أدخل رقم الهاتف لتغيير اللون',
-      'leavePhoneEmptyKeepColor': 'اترك رقم الهاتف فارغاً للاحتفاظ باللون الحالي',
+      'leavePhoneEmptyKeepColor':
+          'اترك رقم الهاتف فارغاً للاحتفاظ باللون الحالي',
       'addFromDevice': 'إضافة من الجهاز',
       'addManually': 'إضافة يدوياً',
       'addContact': 'إضافة جهة اتصال',
@@ -205,7 +345,8 @@ class AppLocalizations {
       'loadContacts': 'تحميل جهات الاتصال',
       'loadAllContacts': 'تحميل جميع جهات الاتصال',
       'permissionRequired': 'مطلوب إذن',
-      'permissionRequiredMessage': 'يحتاج هذا التطبيق إلى الوصول إلى جهات الاتصال للتحقق من توافق الشريك. يرجى منح الإذن في الإعدادات.',
+      'permissionRequiredMessage':
+          'يحتاج هذا التطبيق إلى الوصول إلى جهات الاتصال للتحقق من توافق الشريك. يرجى منح الإذن في الإعدادات.',
       'openSettings': 'فتح الإعدادات',
       'settings': 'الإعدادات',
       'contactsPermissionDenied': 'تم رفض إذن جهات الاتصال',
@@ -216,22 +357,32 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'جاري قراءة جهات الاتصال من الجهاز...',
       'loadingContactsProgress': '{current} من {total}',
       'aboutTitle': 'حول',
-      'aboutText': 'لكل شخص هاتف (أو أكثر)\n\nلكل هاتف آخر 6 أرقام\n\nلكل 6 أرقام لون (في الترميز الست عشري)\n\nلكل لون شخص (?)\n\nلا وجود للمصادفة!\n\nيوفر هذا التطبيق فرصة فريدة للنظر إلى عالم أرقام الهاتف التابعة لأشخاص محددين بمنظور مختلف. استكشف جميع التركيبات الممكنة واكتشف أن المصادفة غير موجودة.\n\nهل يتطابق أم لا؟',
+      'aboutText':
+          'لكل شخص هاتف (أو أكثر)\n\nلكل هاتف آخر 6 أرقام\n\nلكل 6 أرقام لون (في الترميز الست عشري)\n\nلكل لون شخص (?)\n\nلا وجود للمصادفة!\n\nيوفر هذا التطبيق فرصة فريدة للنظر إلى عالم أرقام الهاتف التابعة لأشخاص محددين بمنظور مختلف. استكشف جميع التركيبات الممكنة واكتشف أن المصادفة غير موجودة.\n\nهل يتطابق أم لا؟',
       'heartIconDescription': 'تعليم جهة الاتصال كمفضلة',
       'chartIconDescription': 'إعادة ترتيب جهات الاتصال حسب عدد التطابقات',
       'trashIconDescription': 'حذف جهة الاتصال',
       'deleteAllContacts': 'حذف جميع جهات الاتصال',
-      'deleteAllContactsConfirm': 'هل أنت متأكد أنك تريد حذف جميع جهات الاتصال؟ لا يمكن التراجع عن هذا الإجراء.',
+      'deleteAllContactsConfirm':
+          'هل أنت متأكد أنك تريد حذف جميع جهات الاتصال؟ لا يمكن التراجع عن هذا الإجراء.',
       'pickYourselfTitle': 'اختر نفسك',
-      'pickYourselfMessage': 'اختر جهة اتصالك لبدء ألوانك. لا يمكن لـ iOS اكتشاف ذلك تلقائياً.',
+      'pickYourselfMessage':
+          'اختر جهة اتصالك لبدء ألوانك. لا يمكن لـ iOS اكتشاف ذلك تلقائياً.\n\nيمكنك أيضاً الضغط مطولاً على جهة اتصال في أي لوحة لتعيين نفسك كـ "أنا".',
       'pickYourselfButton': 'اختر جهة اتصال',
       'notNow': 'ليس الآن',
-      'pickYourselfNotInList': 'لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          'لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة.',
+      'setMeWithLongPressHint':
+          'اضغط مطولاً على جهة اتصال في هذه اللوحة لتعيين نفسك كـ "أنا".',
+      'selfContactSelectedToast': 'تم اختيار {contactName} الآن كـ "أنا".',
+      'doubleTapSelfDescription': 'انقر مرتين على لوحة للتمرير إلى نفسك',
+      'longPressSelfDescription':
+          'اضغط مطولاً على جهة اتصال لاختيار "أنا" جديد',
       'upgradeToPro': 'ترقية إلى PRO',
       'restorePurchases': 'استعادة المشتريات',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'تحميل جميع جهات الاتصال من جهازك ميزة PRO. قم بالترقية لاستيراد دفتر عناوينك بالكامل دفعة واحدة.',
+      'proFeatureLoadAllContacts':
+          'تحميل جميع جهات الاتصال من جهازك ميزة PRO. قم بالترقية لاستيراد دفتر عناوينك بالكامل دفعة واحدة.',
       'purchaseInProgress': 'جاري الشراء...',
       'purchaseSuccess': 'تم فتح PRO! شكراً لشرائك.',
       'purchaseFailed': 'فشل الشراء. يرجى المحاولة مرة أخرى.',
@@ -241,7 +392,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'נדרשת הרשאה לגישה לאנשי קשר',
       'contactLimitReached': 'הגעת למגבלת אנשי קשר',
-      'contactLimitMessage': 'הגעת למקסימום של 10 אנשי קשר בגרסה החינמית.\n\nשדרג ל-PartnerCheck Pro כדי להוסיף אנשי קשר ללא הגבלה.',
+      'contactLimitMessage':
+          'הגעת למקסימום של 10 אנשי קשר בגרסה החינמית.\n\nשדרג ל-PartnerCheck Pro כדי להוסיף אנשי קשר ללא הגבלה.',
       'ok': 'אישור',
       'cancel': 'ביטול',
       'delete': 'מחק',
@@ -251,7 +403,8 @@ class AppLocalizations {
       'selectedContactNoName': 'לאנשי הקשר שנבחר אין שם',
       'contactAlreadyInList': '{contactName} כבר נמצא ברשימה',
       'noPhoneNumber': 'אין מספר טלפון',
-      'noPhoneNumberMessage': 'ל-{contactName} אין מספר טלפון. בחר איש קשר עם מספר טלפון.',
+      'noPhoneNumberMessage':
+          'ל-{contactName} אין מספר טלפון. בחר איש קשר עם מספר טלפון.',
       'errorPickingContact': 'שגיאה בבחירת איש קשר: {error}',
       'deleteContact': 'מחק איש קשר',
       'deleteContactConfirm': 'האם אתה בטוח שברצונך למחוק את {contactName}?',
@@ -263,7 +416,8 @@ class AppLocalizations {
       'enterPhoneNumber': 'הזן מספר טלפון',
       'phoneNumberOptional': 'מספר טלפון (אופציונלי)',
       'enterPhoneNumberToChangeColor': 'הזן מספר טלפון כדי לשנות צבע',
-      'leavePhoneEmptyKeepColor': 'השאר את מספר הטלפון ריק כדי לשמור על הצבע הנוכחי',
+      'leavePhoneEmptyKeepColor':
+          'השאר את מספר הטלפון ריק כדי לשמור על הצבע הנוכחי',
       'addFromDevice': 'הוסף מהמכשיר',
       'addManually': 'הוסף ידנית',
       'addContact': 'הוסף איש קשר',
@@ -271,7 +425,8 @@ class AppLocalizations {
       'loadContacts': 'טען אנשי קשר',
       'loadAllContacts': 'טען את כל אנשי הקשר',
       'permissionRequired': 'נדרשת הרשאה',
-      'permissionRequiredMessage': 'האפליקציה זקוקה לגישה לאנשי הקשר שלך כדי לבדוק התאמה בין בני זוג. אנא הענק הרשאה בהגדרות.',
+      'permissionRequiredMessage':
+          'האפליקציה זקוקה לגישה לאנשי הקשר שלך כדי לבדוק התאמה בין בני זוג. אנא הענק הרשאה בהגדרות.',
       'openSettings': 'פתח הגדרות',
       'settings': 'הגדרות',
       'contactsPermissionDenied': 'הרשאת אנשי קשר נדחתה',
@@ -282,22 +437,31 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'קורא אנשי קשר מהמכשיר...',
       'loadingContactsProgress': '{current} מתוך {total}',
       'aboutTitle': 'אודות',
-      'aboutText': 'לכל אדם יש טלפון (או יותר)\n\nלכל טלפון יש 6 הספרות האחרונות\n\nלכל 6 ספרות יש צבע (בקוד hexadecimal)\n\nלכל צבע יש אדם (?)\n\nאין מקריות!\n\nהאפליקציה הזו מציעה הזדמנות ייחודית להסתכל אחרת על עולם מספרי הטלפון של אנשים מסוימים. עבור על כל הצירופים האפשריים וגלה שמקריות לא קיימת.\n\nהאם זה מתאים או לא?',
+      'aboutText':
+          'לכל אדם יש טלפון (או יותר)\n\nלכל טלפון יש 6 הספרות האחרונות\n\nלכל 6 ספרות יש צבע (בקוד hexadecimal)\n\nלכל צבע יש אדם (?)\n\nאין מקריות!\n\nהאפליקציה הזו מציעה הזדמנות ייחודית להסתכל אחרת על עולם מספרי הטלפון של אנשים מסוימים. עבור על כל הצירופים האפשריים וגלה שמקריות לא קיימת.\n\nהאם זה מתאים או לא?',
       'heartIconDescription': 'סמן איש קשר כמועדף',
       'chartIconDescription': 'סדר מחדש אנשי קשר לפי מספר ההתאמות',
       'trashIconDescription': 'מחק איש קשר',
       'deleteAllContacts': 'מחק את כל אנשי הקשר',
-      'deleteAllContactsConfirm': 'האם אתה בטוח שברצונך למחוק את כל אנשי הקשר? לא ניתן לבטל פעולה זו.',
+      'deleteAllContactsConfirm':
+          'האם אתה בטוח שברצונך למחוק את כל אנשי הקשר? לא ניתן לבטל פעולה זו.',
       'pickYourselfTitle': 'בחר את עצמך',
-      'pickYourselfMessage': 'בחר את איש הקשר שלך כדי להתחיל עם הצבעים שלך. iOS לא יכול לזהות זאת אוטומטית.',
+      'pickYourselfMessage':
+          'בחר את איש הקשר שלך כדי להתחיל עם הצבעים שלך. iOS לא יכול לזהות זאת אוטומטית.\n\nניתן גם ללחוץ לחיצה ארוכה על איש קשר באחת הלוחות כדי לסמן את עצמך כ"אני".',
       'pickYourselfButton': 'בחר איש קשר',
       'notNow': 'לא עכשיו',
-      'pickYourselfNotInList': '{contactName} לא נמצא באנשי הקשר שנטענו. בחר מישהו שנמצא ברשימה.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} לא נמצא באנשי הקשר שנטענו. בחר מישהו שנמצא ברשימה.',
+      'setMeWithLongPressHint':
+          'לחץ לחיצה ארוכה על איש קשר בלוח זה כדי לסמן את עצמך כ"אני".',
+      'selfContactSelectedToast': '{contactName} נבחר/ת עכשיו כ"אני".',
+      'doubleTapSelfDescription': 'הקשה כפולה על לוח כדי לגלול אליך',
+      'longPressSelfDescription': 'לחיצה ארוכה על איש קשר כדי לבחור "אני" חדש',
       'upgradeToPro': 'שדרג ל-PRO',
       'restorePurchases': 'שחזר רכישות',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'טעינת כל אנשי הקשר מהמכשיר היא תכונת PRO. שדרג כדי לייבא את כל אנשי הקשר בבת אחת.',
+      'proFeatureLoadAllContacts':
+          'טעינת כל אנשי הקשר מהמכשיר היא תכונת PRO. שדרג כדי לייבא את כל אנשי הקשר בבת אחת.',
       'purchaseInProgress': 'הרכישה מתבצעת...',
       'purchaseSuccess': 'PRO נפתח! תודה על הרכישה.',
       'purchaseFailed': 'הרכישה נכשלה. נסה שוב.',
@@ -307,7 +471,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Je vyžadováno oprávnění ke kontaktům',
       'contactLimitReached': 'Dosažen limit kontaktů',
-      'contactLimitMessage': 'Dosáhli jste maximálního počtu 10 kontaktů ve verzi zdarma.\n\nUpgradujte na PartnerCheck Pro pro přidání neomezeného počtu kontaktů.',
+      'contactLimitMessage':
+          'Dosáhli jste maximálního počtu 10 kontaktů ve verzi zdarma.\n\nUpgradujte na PartnerCheck Pro pro přidání neomezeného počtu kontaktů.',
       'ok': 'OK',
       'cancel': 'Zrušit',
       'delete': 'Smazat',
@@ -317,7 +482,8 @@ class AppLocalizations {
       'selectedContactNoName': 'Vybraný kontakt nemá jméno',
       'contactAlreadyInList': '{contactName} je již v seznamu',
       'noPhoneNumber': 'Bez telefonního čísla',
-      'noPhoneNumberMessage': '{contactName} nemá telefonní číslo. Prosím vyberte kontakt s telefonním číslem.',
+      'noPhoneNumberMessage':
+          '{contactName} nemá telefonní číslo. Prosím vyberte kontakt s telefonním číslem.',
       'errorPickingContact': 'Chyba při výběru kontaktu: {error}',
       'deleteContact': 'Smazat kontakt',
       'deleteContactConfirm': 'Opravdu chcete smazat {contactName}?',
@@ -328,8 +494,10 @@ class AppLocalizations {
       'phoneNumber': 'Telefonní číslo',
       'enterPhoneNumber': 'Zadejte telefonní číslo',
       'phoneNumberOptional': 'Telefonní číslo (volitelné)',
-      'enterPhoneNumberToChangeColor': 'Zadejte telefonní číslo pro změnu barvy',
-      'leavePhoneEmptyKeepColor': 'Ponechte telefonní číslo prázdné pro zachování současné barvy',
+      'enterPhoneNumberToChangeColor':
+          'Zadejte telefonní číslo pro změnu barvy',
+      'leavePhoneEmptyKeepColor':
+          'Ponechte telefonní číslo prázdné pro zachování současné barvy',
       'addFromDevice': 'Přidat ze zařízení',
       'addManually': 'Přidat ručně',
       'addContact': 'Přidat kontakt',
@@ -337,7 +505,8 @@ class AppLocalizations {
       'loadContacts': 'Načíst kontakty',
       'loadAllContacts': 'Načíst všechny kontakty',
       'permissionRequired': 'Vyžadováno oprávnění',
-      'permissionRequiredMessage': 'Tato aplikace potřebuje přístup ke kontaktům pro kontrolu kompatibility partnerů. Prosím udělte oprávnění v nastavení.',
+      'permissionRequiredMessage':
+          'Tato aplikace potřebuje přístup ke kontaktům pro kontrolu kompatibility partnerů. Prosím udělte oprávnění v nastavení.',
       'openSettings': 'Otevřít nastavení',
       'settings': 'Nastavení',
       'contactsPermissionDenied': 'Oprávnění ke kontaktům zamítnuto',
@@ -348,22 +517,32 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Načítání kontaktů ze zařízení...',
       'loadingContactsProgress': '{current} z {total}',
       'aboutTitle': 'O aplikaci',
-      'aboutText': 'Každý člověk má telefon (nebo více)\n\nkaždý telefon má posledních 6 číslic\n\nkaždých 6 číslic má barvu (v hexadecimálním kódu)\n\nkaždá barva má člověka (?)\n\nNáhoda neexistuje!\n\nTato aplikace přináší jedinečnou příležitost podívat se jinak na svět telefonních čísel patřících konkrétním lidem. Projděte všechny možné kombinace a zjistěte, že náhoda neexistuje.\n\nLadí tedy? Neladí?',
+      'aboutText':
+          'Každý člověk má telefon (nebo více)\n\nkaždý telefon má posledních 6 číslic\n\nkaždých 6 číslic má barvu (v hexadecimálním kódu)\n\nkaždá barva má člověka (?)\n\nNáhoda neexistuje!\n\nTato aplikace přináší jedinečnou příležitost podívat se jinak na svět telefonních čísel patřících konkrétním lidem. Projděte všechny možné kombinace a zjistěte, že náhoda neexistuje.\n\nLadí tedy? Neladí?',
       'heartIconDescription': 'Označit kontakt jako oblíbený',
       'chartIconDescription': 'Seřadit kontakty podle počtu shod',
       'trashIconDescription': 'Smazat kontakt',
       'deleteAllContacts': 'Smazat všechny kontakty',
-      'deleteAllContactsConfirm': 'Opravdu chcete smazat všechny kontakty? Tuto akci nelze vrátit zpět.',
+      'deleteAllContactsConfirm':
+          'Opravdu chcete smazat všechny kontakty? Tuto akci nelze vrátit zpět.',
       'pickYourselfTitle': 'Vyberte sebe',
-      'pickYourselfMessage': 'Vyberte svůj kontakt, abyste mohli začít se svými barvami. iOS to nemůže zjistit automaticky.',
+      'pickYourselfMessage':
+          'Vyberte svůj kontakt, abyste mohli začít se svými barvami. iOS to nemůže zjistit automaticky.\n\nMůžete také podržet prst na kontaktu v libovolném panelu a nastavit se jako "já".',
       'pickYourselfButton': 'Vybrat kontakt',
       'notNow': 'Teď ne',
-      'pickYourselfNotInList': '{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu.',
+      'setMeWithLongPressHint':
+          'Podržte prst na kontaktu v tomto panelu a nastavte se jako "já".',
+      'selfContactSelectedToast': '{contactName} je nyní vybrán/a jako "já".',
+      'doubleTapSelfDescription': 'Dvojitým klepnutím na panel přejdete k sobě',
+      'longPressSelfDescription':
+          'Podržením prstu na kontaktu vyberete nové "já"',
       'upgradeToPro': 'Upgradovat na PRO',
       'restorePurchases': 'Obnovit nákupy',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Načtení všech kontaktů ze zařízení je funkce PRO. Upgradujte pro import celého adresáře najednou.',
+      'proFeatureLoadAllContacts':
+          'Načtení všech kontaktů ze zařízení je funkce PRO. Upgradujte pro import celého adresáře najednou.',
       'purchaseInProgress': 'Nákup probíhá...',
       'purchaseSuccess': 'PRO odemčeno! Děkujeme za nákup.',
       'purchaseFailed': 'Nákup se nezdařil. Zkuste to znovu.',
@@ -373,7 +552,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Je potrebné povolenie ku kontaktom',
       'contactLimitReached': 'Dosiahnutý limit kontaktov',
-      'contactLimitMessage': 'Dosiahli ste maximálny počet 10 kontaktov vo bezplatnej verzii.\n\nInovujte na PartnerCheck Pro a pridávajte neobmedzené množstvo kontaktov.',
+      'contactLimitMessage':
+          'Dosiahli ste maximálny počet 10 kontaktov vo bezplatnej verzii.\n\nInovujte na PartnerCheck Pro a pridávajte neobmedzené množstvo kontaktov.',
       'ok': 'OK',
       'cancel': 'Zrušiť',
       'delete': 'Vymazať',
@@ -383,7 +563,8 @@ class AppLocalizations {
       'selectedContactNoName': 'Vybraný kontakt nemá meno',
       'contactAlreadyInList': '{contactName} je už v zozname',
       'noPhoneNumber': 'Bez telefónneho čísla',
-      'noPhoneNumberMessage': '{contactName} nemá telefónne číslo. Vyberte kontakt s telefónnym číslom.',
+      'noPhoneNumberMessage':
+          '{contactName} nemá telefónne číslo. Vyberte kontakt s telefónnym číslom.',
       'errorPickingContact': 'Chyba pri výbere kontaktu: {error}',
       'deleteContact': 'Vymazať kontakt',
       'deleteContactConfirm': 'Naozaj chcete vymazať {contactName}?',
@@ -395,7 +576,8 @@ class AppLocalizations {
       'enterPhoneNumber': 'Zadajte telefónne číslo',
       'phoneNumberOptional': 'Telefónne číslo (voliteľné)',
       'enterPhoneNumberToChangeColor': 'Zadajte telefónne číslo na zmenu farby',
-      'leavePhoneEmptyKeepColor': 'Ponechajte telefónne číslo prázdne, aby sa zachovala aktuálna farba',
+      'leavePhoneEmptyKeepColor':
+          'Ponechajte telefónne číslo prázdne, aby sa zachovala aktuálna farba',
       'addFromDevice': 'Pridať zo zariadenia',
       'addManually': 'Pridať ručne',
       'addContact': 'Pridať kontakt',
@@ -403,7 +585,8 @@ class AppLocalizations {
       'loadContacts': 'Načítať kontakty',
       'loadAllContacts': 'Načítať všetky kontakty',
       'permissionRequired': 'Vyžaduje sa povolenie',
-      'permissionRequiredMessage': 'Táto aplikácia potrebuje prístup ku kontaktom na kontrolu kompatibility partnerov. Udeľte povolenie v nastaveniach.',
+      'permissionRequiredMessage':
+          'Táto aplikácia potrebuje prístup ku kontaktom na kontrolu kompatibility partnerov. Udeľte povolenie v nastaveniach.',
       'openSettings': 'Otvoriť nastavenia',
       'settings': 'Nastavenia',
       'contactsPermissionDenied': 'Povolenie ku kontaktom zamietnuté',
@@ -414,22 +597,32 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Načítavanie kontaktov zo zariadenia...',
       'loadingContactsProgress': '{current} z {total}',
       'aboutTitle': 'O aplikácii',
-      'aboutText': 'Každý človek má telefón (alebo viac)\n\nkaždý telefón má posledných 6 číslic\n\nkaždých 6 číslic má farbu (v hexadecimálnom kóde)\n\nkaždá farba má človeka (?)\n\nNáhoda neexistuje!\n\nTáto aplikácia prináša jedinečnú príležitosť pozrieť sa inak na svet telefónnych čísel patriacich konkrétnym ľuďom. Prejdite všetky možné kombinácie a zistite, že náhoda neexistuje.\n\nSedí to teda? Nesedí?',
+      'aboutText':
+          'Každý človek má telefón (alebo viac)\n\nkaždý telefón má posledných 6 číslic\n\nkaždých 6 číslic má farbu (v hexadecimálnom kóde)\n\nkaždá farba má človeka (?)\n\nNáhoda neexistuje!\n\nTáto aplikácia prináša jedinečnú príležitosť pozrieť sa inak na svet telefónnych čísel patriacich konkrétnym ľuďom. Prejdite všetky možné kombinácie a zistite, že náhoda neexistuje.\n\nSedí to teda? Nesedí?',
       'heartIconDescription': 'Označiť kontakt ako obľúbený',
       'chartIconDescription': 'Zoradiť kontakty podľa počtu zhôd',
       'trashIconDescription': 'Vymazať kontakt',
       'deleteAllContacts': 'Vymazať všetky kontakty',
-      'deleteAllContactsConfirm': 'Naozaj chcete vymazať všetky kontakty? Túto akciu nie je možné vrátiť späť.',
+      'deleteAllContactsConfirm':
+          'Naozaj chcete vymazať všetky kontakty? Túto akciu nie je možné vrátiť späť.',
       'pickYourselfTitle': 'Vyberte seba',
-      'pickYourselfMessage': 'Vyberte svoj kontakt, aby ste mohli začať so svojimi farbami. iOS to nemôže zistiť automaticky.',
+      'pickYourselfMessage':
+          'Vyberte svoj kontakt, aby ste mohli začať so svojimi farbami. iOS to nemôže zistiť automaticky.\n\nMôžete tiež podržať prst na kontakte v ľubovoľnom paneli a nastaviť sa ako "ja".',
       'pickYourselfButton': 'Vybrať kontakt',
       'notNow': 'Teraz nie',
-      'pickYourselfNotInList': '{contactName} sa nenašiel vo vašich načítaných kontaktoch. Vyberte niekoho, kto je v zozname.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} sa nenašiel vo vašich načítaných kontaktoch. Vyberte niekoho, kto je v zozname.',
+      'setMeWithLongPressHint':
+          'Podržte prst na kontakte v tomto paneli a nastavte sa ako "ja".',
+      'selfContactSelectedToast': '{contactName} je teraz vybraný/á ako "ja".',
+      'doubleTapSelfDescription': 'Dvojitým klepnutím na panel prejdete k sebe',
+      'longPressSelfDescription':
+          'Podržaním prsta na kontakte vyberiete nové "ja"',
       'upgradeToPro': 'Upgradovať na PRO',
       'restorePurchases': 'Obnoviť nákupy',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Načítanie všetkých kontaktov zo zariadenia je funkcia PRO. Upgradujte pre import celého adresára naraz.',
+      'proFeatureLoadAllContacts':
+          'Načítanie všetkých kontaktov zo zariadenia je funkcia PRO. Upgradujte pre import celého adresára naraz.',
       'purchaseInProgress': 'Nákup prebieha...',
       'purchaseSuccess': 'PRO odomknuté! Ďakujeme za nákup.',
       'purchaseFailed': 'Nákup zlyhal. Skúste to znova.',
@@ -439,7 +632,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': '需要联系人权限',
       'contactLimitReached': '达到联系人限制',
-      'contactLimitMessage': '您已达到免费版本的最大10个联系人限制。\n\n升级到PartnerCheck Pro以添加无限联系人。',
+      'contactLimitMessage':
+          '您已达到免费版本的最大10个联系人限制。\n\n升级到PartnerCheck Pro以添加无限联系人。',
       'ok': '确定',
       'cancel': '取消',
       'delete': '删除',
@@ -480,18 +674,23 @@ class AppLocalizations {
       'loadingContactsFromDevice': '正在从设备读取联系人...',
       'loadingContactsProgress': '{current} / {total}',
       'aboutTitle': '关于',
-      'aboutText': '每个人都有电话（或更多）\n\n每部电话都有最后6位数字\n\n每6位数字都有一个颜色（十六进制代码）\n\n每种颜色都有一个人（？）\n\n没有巧合！\n\n此应用提供了一个独特的机会，以不同的视角看待属于特定人员的电话号码世界。浏览所有可能的组合，发现巧合并不存在。\n\n匹配还是不匹配？',
+      'aboutText':
+          '每个人都有电话（或更多）\n\n每部电话都有最后6位数字\n\n每6位数字都有一个颜色（十六进制代码）\n\n每种颜色都有一个人（？）\n\n没有巧合！\n\n此应用提供了一个独特的机会，以不同的视角看待属于特定人员的电话号码世界。浏览所有可能的组合，发现巧合并不存在。\n\n匹配还是不匹配？',
       'heartIconDescription': '将联系人标记为收藏',
       'chartIconDescription': '按匹配数重新排序联系人',
       'trashIconDescription': '删除联系人',
       'deleteAllContacts': '删除所有联系人',
       'deleteAllContactsConfirm': '您确定要删除所有联系人吗？此操作无法撤销。',
       'pickYourselfTitle': '选择你自己',
-      'pickYourselfMessage': '选择您的联系人，以便从您的颜色开始。iOS 无法自动检测。',
+      'pickYourselfMessage':
+          '选择您的联系人，以便从您的颜色开始。iOS 无法自动检测。\n\n您也可以在任一窗格中长按联系人来将自己设为"我"。',
       'pickYourselfButton': '选择联系人',
       'notNow': '以后再说',
       'pickYourselfNotInList': '在已加载的联系人中未找到 {contactName}。请选择列表中的联系人。',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'setMeWithLongPressHint': '在此窗格中长按联系人，将自己设为"我"。',
+      'selfContactSelectedToast': '{contactName} 现已选为"我"。',
+      'doubleTapSelfDescription': '双击窗格可滚动到您自己',
+      'longPressSelfDescription': '长按联系人可选择新的"我"',
       'upgradeToPro': '升级到 PRO',
       'restorePurchases': '恢复购买',
       'proVersion': 'PartnerCheck Pro',
@@ -505,7 +704,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': '連絡先の権限が必要です',
       'contactLimitReached': '連絡先の制限に達しました',
-      'contactLimitMessage': '無料版では最大10件の連絡先に達しました。\n\nPartnerCheck Proにアップグレードして、無制限の連絡先を追加してください。',
+      'contactLimitMessage':
+          '無料版では最大10件の連絡先に達しました。\n\nPartnerCheck Proにアップグレードして、無制限の連絡先を追加してください。',
       'ok': 'OK',
       'cancel': 'キャンセル',
       'delete': '削除',
@@ -535,7 +735,8 @@ class AppLocalizations {
       'loadContacts': '連絡先を読み込む',
       'loadAllContacts': 'すべての連絡先を読み込む',
       'permissionRequired': '権限が必要です',
-      'permissionRequiredMessage': 'このアプリはパートナーの互換性をチェックするために連絡先へのアクセスが必要です。設定で権限を付与してください。',
+      'permissionRequiredMessage':
+          'このアプリはパートナーの互換性をチェックするために連絡先へのアクセスが必要です。設定で権限を付与してください。',
       'openSettings': '設定を開く',
       'settings': '設定',
       'contactsPermissionDenied': '連絡先の権限が拒否されました',
@@ -546,22 +747,29 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'デバイスから連絡先を読み込んでいます...',
       'loadingContactsProgress': '{current} / {total}',
       'aboutTitle': 'について',
-      'aboutText': 'すべての人が電話（またはそれ以上）を持っています\n\nすべての電話には最後の6桁があります\n\nすべての6桁には色（16進コード）があります\n\nすべての色には人がいます（？）\n\n偶然はありません！\n\nこのアプリは、特定の人に属する電話番号の世界を異なる視点で見る独特の機会を提供します。すべての可能な組み合わせを調べて、偶然が存在しないことを発見してください。\n\n一致しますか、それとも一致しませんか？',
+      'aboutText':
+          'すべての人が電話（またはそれ以上）を持っています\n\nすべての電話には最後の6桁があります\n\nすべての6桁には色（16進コード）があります\n\nすべての色には人がいます（？）\n\n偶然はありません！\n\nこのアプリは、特定の人に属する電話番号の世界を異なる視点で見る独特の機会を提供します。すべての可能な組み合わせを調べて、偶然が存在しないことを発見してください。\n\n一致しますか、それとも一致しませんか？',
       'heartIconDescription': '連絡先をお気に入りとしてマーク',
       'chartIconDescription': '一致数で連絡先を並べ替え',
       'trashIconDescription': '連絡先を削除',
       'deleteAllContacts': 'すべての連絡先を削除',
       'deleteAllContactsConfirm': 'すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。',
       'pickYourselfTitle': '自分を選択',
-      'pickYourselfMessage': '自分の色で始めるには、自分の連絡先を選んでください。iOS では自動検出できません。',
+      'pickYourselfMessage':
+          '自分の色で始めるには、自分の連絡先を選んでください。iOS では自動検出できません。\n\nどちらかのペインで連絡先を長押しして「自分」を設定することもできます。',
       'pickYourselfButton': '連絡先を選ぶ',
       'notNow': '後で',
-      'pickYourselfNotInList': '{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。',
+      'setMeWithLongPressHint': 'このペインで連絡先を長押しして「自分」を設定します。',
+      'selfContactSelectedToast': '{contactName} が「自分」として選択されました。',
+      'doubleTapSelfDescription': 'ペインをダブルタップすると自分までスクロール',
+      'longPressSelfDescription': '連絡先を長押しして新しい「自分」を選択',
       'upgradeToPro': 'PRO にアップグレード',
       'restorePurchases': '購入を復元',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'デバイスからすべての連絡先を読み込むのは PRO 機能です。アップグレードしてアドレス帳全体を一度にインポートできます。',
+      'proFeatureLoadAllContacts':
+          'デバイスからすべての連絡先を読み込むのは PRO 機能です。アップグレードしてアドレス帳全体を一度にインポートできます。',
       'purchaseInProgress': '購入処理中...',
       'purchaseSuccess': 'PRO が解除されました！ご購入ありがとうございます。',
       'purchaseFailed': '購入に失敗しました。もう一度お試しください。',
@@ -571,7 +779,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Contactenmachtiging vereist',
       'contactLimitReached': 'Contactlimiet bereikt',
-      'contactLimitMessage': 'U heeft het maximum van 10 contacten in de gratis versie bereikt.\n\nUpgrade naar PartnerCheck Pro om onbeperkt contacten toe te voegen.',
+      'contactLimitMessage':
+          'U heeft het maximum van 10 contacten in de gratis versie bereikt.\n\nUpgrade naar PartnerCheck Pro om onbeperkt contacten toe te voegen.',
       'ok': 'OK',
       'cancel': 'Annuleren',
       'delete': 'Verwijderen',
@@ -581,10 +790,12 @@ class AppLocalizations {
       'selectedContactNoName': 'Geselecteerd contact heeft geen naam',
       'contactAlreadyInList': '{contactName} staat al in de lijst',
       'noPhoneNumber': 'Geen telefoonnummer',
-      'noPhoneNumberMessage': '{contactName} heeft geen telefoonnummer. Selecteer een contact met een telefoonnummer.',
+      'noPhoneNumberMessage':
+          '{contactName} heeft geen telefoonnummer. Selecteer een contact met een telefoonnummer.',
       'errorPickingContact': 'Fout bij selecteren contact: {error}',
       'deleteContact': 'Contact verwijderen',
-      'deleteContactConfirm': 'Weet u zeker dat u {contactName} wilt verwijderen?',
+      'deleteContactConfirm':
+          'Weet u zeker dat u {contactName} wilt verwijderen?',
       'addContactManually': 'Contact handmatig toevoegen',
       'editContact': 'Contact bewerken',
       'name': 'Naam',
@@ -592,8 +803,10 @@ class AppLocalizations {
       'phoneNumber': 'Telefoonnummer',
       'enterPhoneNumber': 'Voer telefoonnummer in',
       'phoneNumberOptional': 'Telefoonnummer (optioneel)',
-      'enterPhoneNumberToChangeColor': 'Voer telefoonnummer in om kleur te wijzigen',
-      'leavePhoneEmptyKeepColor': 'Laat telefoonnummer leeg om huidige kleur te behouden',
+      'enterPhoneNumberToChangeColor':
+          'Voer telefoonnummer in om kleur te wijzigen',
+      'leavePhoneEmptyKeepColor':
+          'Laat telefoonnummer leeg om huidige kleur te behouden',
       'addFromDevice': 'Toevoegen vanaf apparaat',
       'addManually': 'Handmatig toevoegen',
       'addContact': 'Contact toevoegen',
@@ -601,7 +814,8 @@ class AppLocalizations {
       'loadContacts': 'Contacten laden',
       'loadAllContacts': 'Alle contacten laden',
       'permissionRequired': 'Machtiging vereist',
-      'permissionRequiredMessage': 'Deze app heeft toegang tot uw contacten nodig om partnercompatibiliteit te controleren. Verleen machtiging in instellingen.',
+      'permissionRequiredMessage':
+          'Deze app heeft toegang tot uw contacten nodig om partnercompatibiliteit te controleren. Verleen machtiging in instellingen.',
       'openSettings': 'Instellingen openen',
       'settings': 'Instellingen',
       'contactsPermissionDenied': 'Contactenmachtiging geweigerd',
@@ -612,22 +826,33 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Contacten van apparaat lezen...',
       'loadingContactsProgress': '{current} van {total}',
       'aboutTitle': 'Over',
-      'aboutText': 'Elke persoon heeft een telefoon (of meer)\n\nelke telefoon heeft de laatste 6 cijfers\n\nelke 6 cijfers hebben een kleur (in hexadecimale code)\n\nelke kleur heeft een persoon (?)\n\nEr is geen toeval!\n\nDeze app biedt een unieke kans om anders te kijken naar de wereld van telefoonnummers die bij specifieke mensen horen. Ga door alle mogelijke combinaties en ontdek dat toeval niet bestaat.\n\nMatcht het of niet?',
+      'aboutText':
+          'Elke persoon heeft een telefoon (of meer)\n\nelke telefoon heeft de laatste 6 cijfers\n\nelke 6 cijfers hebben een kleur (in hexadecimale code)\n\nelke kleur heeft een persoon (?)\n\nEr is geen toeval!\n\nDeze app biedt een unieke kans om anders te kijken naar de wereld van telefoonnummers die bij specifieke mensen horen. Ga door alle mogelijke combinaties en ontdek dat toeval niet bestaat.\n\nMatcht het of niet?',
       'heartIconDescription': 'Contact als favoriet markeren',
       'chartIconDescription': 'Contacten sorteren op aantal matches',
       'trashIconDescription': 'Contact verwijderen',
       'deleteAllContacts': 'Alle contacten verwijderen',
-      'deleteAllContactsConfirm': 'Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.',
+      'deleteAllContactsConfirm':
+          'Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.',
       'pickYourselfTitle': 'Selecteer jezelf',
-      'pickYourselfMessage': 'Kies je contact zodat je kunt beginnen met je kleuren. iOS kan dit niet automatisch detecteren.',
+      'pickYourselfMessage':
+          'Kies je contact zodat je kunt beginnen met je kleuren. iOS kan dit niet automatisch detecteren.\n\nJe kunt ook een contact in een van beide panelen ingedrukt houden om jezelf als "ik" in te stellen.',
       'pickYourselfButton': 'Contact kiezen',
       'notNow': 'Niet nu',
-      'pickYourselfNotInList': '{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat.',
+      'setMeWithLongPressHint':
+          'Houd een contact in dit paneel ingedrukt om jezelf als "ik" in te stellen.',
+      'selfContactSelectedToast': '{contactName} is nu geselecteerd als "ik".',
+      'doubleTapSelfDescription':
+          'Dubbeltik op een paneel om naar jezelf te scrollen',
+      'longPressSelfDescription':
+          'Houd een contact ingedrukt om een nieuwe "ik" te kiezen',
       'upgradeToPro': 'Upgraden naar PRO',
       'restorePurchases': 'Aankopen herstellen',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Alle contacten van je apparaat laden is een PRO-functie. Upgrade om je hele adresboek in één keer te importeren.',
+      'proFeatureLoadAllContacts':
+          'Alle contacten van je apparaat laden is een PRO-functie. Upgrade om je hele adresboek in één keer te importeren.',
       'purchaseInProgress': 'Aankoop bezig...',
       'purchaseSuccess': 'PRO ontgrendeld! Bedankt voor je aankoop.',
       'purchaseFailed': 'Aankoop mislukt. Probeer het opnieuw.',
@@ -637,7 +862,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Kontaktberechtigung erforderlich',
       'contactLimitReached': 'Kontaktlimit erreicht',
-      'contactLimitMessage': 'Sie haben das Maximum von 10 Kontakten in der kostenlosen Version erreicht.\n\nUpgraden Sie auf PartnerCheck Pro, um unbegrenzt Kontakte hinzuzufügen.',
+      'contactLimitMessage':
+          'Sie haben das Maximum von 10 Kontakten in der kostenlosen Version erreicht.\n\nUpgraden Sie auf PartnerCheck Pro, um unbegrenzt Kontakte hinzuzufügen.',
       'ok': 'OK',
       'cancel': 'Abbrechen',
       'delete': 'Löschen',
@@ -647,7 +873,8 @@ class AppLocalizations {
       'selectedContactNoName': 'Ausgewählter Kontakt hat keinen Namen',
       'contactAlreadyInList': '{contactName} ist bereits in der Liste',
       'noPhoneNumber': 'Keine Telefonnummer',
-      'noPhoneNumberMessage': '{contactName} hat keine Telefonnummer. Bitte wählen Sie einen Kontakt mit einer Telefonnummer.',
+      'noPhoneNumberMessage':
+          '{contactName} hat keine Telefonnummer. Bitte wählen Sie einen Kontakt mit einer Telefonnummer.',
       'errorPickingContact': 'Fehler beim Auswählen des Kontakts: {error}',
       'deleteContact': 'Kontakt löschen',
       'deleteContactConfirm': 'Möchten Sie {contactName} wirklich löschen?',
@@ -658,8 +885,10 @@ class AppLocalizations {
       'phoneNumber': 'Telefonnummer',
       'enterPhoneNumber': 'Telefonnummer eingeben',
       'phoneNumberOptional': 'Telefonnummer (optional)',
-      'enterPhoneNumberToChangeColor': 'Telefonnummer eingeben, um Farbe zu ändern',
-      'leavePhoneEmptyKeepColor': 'Telefonnummer leer lassen, um aktuelle Farbe beizubehalten',
+      'enterPhoneNumberToChangeColor':
+          'Telefonnummer eingeben, um Farbe zu ändern',
+      'leavePhoneEmptyKeepColor':
+          'Telefonnummer leer lassen, um aktuelle Farbe beizubehalten',
       'addFromDevice': 'Vom Gerät hinzufügen',
       'addManually': 'Manuell hinzufügen',
       'addContact': 'Kontakt hinzufügen',
@@ -667,7 +896,8 @@ class AppLocalizations {
       'loadContacts': 'Kontakte laden',
       'loadAllContacts': 'Alle Kontakte laden',
       'permissionRequired': 'Berechtigung erforderlich',
-      'permissionRequiredMessage': 'Diese App benötigt Zugriff auf Ihre Kontakte, um die Partnerkompatibilität zu überprüfen. Bitte gewähren Sie die Berechtigung in den Einstellungen.',
+      'permissionRequiredMessage':
+          'Diese App benötigt Zugriff auf Ihre Kontakte, um die Partnerkompatibilität zu überprüfen. Bitte gewähren Sie die Berechtigung in den Einstellungen.',
       'openSettings': 'Einstellungen öffnen',
       'settings': 'Einstellungen',
       'contactsPermissionDenied': 'Kontaktberechtigung verweigert',
@@ -678,22 +908,35 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Kontakte vom Gerät lesen...',
       'loadingContactsProgress': '{current} von {total}',
       'aboutTitle': 'Über',
-      'aboutText': 'Jede Person hat ein Telefon (oder mehr)\n\njedes Telefon hat die letzten 6 Ziffern\n\njede 6 Ziffern haben eine Farbe (im Hexadezimalcode)\n\njede Farbe hat eine Person (?)\n\nEs gibt keinen Zufall!\n\nDiese App bietet eine einzigartige Gelegenheit, die Welt der Telefonnummern, die zu bestimmten Personen gehören, anders zu betrachten. Gehen Sie durch alle möglichen Kombinationen und finden Sie heraus, dass Zufall nicht existiert.\n\nPasst es oder nicht?',
+      'aboutText':
+          'Jede Person hat ein Telefon (oder mehr)\n\njedes Telefon hat die letzten 6 Ziffern\n\njede 6 Ziffern haben eine Farbe (im Hexadezimalcode)\n\njede Farbe hat eine Person (?)\n\nEs gibt keinen Zufall!\n\nDiese App bietet eine einzigartige Gelegenheit, die Welt der Telefonnummern, die zu bestimmten Personen gehören, anders zu betrachten. Gehen Sie durch alle möglichen Kombinationen und finden Sie heraus, dass Zufall nicht existiert.\n\nPasst es oder nicht?',
       'heartIconDescription': 'Kontakt als Favorit markieren',
-      'chartIconDescription': 'Kontakte nach Anzahl der Übereinstimmungen sortieren',
+      'chartIconDescription':
+          'Kontakte nach Anzahl der Übereinstimmungen sortieren',
       'trashIconDescription': 'Kontakt löschen',
       'deleteAllContacts': 'Alle Kontakte löschen',
-      'deleteAllContactsConfirm': 'Sind Sie sicher, dass Sie alle Kontakte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
+      'deleteAllContactsConfirm':
+          'Sind Sie sicher, dass Sie alle Kontakte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
       'pickYourselfTitle': 'Wähle dich selbst',
-      'pickYourselfMessage': 'Wähle deinen Kontakt, um mit deinen Farben zu starten. iOS kann dies nicht automatisch erkennen.',
+      'pickYourselfMessage':
+          'Wähle deinen Kontakt, um mit deinen Farben zu starten. iOS kann dies nicht automatisch erkennen.\n\nDu kannst auch einen Kontakt in einem der Fenster gedrückt halten, um dich als "ich" festzulegen.',
       'pickYourselfButton': 'Kontakt wählen',
       'notNow': 'Nicht jetzt',
-      'pickYourselfNotInList': '{contactName} wurde in deinen geladenen Kontakten nicht gefunden. Wähle jemanden, der in der Liste ist.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} wurde in deinen geladenen Kontakten nicht gefunden. Wähle jemanden, der in der Liste ist.',
+      'setMeWithLongPressHint':
+          'Halte einen Kontakt in diesem Fenster gedrückt, um dich als "ich" festzulegen.',
+      'selfContactSelectedToast':
+          '{contactName} ist jetzt als "ich" ausgewählt.',
+      'doubleTapSelfDescription':
+          'Doppeltippen auf ein Fenster, um zu dir zu scrollen',
+      'longPressSelfDescription':
+          'Kontakt gedrückt halten, um ein neues "ich" zu wählen',
       'upgradeToPro': 'Auf PRO upgraden',
       'restorePurchases': 'Käufe wiederherstellen',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Alle Kontakte vom Gerät laden ist eine PRO-Funktion. Upgrade, um dein gesamtes Adressbuch auf einmal zu importieren.',
+      'proFeatureLoadAllContacts':
+          'Alle Kontakte vom Gerät laden ist eine PRO-Funktion. Upgrade, um dein gesamtes Adressbuch auf einmal zu importieren.',
       'purchaseInProgress': 'Kauf wird durchgeführt...',
       'purchaseSuccess': 'PRO freigeschaltet! Danke für deinen Kauf.',
       'purchaseFailed': 'Kauf fehlgeschlagen. Bitte versuche es erneut.',
@@ -703,7 +946,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Se requiere permiso de contactos',
       'contactLimitReached': 'Límite de contactos alcanzado',
-      'contactLimitMessage': 'Ha alcanzado el máximo de 10 contactos en la versión gratuita.\n\nActualice a PartnerCheck Pro para agregar contactos ilimitados.',
+      'contactLimitMessage':
+          'Ha alcanzado el máximo de 10 contactos en la versión gratuita.\n\nActualice a PartnerCheck Pro para agregar contactos ilimitados.',
       'ok': 'OK',
       'cancel': 'Cancelar',
       'delete': 'Eliminar',
@@ -713,10 +957,12 @@ class AppLocalizations {
       'selectedContactNoName': 'El contacto seleccionado no tiene nombre',
       'contactAlreadyInList': '{contactName} ya está en la lista',
       'noPhoneNumber': 'Sin número de teléfono',
-      'noPhoneNumberMessage': '{contactName} no tiene número de teléfono. Por favor, seleccione un contacto con número de teléfono.',
+      'noPhoneNumberMessage':
+          '{contactName} no tiene número de teléfono. Por favor, seleccione un contacto con número de teléfono.',
       'errorPickingContact': 'Error al seleccionar contacto: {error}',
       'deleteContact': 'Eliminar contacto',
-      'deleteContactConfirm': '¿Está seguro de que desea eliminar {contactName}?',
+      'deleteContactConfirm':
+          '¿Está seguro de que desea eliminar {contactName}?',
       'addContactManually': 'Agregar contacto manualmente',
       'editContact': 'Editar contacto',
       'name': 'Nombre',
@@ -724,8 +970,10 @@ class AppLocalizations {
       'phoneNumber': 'Número de teléfono',
       'enterPhoneNumber': 'Ingrese el número de teléfono',
       'phoneNumberOptional': 'Número de teléfono (opcional)',
-      'enterPhoneNumberToChangeColor': 'Ingrese el número de teléfono para cambiar el color',
-      'leavePhoneEmptyKeepColor': 'Deje el número de teléfono vacío para mantener el color actual',
+      'enterPhoneNumberToChangeColor':
+          'Ingrese el número de teléfono para cambiar el color',
+      'leavePhoneEmptyKeepColor':
+          'Deje el número de teléfono vacío para mantener el color actual',
       'addFromDevice': 'Agregar desde dispositivo',
       'addManually': 'Agregar manualmente',
       'addContact': 'Agregar contacto',
@@ -733,7 +981,8 @@ class AppLocalizations {
       'loadContacts': 'Cargar contactos',
       'loadAllContacts': 'Cargar todos los contactos',
       'permissionRequired': 'Permiso requerido',
-      'permissionRequiredMessage': 'Esta aplicación necesita acceso a sus contactos para verificar la compatibilidad de parejas. Por favor, otorgue el permiso en la configuración.',
+      'permissionRequiredMessage':
+          'Esta aplicación necesita acceso a sus contactos para verificar la compatibilidad de parejas. Por favor, otorgue el permiso en la configuración.',
       'openSettings': 'Abrir configuración',
       'settings': 'Configuración',
       'contactsPermissionDenied': 'Permiso de contactos denegado',
@@ -744,22 +993,34 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Leyendo contactos del dispositivo...',
       'loadingContactsProgress': '{current} de {total}',
       'aboutTitle': 'Acerca de',
-      'aboutText': 'Cada persona tiene un teléfono (o más)\n\ncada teléfono tiene los últimos 6 dígitos\n\ncada 6 dígitos tiene un color (en código hexadecimal)\n\ncada color tiene una persona (?)\n\n¡No hay coincidencia!\n\nEsta aplicación ofrece una oportunidad única de ver de manera diferente el mundo de los números de teléfono que pertenecen a personas específicas. Revise todas las combinaciones posibles y descubra que la coincidencia no existe.\n\n¿Coincide o no?',
+      'aboutText':
+          'Cada persona tiene un teléfono (o más)\n\ncada teléfono tiene los últimos 6 dígitos\n\ncada 6 dígitos tiene un color (en código hexadecimal)\n\ncada color tiene una persona (?)\n\n¡No hay coincidencia!\n\nEsta aplicación ofrece una oportunidad única de ver de manera diferente el mundo de los números de teléfono que pertenecen a personas específicas. Revise todas las combinaciones posibles y descubra que la coincidencia no existe.\n\n¿Coincide o no?',
       'heartIconDescription': 'Marcar contacto como favorito',
       'chartIconDescription': 'Reordenar contactos por número de coincidencias',
       'trashIconDescription': 'Eliminar contacto',
       'deleteAllContacts': 'Eliminar todos los contactos',
-      'deleteAllContactsConfirm': '¿Está seguro de que desea eliminar todos los contactos? Esta acción no se puede deshacer.',
+      'deleteAllContactsConfirm':
+          '¿Está seguro de que desea eliminar todos los contactos? Esta acción no se puede deshacer.',
       'pickYourselfTitle': 'Selecciónate',
-      'pickYourselfMessage': 'Elige tu contacto para empezar con tus colores. iOS no puede detectarlo automáticamente.',
+      'pickYourselfMessage':
+          'Elige tu contacto para empezar con tus colores. iOS no puede detectarlo automáticamente.\n\nTambién puedes mantener pulsado un contacto en cualquier panel para establecerte como "yo".',
       'pickYourselfButton': 'Elegir contacto',
       'notNow': 'Ahora no',
-      'pickYourselfNotInList': '{contactName} no se encontró en tus contactos cargados. Elige a alguien que esté en la lista.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} no se encontró en tus contactos cargados. Elige a alguien que esté en la lista.',
+      'setMeWithLongPressHint':
+          'Mantén pulsado un contacto en este panel para establecerte como "yo".',
+      'selfContactSelectedToast':
+          '{contactName} ahora está seleccionado/a como "yo".',
+      'doubleTapSelfDescription':
+          'Toca dos veces un panel para desplazarte hasta ti',
+      'longPressSelfDescription':
+          'Mantén pulsado un contacto para elegir un nuevo "yo"',
       'upgradeToPro': 'Actualizar a PRO',
       'restorePurchases': 'Restaurar compras',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Cargar todos los contactos del dispositivo es una función PRO. Actualiza para importar toda tu agenda de una vez.',
+      'proFeatureLoadAllContacts':
+          'Cargar todos los contactos del dispositivo es una función PRO. Actualiza para importar toda tu agenda de una vez.',
       'purchaseInProgress': 'Compra en curso...',
       'purchaseSuccess': '¡PRO desbloqueado! Gracias por tu compra.',
       'purchaseFailed': 'La compra falló. Inténtalo de nuevo.',
@@ -769,7 +1030,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Autorisation de contacts requise',
       'contactLimitReached': 'Limite de contacts atteinte',
-      'contactLimitMessage': 'Vous avez atteint le maximum de 10 contacts dans la version gratuite.\n\nPassez à PartnerCheck Pro pour ajouter des contacts illimités.',
+      'contactLimitMessage':
+          'Vous avez atteint le maximum de 10 contacts dans la version gratuite.\n\nPassez à PartnerCheck Pro pour ajouter des contacts illimités.',
       'ok': 'OK',
       'cancel': 'Annuler',
       'delete': 'Supprimer',
@@ -779,10 +1041,12 @@ class AppLocalizations {
       'selectedContactNoName': 'Le contact sélectionné n\'a pas de nom',
       'contactAlreadyInList': '{contactName} est déjà dans la liste',
       'noPhoneNumber': 'Aucun numéro de téléphone',
-      'noPhoneNumberMessage': '{contactName} n\'a pas de numéro de téléphone. Veuillez sélectionner un contact avec un numéro de téléphone.',
+      'noPhoneNumberMessage':
+          '{contactName} n\'a pas de numéro de téléphone. Veuillez sélectionner un contact avec un numéro de téléphone.',
       'errorPickingContact': 'Erreur lors de la sélection du contact : {error}',
       'deleteContact': 'Supprimer le contact',
-      'deleteContactConfirm': 'Êtes-vous sûr de vouloir supprimer {contactName} ?',
+      'deleteContactConfirm':
+          'Êtes-vous sûr de vouloir supprimer {contactName} ?',
       'addContactManually': 'Ajouter un contact manuellement',
       'editContact': 'Modifier le contact',
       'name': 'Nom',
@@ -790,8 +1054,10 @@ class AppLocalizations {
       'phoneNumber': 'Numéro de téléphone',
       'enterPhoneNumber': 'Entrez le numéro de téléphone',
       'phoneNumberOptional': 'Numéro de téléphone (optionnel)',
-      'enterPhoneNumberToChangeColor': 'Entrez le numéro de téléphone pour changer la couleur',
-      'leavePhoneEmptyKeepColor': 'Laissez le numéro de téléphone vide pour conserver la couleur actuelle',
+      'enterPhoneNumberToChangeColor':
+          'Entrez le numéro de téléphone pour changer la couleur',
+      'leavePhoneEmptyKeepColor':
+          'Laissez le numéro de téléphone vide pour conserver la couleur actuelle',
       'addFromDevice': 'Ajouter depuis l\'appareil',
       'addManually': 'Ajouter manuellement',
       'addContact': 'Ajouter un contact',
@@ -799,33 +1065,48 @@ class AppLocalizations {
       'loadContacts': 'Charger les contacts',
       'loadAllContacts': 'Charger tous les contacts',
       'permissionRequired': 'Autorisation requise',
-      'permissionRequiredMessage': 'Cette application a besoin d\'accéder à vos contacts pour vérifier la compatibilité des partenaires. Veuillez accorder l\'autorisation dans les paramètres.',
+      'permissionRequiredMessage':
+          'Cette application a besoin d\'accéder à vos contacts pour vérifier la compatibilité des partenaires. Veuillez accorder l\'autorisation dans les paramètres.',
       'openSettings': 'Ouvrir les paramètres',
       'settings': 'Paramètres',
       'contactsPermissionDenied': 'Autorisation de contacts refusée',
       'permissionDenied': 'Autorisation refusée : {status}',
-      'errorLoadingContacts': 'Erreur lors du chargement des contacts : {error}',
+      'errorLoadingContacts':
+          'Erreur lors du chargement des contacts : {error}',
       'partnerCheckFree': 'PartnerCheck Free',
       'loading': 'Chargement...',
       'loadingContactsFromDevice': 'Lecture des contacts depuis l\'appareil...',
       'loadingContactsProgress': '{current} sur {total}',
       'aboutTitle': 'À propos',
-      'aboutText': 'Chaque personne a un téléphone (ou plus)\n\nchaque téléphone a les 6 derniers chiffres\n\nchaque 6 chiffres a une couleur (en code hexadécimal)\n\nchaque couleur a une personne (?)\n\nIl n\'y a pas de coïncidence !\n\nCette application offre une opportunité unique de regarder différemment le monde des numéros de téléphone appartenant à des personnes spécifiques. Parcourez toutes les combinaisons possibles et découvrez que la coïncidence n\'existe pas.\n\nEst-ce que ça correspond ou pas ?',
+      'aboutText':
+          'Chaque personne a un téléphone (ou plus)\n\nchaque téléphone a les 6 derniers chiffres\n\nchaque 6 chiffres a une couleur (en code hexadécimal)\n\nchaque couleur a une personne (?)\n\nIl n\'y a pas de coïncidence !\n\nCette application offre une opportunité unique de regarder différemment le monde des numéros de téléphone appartenant à des personnes spécifiques. Parcourez toutes les combinaisons possibles et découvrez que la coïncidence n\'existe pas.\n\nEst-ce que ça correspond ou pas ?',
       'heartIconDescription': 'Marquer le contact comme favori',
-      'chartIconDescription': 'Réorganiser les contacts par nombre de correspondances',
+      'chartIconDescription':
+          'Réorganiser les contacts par nombre de correspondances',
       'trashIconDescription': 'Supprimer le contact',
       'deleteAllContacts': 'Supprimer tous les contacts',
-      'deleteAllContactsConfirm': 'Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée.',
+      'deleteAllContactsConfirm':
+          'Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée.',
       'pickYourselfTitle': 'Sélectionnez-vous',
-      'pickYourselfMessage': 'Choisissez votre contact pour commencer avec vos couleurs. iOS ne peut pas le détecter automatiquement.',
+      'pickYourselfMessage':
+          'Choisissez votre contact pour commencer avec vos couleurs. iOS ne peut pas le détecter automatiquement.\n\nVous pouvez aussi appuyer longuement sur un contact dans l\'un des panneaux pour vous définir comme « moi ».',
       'pickYourselfButton': 'Choisir un contact',
       'notNow': 'Pas maintenant',
-      'pickYourselfNotInList': '{contactName} n\'a pas été trouvé dans vos contacts chargés. Choisissez quelqu\'un qui est dans la liste.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} n\'a pas été trouvé dans vos contacts chargés. Choisissez quelqu\'un qui est dans la liste.',
+      'setMeWithLongPressHint':
+          'Appuyez longuement sur un contact dans ce panneau pour vous définir comme « moi ».',
+      'selfContactSelectedToast':
+          '{contactName} est maintenant sélectionné(e) comme « moi ».',
+      'doubleTapSelfDescription':
+          'Double appui sur un panneau pour défiler jusqu\'à vous',
+      'longPressSelfDescription':
+          'Appui long sur un contact pour choisir un nouveau « moi »',
       'upgradeToPro': 'Passer à PRO',
       'restorePurchases': 'Restaurer les achats',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Charger tous les contacts de l\'appareil est une fonctionnalité PRO. Passez à PRO pour importer tout votre carnet d\'adresses en une fois.',
+      'proFeatureLoadAllContacts':
+          'Charger tous les contacts de l\'appareil est une fonctionnalité PRO. Passez à PRO pour importer tout votre carnet d\'adresses en une fois.',
       'purchaseInProgress': 'Achat en cours...',
       'purchaseSuccess': 'PRO débloqué ! Merci pour votre achat.',
       'purchaseFailed': 'L\'achat a échoué. Veuillez réessayer.',
@@ -835,7 +1116,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'संपर्कों की अनुमति आवश्यक है',
       'contactLimitReached': 'संपर्क सीमा पूर्ण',
-      'contactLimitMessage': 'आप मुफ़्त संस्करण में अधिकतम 10 संपर्कों की सीमा पर पहुँच गए हैं।\n\nअसीमित संपर्क जोड़ने के लिए PartnerCheck Pro में अपग्रेड करें।',
+      'contactLimitMessage':
+          'आप मुफ़्त संस्करण में अधिकतम 10 संपर्कों की सीमा पर पहुँच गए हैं।\n\nअसीमित संपर्क जोड़ने के लिए PartnerCheck Pro में अपग्रेड करें।',
       'ok': 'ठीक है',
       'cancel': 'रद्द करें',
       'delete': 'हटाएँ',
@@ -845,7 +1127,8 @@ class AppLocalizations {
       'selectedContactNoName': 'चयनित संपर्क का कोई नाम नहीं है',
       'contactAlreadyInList': '{contactName} पहले से सूची में है',
       'noPhoneNumber': 'कोई फ़ोन नंबर नहीं',
-      'noPhoneNumberMessage': '{contactName} का कोई फ़ोन नंबर नहीं है। कृपया फ़ोन नंबर वाला संपर्क चुनें।',
+      'noPhoneNumberMessage':
+          '{contactName} का कोई फ़ोन नंबर नहीं है। कृपया फ़ोन नंबर वाला संपर्क चुनें।',
       'errorPickingContact': 'संपर्क चुनने में त्रुटि: {error}',
       'deleteContact': 'संपर्क हटाएँ',
       'deleteContactConfirm': 'क्या आप वाकई {contactName} को हटाना चाहते हैं?',
@@ -857,7 +1140,8 @@ class AppLocalizations {
       'enterPhoneNumber': 'फ़ोन नंबर दर्ज करें',
       'phoneNumberOptional': 'फ़ोन नंबर (वैकल्पिक)',
       'enterPhoneNumberToChangeColor': 'रंग बदलने के लिए फ़ोन नंबर दर्ज करें',
-      'leavePhoneEmptyKeepColor': 'वर्तमान रंग बनाए रखने के लिए फ़ोन नंबर खाली छोड़ें',
+      'leavePhoneEmptyKeepColor':
+          'वर्तमान रंग बनाए रखने के लिए फ़ोन नंबर खाली छोड़ें',
       'addFromDevice': 'डिवाइस से जोड़ें',
       'addManually': 'मैन्युअली जोड़ें',
       'addContact': 'संपर्क जोड़ें',
@@ -865,7 +1149,8 @@ class AppLocalizations {
       'loadContacts': 'संपर्क लोड करें',
       'loadAllContacts': 'सभी संपर्क लोड करें',
       'permissionRequired': 'अनुमति आवश्यक',
-      'permissionRequiredMessage': 'साझीदार अनुकूलता की जाँच के लिए इस ऐप को आपके संपर्कों तक पहुँच चाहिए। कृपया सेटिंग में अनुमति दें।',
+      'permissionRequiredMessage':
+          'साझीदार अनुकूलता की जाँच के लिए इस ऐप को आपके संपर्कों तक पहुँच चाहिए। कृपया सेटिंग में अनुमति दें।',
       'openSettings': 'सेटिंग खोलें',
       'settings': 'सेटिंग',
       'contactsPermissionDenied': 'संपर्कों की अनुमति अस्वीकार',
@@ -876,22 +1161,34 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'डिवाइस से संपर्क पढ़े जा रहे हैं...',
       'loadingContactsProgress': '{current} में से {total}',
       'aboutTitle': 'के बारे में',
-      'aboutText': 'हर व्यक्ति के पास एक फ़ोन (या अधिक) होता है\n\nहर फ़ोन के अंतिम 6 अंक होते हैं\n\nहर 6 अंकों का एक रंग (हेक्साडेसimal कोड में) होता है\n\nहर रंग का एक व्यक्ति (?) होता है\n\nकोई संयोग नहीं है!\n\nयह ऐप विशिष्ट लोगों से जुड़े फ़ोन नंबरों की दुनिया को अलग नज़रिए से देखने का अनूठा अवसर देता है। सभी संभावित संयोजनों से गुज़रें और जानें कि संयोग मौजूद नहीं है।\n\nक्या यह मेल खाता है या नहीं?',
+      'aboutText':
+          'हर व्यक्ति के पास एक फ़ोन (या अधिक) होता है\n\nहर फ़ोन के अंतिम 6 अंक होते हैं\n\nहर 6 अंकों का एक रंग (हेक्साडेसimal कोड में) होता है\n\nहर रंग का एक व्यक्ति (?) होता है\n\nकोई संयोग नहीं है!\n\nयह ऐप विशिष्ट लोगों से जुड़े फ़ोन नंबरों की दुनिया को अलग नज़रिए से देखने का अनूठा अवसर देता है। सभी संभावित संयोजनों से गुज़रें और जानें कि संयोग मौजूद नहीं है।\n\nक्या यह मेल खाता है या नहीं?',
       'heartIconDescription': 'संपर्क को पसंदीदा के रूप में चिह्नित करें',
-      'chartIconDescription': 'मेल की संख्या के अनुसार संपर्कों को क्रमबद्ध करें',
+      'chartIconDescription':
+          'मेल की संख्या के अनुसार संपर्कों को क्रमबद्ध करें',
       'trashIconDescription': 'संपर्क हटाएँ',
       'deleteAllContacts': 'सभी संपर्क हटाएँ',
-      'deleteAllContactsConfirm': 'क्या आप वाकई सभी संपर्क हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
+      'deleteAllContactsConfirm':
+          'क्या आप वाकई सभी संपर्क हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
       'pickYourselfTitle': 'अपना चयन करें',
-      'pickYourselfMessage': 'अपने रंगों के साथ शुरू करने के लिए अपना संपर्क चुनें। iOS इसे स्वचालित रूप से नहीं पहचान सकता।',
+      'pickYourselfMessage':
+          'अपने रंगों के साथ शुरू करने के लिए अपना संपर्क चुनें। iOS इसे स्वचालित रूप से नहीं पहचान सकता।\n\nआप किसी भी पैन में संपर्क को दबाकर रखकर себ को "मैं" के रूप में भी सेट कर सकते हैं।',
       'pickYourselfButton': 'संपर्क चुनें',
       'notNow': 'अभी नहीं',
-      'pickYourselfNotInList': '{contactName} आपके लोड किए गए संपर्कों में नहीं मिला। सूची में मौजूद किसी को चुनें।',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} आपके लोड किए गए संपर्कों में नहीं मिला। सूची में मौजूद किसी को चुनें।',
+      'setMeWithLongPressHint':
+          'इस पैन में संपर्क को दबाकर रखें और себ को "मैं" के रूप में सेट करें।',
+      'selfContactSelectedToast':
+          '{contactName} अब "मैं" के रूप में चुना गया है।',
+      'doubleTapSelfDescription':
+          'अपने तक स्क्रॉल करने के लिए पैन पर दो बार टैप करें',
+      'longPressSelfDescription': 'नया "मैं" चुनने के लिए संपर्क को दबाकर रखें',
       'upgradeToPro': 'PRO में अपग्रेड करें',
       'restorePurchases': 'खरीदारी पुनर्स्थापित करें',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'डिवाइस से सभी संपर्क लोड करना PRO सुविधा है। अपनी पूरी एड्रेस बुक एक साथ आयात करने के लिए अपग्रेड करें।',
+      'proFeatureLoadAllContacts':
+          'डिवाइस से सभी संपर्क लोड करना PRO सुविधा है। अपनी पूरी एड्रेस बुक एक साथ आयात करने के लिए अपग्रेड करें।',
       'purchaseInProgress': 'खरीदारी प्रगति में...',
       'purchaseSuccess': 'PRO अनलॉक हो गया! आपकी खरीदारी के लिए धन्यवाद।',
       'purchaseFailed': 'खरीदारी विफल। कृपया पुनः प्रयास करें।',
@@ -901,7 +1198,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Autorizzazione contatti richiesta',
       'contactLimitReached': 'Limite contatti raggiunto',
-      'contactLimitMessage': 'Hai raggiunto il massimo di 10 contatti nella versione gratuita.\n\nPassa a PartnerCheck Pro per aggiungere contatti illimitati.',
+      'contactLimitMessage':
+          'Hai raggiunto il massimo di 10 contatti nella versione gratuita.\n\nPassa a PartnerCheck Pro per aggiungere contatti illimitati.',
       'ok': 'OK',
       'cancel': 'Annulla',
       'delete': 'Elimina',
@@ -911,7 +1209,8 @@ class AppLocalizations {
       'selectedContactNoName': 'Il contatto selezionato non ha nome',
       'contactAlreadyInList': '{contactName} è già nella lista',
       'noPhoneNumber': 'Nessun numero di telefono',
-      'noPhoneNumberMessage': '{contactName} non ha un numero di telefono. Seleziona un contatto con un numero di telefono.',
+      'noPhoneNumberMessage':
+          '{contactName} non ha un numero di telefono. Seleziona un contatto con un numero di telefono.',
       'errorPickingContact': 'Errore nella selezione del contatto: {error}',
       'deleteContact': 'Elimina contatto',
       'deleteContactConfirm': 'Sei sicuro di voler eliminare {contactName}?',
@@ -922,8 +1221,10 @@ class AppLocalizations {
       'phoneNumber': 'Numero di telefono',
       'enterPhoneNumber': 'Inserisci il numero di telefono',
       'phoneNumberOptional': 'Numero di telefono (opzionale)',
-      'enterPhoneNumberToChangeColor': 'Inserisci il numero di telefono per cambiare il colore',
-      'leavePhoneEmptyKeepColor': 'Lascia il numero di telefono vuoto per mantenere il colore attuale',
+      'enterPhoneNumberToChangeColor':
+          'Inserisci il numero di telefono per cambiare il colore',
+      'leavePhoneEmptyKeepColor':
+          'Lascia il numero di telefono vuoto per mantenere il colore attuale',
       'addFromDevice': 'Aggiungi dal dispositivo',
       'addManually': 'Aggiungi manualmente',
       'addContact': 'Aggiungi contatto',
@@ -931,7 +1232,8 @@ class AppLocalizations {
       'loadContacts': 'Carica contatti',
       'loadAllContacts': 'Carica tutti i contatti',
       'permissionRequired': 'Autorizzazione richiesta',
-      'permissionRequiredMessage': 'Questa app ha bisogno dell\'accesso ai tuoi contatti per verificare la compatibilità del partner. Concedi l\'autorizzazione nelle impostazioni.',
+      'permissionRequiredMessage':
+          'Questa app ha bisogno dell\'accesso ai tuoi contatti per verificare la compatibilità del partner. Concedi l\'autorizzazione nelle impostazioni.',
       'openSettings': 'Apri impostazioni',
       'settings': 'Impostazioni',
       'contactsPermissionDenied': 'Autorizzazione contatti negata',
@@ -942,22 +1244,34 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Lettura contatti dal dispositivo...',
       'loadingContactsProgress': '{current} di {total}',
       'aboutTitle': 'Informazioni',
-      'aboutText': 'Ogni persona ha un telefono (o più)\n\nogni telefono ha le ultime 6 cifre\n\nogni 6 cifre ha un colore (in codice esadecimale)\n\nogni colore ha una persona (?)\n\nNon c\'è coincidenza!\n\nQuesta app offre un\'opportunità unica di guardare in modo diverso il mondo dei numeri di telefono appartenenti a persone specifiche. Esplora tutte le combinazioni possibili e scopri che la coincidenza non esiste.\n\nCorrisponde o no?',
+      'aboutText':
+          'Ogni persona ha un telefono (o più)\n\nogni telefono ha le ultime 6 cifre\n\nogni 6 cifre ha un colore (in codice esadecimale)\n\nogni colore ha una persona (?)\n\nNon c\'è coincidenza!\n\nQuesta app offre un\'opportunità unica di guardare in modo diverso il mondo dei numeri di telefono appartenenti a persone specifiche. Esplora tutte le combinazioni possibili e scopri che la coincidenza non esiste.\n\nCorrisponde o no?',
       'heartIconDescription': 'Segna contatto come preferito',
       'chartIconDescription': 'Riordina contatti per numero di corrispondenze',
       'trashIconDescription': 'Elimina contatto',
       'deleteAllContacts': 'Elimina tutti i contatti',
-      'deleteAllContactsConfirm': 'Sei sicuro di voler eliminare tutti i contatti? Questa azione non può essere annullata.',
+      'deleteAllContactsConfirm':
+          'Sei sicuro di voler eliminare tutti i contatti? Questa azione non può essere annullata.',
       'pickYourselfTitle': 'Seleziona te stesso',
-      'pickYourselfMessage': 'Scegli il tuo contatto per iniziare con i tuoi colori. iOS non può rilevarlo automaticamente.',
+      'pickYourselfMessage':
+          'Scegli il tuo contatto per iniziare con i tuoi colori. iOS non può rilevarlo automaticamente.\n\nPuoi anche tenere premuto un contatto in uno dei pannelli per impostarti come "io".',
       'pickYourselfButton': 'Scegli contatto',
       'notNow': 'Non ora',
-      'pickYourselfNotInList': '{contactName} non è stato trovato nei contatti caricati. Scegli qualcuno presente nell\'elenco.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} non è stato trovato nei contatti caricati. Scegli qualcuno presente nell\'elenco.',
+      'setMeWithLongPressHint':
+          'Tieni premuto un contatto in questo pannello per impostarti come "io".',
+      'selfContactSelectedToast':
+          '{contactName} è ora selezionato/a come "io".',
+      'doubleTapSelfDescription':
+          'Doppio tocco su un pannello per scorrere fino a te',
+      'longPressSelfDescription':
+          'Tieni premuto un contatto per selezionare un nuovo "io"',
       'upgradeToPro': 'Passa a PRO',
       'restorePurchases': 'Ripristina acquisti',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Caricare tutti i contatti dal dispositivo è una funzione PRO. Passa a PRO per importare l\'intera rubrica in una volta.',
+      'proFeatureLoadAllContacts':
+          'Caricare tutti i contatti dal dispositivo è una funzione PRO. Passa a PRO per importare l\'intera rubrica in una volta.',
       'purchaseInProgress': 'Acquisto in corso...',
       'purchaseSuccess': 'PRO sbloccato! Grazie per l\'acquisto.',
       'purchaseFailed': 'Acquisto non riuscito. Riprova.',
@@ -967,7 +1281,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Wymagane uprawnienie do kontaktów',
       'contactLimitReached': 'Osiągnięto limit kontaktów',
-      'contactLimitMessage': 'Osiągnąłeś maksimum 10 kontaktów w wersji darmowej.\n\nZaktualizuj do PartnerCheck Pro, aby dodać nieograniczoną liczbę kontaktów.',
+      'contactLimitMessage':
+          'Osiągnąłeś maksimum 10 kontaktów w wersji darmowej.\n\nZaktualizuj do PartnerCheck Pro, aby dodać nieograniczoną liczbę kontaktów.',
       'ok': 'OK',
       'cancel': 'Anuluj',
       'delete': 'Usuń',
@@ -977,7 +1292,8 @@ class AppLocalizations {
       'selectedContactNoName': 'Wybrany kontakt nie ma nazwy',
       'contactAlreadyInList': '{contactName} jest już na liście',
       'noPhoneNumber': 'Brak numeru telefonu',
-      'noPhoneNumberMessage': '{contactName} nie ma numeru telefonu. Proszę wybrać kontakt z numerem telefonu.',
+      'noPhoneNumberMessage':
+          '{contactName} nie ma numeru telefonu. Proszę wybrać kontakt z numerem telefonu.',
       'errorPickingContact': 'Błąd podczas wybierania kontaktu: {error}',
       'deleteContact': 'Usuń kontakt',
       'deleteContactConfirm': 'Czy na pewno chcesz usunąć {contactName}?',
@@ -988,8 +1304,10 @@ class AppLocalizations {
       'phoneNumber': 'Numer telefonu',
       'enterPhoneNumber': 'Wprowadź numer telefonu',
       'phoneNumberOptional': 'Numer telefonu (opcjonalny)',
-      'enterPhoneNumberToChangeColor': 'Wprowadź numer telefonu, aby zmienić kolor',
-      'leavePhoneEmptyKeepColor': 'Pozostaw numer telefonu pusty, aby zachować aktualny kolor',
+      'enterPhoneNumberToChangeColor':
+          'Wprowadź numer telefonu, aby zmienić kolor',
+      'leavePhoneEmptyKeepColor':
+          'Pozostaw numer telefonu pusty, aby zachować aktualny kolor',
       'addFromDevice': 'Dodaj z urządzenia',
       'addManually': 'Dodaj ręcznie',
       'addContact': 'Dodaj kontakt',
@@ -997,7 +1315,8 @@ class AppLocalizations {
       'loadContacts': 'Załaduj kontakty',
       'loadAllContacts': 'Załaduj wszystkie kontakty',
       'permissionRequired': 'Wymagane uprawnienie',
-      'permissionRequiredMessage': 'Ta aplikacja potrzebuje dostępu do Twoich kontaktów, aby sprawdzić zgodność partnerów. Proszę udzielić uprawnienia w ustawieniach.',
+      'permissionRequiredMessage':
+          'Ta aplikacja potrzebuje dostępu do Twoich kontaktów, aby sprawdzić zgodność partnerów. Proszę udzielić uprawnienia w ustawieniach.',
       'openSettings': 'Otwórz ustawienia',
       'settings': 'Ustawienia',
       'contactsPermissionDenied': 'Uprawnienie do kontaktów odrzucone',
@@ -1008,22 +1327,33 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Odczytywanie kontaktów z urządzenia...',
       'loadingContactsProgress': '{current} z {total}',
       'aboutTitle': 'O aplikacji',
-      'aboutText': 'Każda osoba ma telefon (lub więcej)\n\nkażdy telefon ma ostatnie 6 cyfr\n\nkażde 6 cyfr ma kolor (w kodzie szesnastkowym)\n\nkażdy kolor ma osobę (?)\n\nNie ma przypadku!\n\nTa aplikacja daje wyjątkową okazję, aby spojrzeć inaczej na świat numerów telefonów należących do konkretnych osób. Przejrzyj wszystkie możliwe kombinacje i odkryj, że przypadek nie istnieje.\n\nPasuje czy nie?',
+      'aboutText':
+          'Każda osoba ma telefon (lub więcej)\n\nkażdy telefon ma ostatnie 6 cyfr\n\nkażde 6 cyfr ma kolor (w kodzie szesnastkowym)\n\nkażdy kolor ma osobę (?)\n\nNie ma przypadku!\n\nTa aplikacja daje wyjątkową okazję, aby spojrzeć inaczej na świat numerów telefonów należących do konkretnych osób. Przejrzyj wszystkie możliwe kombinacje i odkryj, że przypadek nie istnieje.\n\nPasuje czy nie?',
       'heartIconDescription': 'Oznacz kontakt jako ulubiony',
       'chartIconDescription': 'Przeładuj kontakty według liczby dopasowań',
       'trashIconDescription': 'Usuń kontakt',
       'deleteAllContacts': 'Usuń wszystkie kontakty',
-      'deleteAllContactsConfirm': 'Czy na pewno chcesz usunąć wszystkie kontakty? Tej akcji nie można cofnąć.',
+      'deleteAllContactsConfirm':
+          'Czy na pewno chcesz usunąć wszystkie kontakty? Tej akcji nie można cofnąć.',
       'pickYourselfTitle': 'Wybierz siebie',
-      'pickYourselfMessage': 'Wybierz swój kontakt, aby zacząć od swoich kolorów. iOS nie może tego wykryć automatycznie.',
+      'pickYourselfMessage':
+          'Wybierz swój kontakt, aby zacząć od swoich kolorów. iOS nie może tego wykryć automatycznie.\n\nMożesz też przytrzymać kontakt na jednym z paneli, aby ustawić siebie jako "ja".',
       'pickYourselfButton': 'Wybierz kontakt',
       'notNow': 'Nie teraz',
-      'pickYourselfNotInList': '{contactName} nie znaleziono w załadowanych kontaktach. Wybierz kogoś, kto jest na liście.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} nie znaleziono w załadowanych kontaktach. Wybierz kogoś, kto jest na liście.',
+      'setMeWithLongPressHint':
+          'Przytrzymaj kontakt na tym panelu, aby ustawić siebie jako "ja".',
+      'selfContactSelectedToast':
+          '{contactName} jest teraz wybrany/a jako "ja".',
+      'doubleTapSelfDescription':
+          'Dotknij panelu dwukrotnie, aby przewinąć do siebie',
+      'longPressSelfDescription': 'Przytrzymaj kontakt, aby wybrać nowe "ja"',
       'upgradeToPro': 'Przejdź na PRO',
       'restorePurchases': 'Przywróć zakupy',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Ładowanie wszystkich kontaktów z urządzenia to funkcja PRO. Ulepsz, aby zaimportować całą książkę adresową naraz.',
+      'proFeatureLoadAllContacts':
+          'Ładowanie wszystkich kontaktów z urządzenia to funkcja PRO. Ulepsz, aby zaimportować całą książkę adresową naraz.',
       'purchaseInProgress': 'Zakup w toku...',
       'purchaseSuccess': 'PRO odblokowane! Dziękujemy za zakup.',
       'purchaseFailed': 'Zakup nie powiódł się. Spróbuj ponownie.',
@@ -1033,7 +1363,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Kapcsolatok engedélye szükséges',
       'contactLimitReached': 'Kapcsolatok korlátja elérve',
-      'contactLimitMessage': 'Elérte a 10 kapcsolat maximumát az ingyenes verzióban.\n\nFrissítsen PartnerCheck Pro-ra, hogy korlátlan számú kapcsolatot adjon hozzá.',
+      'contactLimitMessage':
+          'Elérte a 10 kapcsolat maximumát az ingyenes verzióban.\n\nFrissítsen PartnerCheck Pro-ra, hogy korlátlan számú kapcsolatot adjon hozzá.',
       'ok': 'OK',
       'cancel': 'Mégse',
       'delete': 'Törlés',
@@ -1043,7 +1374,8 @@ class AppLocalizations {
       'selectedContactNoName': 'A kiválasztott kapcsolatnak nincs neve',
       'contactAlreadyInList': '{contactName} már a listán van',
       'noPhoneNumber': 'Nincs telefonszám',
-      'noPhoneNumberMessage': '{contactName} nem rendelkezik telefonszámmal. Kérjük, válasszon egy kapcsolatot telefonszámmal.',
+      'noPhoneNumberMessage':
+          '{contactName} nem rendelkezik telefonszámmal. Kérjük, válasszon egy kapcsolatot telefonszámmal.',
       'errorPickingContact': 'Hiba a kapcsolat kiválasztásakor: {error}',
       'deleteContact': 'Kapcsolat törlése',
       'deleteContactConfirm': 'Biztosan törölni szeretné {contactName}?',
@@ -1054,8 +1386,10 @@ class AppLocalizations {
       'phoneNumber': 'Telefonszám',
       'enterPhoneNumber': 'Adja meg a telefonszámot',
       'phoneNumberOptional': 'Telefonszám (opcionális)',
-      'enterPhoneNumberToChangeColor': 'Adja meg a telefonszámot a szín megváltoztatásához',
-      'leavePhoneEmptyKeepColor': 'Hagyja üresen a telefonszámot az aktuális szín megtartásához',
+      'enterPhoneNumberToChangeColor':
+          'Adja meg a telefonszámot a szín megváltoztatásához',
+      'leavePhoneEmptyKeepColor':
+          'Hagyja üresen a telefonszámot az aktuális szín megtartásához',
       'addFromDevice': 'Hozzáadás eszközről',
       'addManually': 'Manuális hozzáadás',
       'addContact': 'Kapcsolat hozzáadása',
@@ -1063,7 +1397,8 @@ class AppLocalizations {
       'loadContacts': 'Kapcsolatok betöltése',
       'loadAllContacts': 'Összes kapcsolat betöltése',
       'permissionRequired': 'Engedély szükséges',
-      'permissionRequiredMessage': 'Ez az alkalmazás hozzáférést igényel a kapcsolataihoz a partner kompatibilitás ellenőrzéséhez. Kérjük, adja meg az engedélyt a beállításokban.',
+      'permissionRequiredMessage':
+          'Ez az alkalmazás hozzáférést igényel a kapcsolataihoz a partner kompatibilitás ellenőrzéséhez. Kérjük, adja meg az engedélyt a beállításokban.',
       'openSettings': 'Beállítások megnyitása',
       'settings': 'Beállítások',
       'contactsPermissionDenied': 'Kapcsolatok engedélye megtagadva',
@@ -1074,22 +1409,35 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Kapcsolatok olvasása az eszközről...',
       'loadingContactsProgress': '{current} / {total}',
       'aboutTitle': 'Névjegy',
-      'aboutText': 'Minden embernek van telefonja (vagy több)\n\nminden telefonnak van az utolsó 6 számjegye\n\nminden 6 számjegynek van színe (hexadecimális kódban)\n\nminden színnek van embere (?)\n\nNincs véletlen!\n\nEz az alkalmazás egyedi lehetőséget nyújt, hogy másképp nézzük meg az adott emberekhez tartozó telefonszámok világát. Tekintse át az összes lehetséges kombinációt és fedezze fel, hogy a véletlen nem létezik.\n\nEgyezik vagy nem?',
+      'aboutText':
+          'Minden embernek van telefonja (vagy több)\n\nminden telefonnak van az utolsó 6 számjegye\n\nminden 6 számjegynek van színe (hexadecimális kódban)\n\nminden színnek van embere (?)\n\nNincs véletlen!\n\nEz az alkalmazás egyedi lehetőséget nyújt, hogy másképp nézzük meg az adott emberekhez tartozó telefonszámok világát. Tekintse át az összes lehetséges kombinációt és fedezze fel, hogy a véletlen nem létezik.\n\nEgyezik vagy nem?',
       'heartIconDescription': 'Kapcsolat megjelölése kedvencként',
-      'chartIconDescription': 'Kapcsolatok újrarendezése egyezések száma szerint',
+      'chartIconDescription':
+          'Kapcsolatok újrarendezése egyezések száma szerint',
       'trashIconDescription': 'Kapcsolat törlése',
       'deleteAllContacts': 'Összes kapcsolat törlése',
-      'deleteAllContactsConfirm': 'Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza.',
+      'deleteAllContactsConfirm':
+          'Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza.',
       'pickYourselfTitle': 'Válaszd ki magad',
-      'pickYourselfMessage': 'Válaszd ki a kapcsolatodat, hogy a színeiddel kezdhess. Az iOS nem tudja ezt automatikusan felismerni.',
+      'pickYourselfMessage':
+          'Válaszd ki a kapcsolatodat, hogy a színeiddel kezdhess. Az iOS nem tudja ezt automatikusan felismerni.\n\nBármelyik panelen nyomva tarthatod egy kapcsolatot is, hogy "én"-ként beállítsd magad.',
       'pickYourselfButton': 'Kapcsolat kiválasztása',
       'notNow': 'Most nem',
-      'pickYourselfNotInList': 'A(z) {contactName} nem található a betöltött kapcsolatok között. Válassz valakit, aki szerepel a listában.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          'A(z) {contactName} nem található a betöltött kapcsolatok között. Válassz valakit, aki szerepel a listában.',
+      'setMeWithLongPressHint':
+          'Tartsd nyomva a kapcsolatot ezen a panelen, hogy "én"-ként beállítsd magad.',
+      'selfContactSelectedToast':
+          '{contactName} most "én"-ként van kiválasztva.',
+      'doubleTapSelfDescription':
+          'Dupla koppintás egy panelen, hogy magadhoz görgess',
+      'longPressSelfDescription':
+          'Tartsd nyomva a kapcsolatot új "én" választásához',
       'upgradeToPro': 'Frissítés PRO-ra',
       'restorePurchases': 'Vásárlások visszaállítása',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Az összes kapcsolat betöltése az eszközről PRO funkció. Frissíts, hogy egyszerre importáld a teljes címjegyzékedet.',
+      'proFeatureLoadAllContacts':
+          'Az összes kapcsolat betöltése az eszközről PRO funkció. Frissíts, hogy egyszerre importáld a teljes címjegyzékedet.',
       'purchaseInProgress': 'Vásárlás folyamatban...',
       'purchaseSuccess': 'PRO feloldva! Köszönjük a vásárlást.',
       'purchaseFailed': 'A vásárlás sikertelen. Próbáld újra.',
@@ -1099,7 +1447,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Требуется разрешение на контакты',
       'contactLimitReached': 'Достигнут лимит контактов',
-      'contactLimitMessage': 'Вы достигли максимума в 10 контактов в бесплатной версии.\n\nОбновитесь до PartnerCheck Pro, чтобы добавить неограниченное количество контактов.',
+      'contactLimitMessage':
+          'Вы достигли максимума в 10 контактов в бесплатной версии.\n\nОбновитесь до PartnerCheck Pro, чтобы добавить неограниченное количество контактов.',
       'ok': 'ОК',
       'cancel': 'Отмена',
       'delete': 'Удалить',
@@ -1109,7 +1458,8 @@ class AppLocalizations {
       'selectedContactNoName': 'У выбранного контакта нет имени',
       'contactAlreadyInList': '{contactName} уже в списке',
       'noPhoneNumber': 'Нет номера телефона',
-      'noPhoneNumberMessage': '{contactName} не имеет номера телефона. Пожалуйста, выберите контакт с номером телефона.',
+      'noPhoneNumberMessage':
+          '{contactName} не имеет номера телефона. Пожалуйста, выберите контакт с номером телефона.',
       'errorPickingContact': 'Ошибка при выборе контакта: {error}',
       'deleteContact': 'Удалить контакт',
       'deleteContactConfirm': 'Вы уверены, что хотите удалить {contactName}?',
@@ -1120,8 +1470,10 @@ class AppLocalizations {
       'phoneNumber': 'Номер телефона',
       'enterPhoneNumber': 'Введите номер телефона',
       'phoneNumberOptional': 'Номер телефона (необязательно)',
-      'enterPhoneNumberToChangeColor': 'Введите номер телефона, чтобы изменить цвет',
-      'leavePhoneEmptyKeepColor': 'Оставьте номер телефона пустым, чтобы сохранить текущий цвет',
+      'enterPhoneNumberToChangeColor':
+          'Введите номер телефона, чтобы изменить цвет',
+      'leavePhoneEmptyKeepColor':
+          'Оставьте номер телефона пустым, чтобы сохранить текущий цвет',
       'addFromDevice': 'Добавить с устройства',
       'addManually': 'Добавить вручную',
       'addContact': 'Добавить контакт',
@@ -1129,7 +1481,8 @@ class AppLocalizations {
       'loadContacts': 'Загрузить контакты',
       'loadAllContacts': 'Загрузить все контакты',
       'permissionRequired': 'Требуется разрешение',
-      'permissionRequiredMessage': 'Это приложение нуждается в доступе к вашим контактам для проверки совместимости партнеров. Пожалуйста, предоставьте разрешение в настройках.',
+      'permissionRequiredMessage':
+          'Это приложение нуждается в доступе к вашим контактам для проверки совместимости партнеров. Пожалуйста, предоставьте разрешение в настройках.',
       'openSettings': 'Открыть настройки',
       'settings': 'Настройки',
       'contactsPermissionDenied': 'Разрешение на контакты отклонено',
@@ -1140,22 +1493,34 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Чтение контактов с устройства...',
       'loadingContactsProgress': '{current} из {total}',
       'aboutTitle': 'О приложении',
-      'aboutText': 'У каждого человека есть телефон (или больше)\n\nу каждого телефона есть последние 6 цифр\n\nу каждых 6 цифр есть цвет (в шестнадцатеричном коде)\n\nу каждого цвета есть человек (?)\n\nСовпадений не бывает!\n\nЭто приложение предоставляет уникальную возможность по-другому взглянуть на мир телефонных номеров, принадлежащих конкретным людям. Просмотрите все возможные комбинации и узнайте, что совпадений не существует.\n\nСовпадает или нет?',
+      'aboutText':
+          'У каждого человека есть телефон (или больше)\n\nу каждого телефона есть последние 6 цифр\n\nу каждых 6 цифр есть цвет (в шестнадцатеричном коде)\n\nу каждого цвета есть человек (?)\n\nСовпадений не бывает!\n\nЭто приложение предоставляет уникальную возможность по-другому взглянуть на мир телефонных номеров, принадлежащих конкретным людям. Просмотрите все возможные комбинации и узнайте, что совпадений не существует.\n\nСовпадает или нет?',
       'heartIconDescription': 'Отметить контакт как избранный',
-      'chartIconDescription': 'Переупорядочить контакты по количеству совпадений',
+      'chartIconDescription':
+          'Переупорядочить контакты по количеству совпадений',
       'trashIconDescription': 'Удалить контакт',
       'deleteAllContacts': 'Удалить все контакты',
-      'deleteAllContactsConfirm': 'Вы уверены, что хотите удалить все контакты? Это действие нельзя отменить.',
+      'deleteAllContactsConfirm':
+          'Вы уверены, что хотите удалить все контакты? Это действие нельзя отменить.',
       'pickYourselfTitle': 'Выберите себя',
-      'pickYourselfMessage': 'Выберите свой контакт, чтобы начать со своих цветов. iOS не может определить это автоматически.',
+      'pickYourselfMessage':
+          'Выберите свой контакт, чтобы начать со своих цветов. iOS не может определить это автоматически.\n\nВы также можете нажать и удерживать контакт на любой панели, чтобы установить себя как «я».',
       'pickYourselfButton': 'Выбрать контакт',
       'notNow': 'Не сейчас',
-      'pickYourselfNotInList': '{contactName} не найден в загруженных контактах. Выберите кого-то из списка.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} не найден в загруженных контактах. Выберите кого-то из списка.',
+      'setMeWithLongPressHint':
+          'Нажмите и удерживайте контакт на этой панели, чтобы установить себя как «я».',
+      'selfContactSelectedToast': '{contactName} теперь выбран(а) как «я».',
+      'doubleTapSelfDescription':
+          'Двойное нажатие на панель, чтобы прокрутить к себе',
+      'longPressSelfDescription':
+          'Нажмите и удерживайте контакт, чтобы выбрать новое «я»',
       'upgradeToPro': 'Перейти на PRO',
       'restorePurchases': 'Восстановить покупки',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Загрузка всех контактов с устройства — функция PRO. Обновитесь, чтобы импортировать всю записную книгу сразу.',
+      'proFeatureLoadAllContacts':
+          'Загрузка всех контактов с устройства — функция PRO. Обновитесь, чтобы импортировать всю записную книгу сразу.',
       'purchaseInProgress': 'Покупка выполняется...',
       'purchaseSuccess': 'PRO разблокирован! Спасибо за покупку.',
       'purchaseFailed': 'Покупка не удалась. Попробуйте снова.',
@@ -1165,7 +1530,8 @@ class AppLocalizations {
       'appTitle': 'Partner Check',
       'contactsPermissionRequired': 'Permissão de contatos necessária',
       'contactLimitReached': 'Limite de contatos atingido',
-      'contactLimitMessage': 'Você atingiu o máximo de 10 contatos na versão gratuita.\n\nAtualize para PartnerCheck Pro para adicionar contatos ilimitados.',
+      'contactLimitMessage':
+          'Você atingiu o máximo de 10 contatos na versão gratuita.\n\nAtualize para PartnerCheck Pro para adicionar contatos ilimitados.',
       'ok': 'OK',
       'cancel': 'Cancelar',
       'delete': 'Excluir',
@@ -1175,10 +1541,12 @@ class AppLocalizations {
       'selectedContactNoName': 'O contato selecionado não tem nome',
       'contactAlreadyInList': '{contactName} já está na lista',
       'noPhoneNumber': 'Sem número de telefone',
-      'noPhoneNumberMessage': '{contactName} não tem número de telefone. Por favor, selecione um contato com número de telefone.',
+      'noPhoneNumberMessage':
+          '{contactName} não tem número de telefone. Por favor, selecione um contato com número de telefone.',
       'errorPickingContact': 'Erro ao selecionar contato: {error}',
       'deleteContact': 'Excluir contato',
-      'deleteContactConfirm': 'Tem certeza de que deseja excluir {contactName}?',
+      'deleteContactConfirm':
+          'Tem certeza de que deseja excluir {contactName}?',
       'addContactManually': 'Adicionar contato manualmente',
       'editContact': 'Editar contato',
       'name': 'Nome',
@@ -1186,8 +1554,10 @@ class AppLocalizations {
       'phoneNumber': 'Número de telefone',
       'enterPhoneNumber': 'Digite o número de telefone',
       'phoneNumberOptional': 'Número de telefone (opcional)',
-      'enterPhoneNumberToChangeColor': 'Digite o número de telefone para alterar a cor',
-      'leavePhoneEmptyKeepColor': 'Deixe o número de telefone vazio para manter a cor atual',
+      'enterPhoneNumberToChangeColor':
+          'Digite o número de telefone para alterar a cor',
+      'leavePhoneEmptyKeepColor':
+          'Deixe o número de telefone vazio para manter a cor atual',
       'addFromDevice': 'Adicionar do dispositivo',
       'addManually': 'Adicionar manualmente',
       'addContact': 'Adicionar contato',
@@ -1195,7 +1565,8 @@ class AppLocalizations {
       'loadContacts': 'Carregar contatos',
       'loadAllContacts': 'Carregar todos os contatos',
       'permissionRequired': 'Permissão necessária',
-      'permissionRequiredMessage': 'Este aplicativo precisa de acesso aos seus contatos para verificar a compatibilidade do parceiro. Por favor, conceda a permissão nas configurações.',
+      'permissionRequiredMessage':
+          'Este aplicativo precisa de acesso aos seus contatos para verificar a compatibilidade do parceiro. Por favor, conceda a permissão nas configurações.',
       'openSettings': 'Abrir configurações',
       'settings': 'Configurações',
       'contactsPermissionDenied': 'Permissão de contatos negada',
@@ -1206,22 +1577,35 @@ class AppLocalizations {
       'loadingContactsFromDevice': 'Lendo contatos do dispositivo...',
       'loadingContactsProgress': '{current} de {total}',
       'aboutTitle': 'Sobre',
-      'aboutText': 'Cada pessoa tem um telefone (ou mais)\n\ncada telefone tem os últimos 6 dígitos\n\ncada 6 dígitos tem uma cor (em código hexadecimal)\n\ncada cor tem uma pessoa (?)\n\nNão há coincidência!\n\nEste aplicativo oferece uma oportunidade única de olhar de forma diferente para o mundo dos números de telefone pertencentes a pessoas específicas. Percorra todas as combinações possíveis e descubra que a coincidência não existe.\n\nCombina ou não?',
+      'aboutText':
+          'Cada pessoa tem um telefone (ou mais)\n\ncada telefone tem os últimos 6 dígitos\n\ncada 6 dígitos tem uma cor (em código hexadecimal)\n\ncada cor tem uma pessoa (?)\n\nNão há coincidência!\n\nEste aplicativo oferece uma oportunidade única de olhar de forma diferente para o mundo dos números de telefone pertencentes a pessoas específicas. Percorra todas as combinações possíveis e descubra que a coincidência não existe.\n\nCombina ou não?',
       'heartIconDescription': 'Marcar contato como favorito',
-      'chartIconDescription': 'Reordenar contatos por número de correspondências',
+      'chartIconDescription':
+          'Reordenar contatos por número de correspondências',
       'trashIconDescription': 'Excluir contato',
       'deleteAllContacts': 'Excluir todos os contatos',
-      'deleteAllContactsConfirm': 'Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita.',
+      'deleteAllContactsConfirm':
+          'Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita.',
       'pickYourselfTitle': 'Selecione-se',
-      'pickYourselfMessage': 'Escolha seu contato para começar com suas cores. O iOS não pode detectar isso automaticamente.',
+      'pickYourselfMessage':
+          'Escolha seu contato para começar com suas cores. O iOS não pode detectar isso automaticamente.\n\nVocê também pode tocar e segurar um contato em qualquer painel para se definir como "eu".',
       'pickYourselfButton': 'Escolher contato',
       'notNow': 'Agora não',
-      'pickYourselfNotInList': '{contactName} não foi encontrado nos seus contatos carregados. Escolha alguém que esteja na lista.',
-      'setMeWithLongPressHint': 'Long-press a contact on this pane to set yourself as "me".',
+      'pickYourselfNotInList':
+          '{contactName} não foi encontrado nos seus contatos carregados. Escolha alguém que esteja na lista.',
+      'setMeWithLongPressHint':
+          'Toque e segure um contato neste painel para se definir como "eu".',
+      'selfContactSelectedToast':
+          '{contactName} agora está selecionado(a) como "eu".',
+      'doubleTapSelfDescription':
+          'Toque duas vezes em um painel para rolar até você',
+      'longPressSelfDescription':
+          'Toque e segure um contato para selecionar um novo "eu"',
       'upgradeToPro': 'Atualizar para PRO',
       'restorePurchases': 'Restaurar compras',
       'proVersion': 'PartnerCheck Pro',
-      'proFeatureLoadAllContacts': 'Carregar todos os contactos do dispositivo é uma funcionalidade PRO. Atualize para importar toda a sua agenda de uma vez.',
+      'proFeatureLoadAllContacts':
+          'Carregar todos os contactos do dispositivo é uma funcionalidade PRO. Atualize para importar toda a sua agenda de uma vez.',
       'purchaseInProgress': 'Compra em curso...',
       'purchaseSuccess': 'PRO desbloqueado! Obrigado pela sua compra.',
       'purchaseFailed': 'A compra falhou. Tente novamente.',
@@ -1230,17 +1614,40 @@ class AppLocalizations {
   };
 }
 
-class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
   bool isSupported(Locale locale) {
-    return ['en', 'ar', 'he', 'cs', 'sk', 'zh', 'ja', 'nl', 'de', 'es', 'fr', 'hi', 'it', 'pl', 'hu', 'ru', 'pt'].contains(locale.languageCode);
+    final languageCode =
+        locale.languageCode == 'iw' ? 'he' : locale.languageCode;
+    return [
+      'en',
+      'ar',
+      'he',
+      'cs',
+      'sk',
+      'zh',
+      'ja',
+      'nl',
+      'de',
+      'es',
+      'fr',
+      'hi',
+      'it',
+      'pl',
+      'hu',
+      'ru',
+      'pt',
+    ].contains(languageCode);
   }
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
-    return AppLocalizations(locale);
+    final languageCode =
+        locale.languageCode == 'iw' ? 'he' : locale.languageCode;
+    return AppLocalizations(Locale(languageCode));
   }
 
   @override

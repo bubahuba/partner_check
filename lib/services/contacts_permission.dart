@@ -6,8 +6,7 @@ const contactsNameAndPhoneProperties = {
 };
 
 Future<bool> ensureContactsReadPermission() async {
-  final status =
-      await FlutterContacts.permissions.request(PermissionType.read);
+  final status = await FlutterContacts.permissions.request(PermissionType.read);
   return status == PermissionStatus.granted ||
       status == PermissionStatus.limited;
 }

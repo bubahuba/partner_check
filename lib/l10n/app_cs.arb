@@ -51,11 +51,11 @@
   "deleteAllContacts": "Smazat všechny kontakty",
   "deleteAllContactsConfirm": "Opravdu chcete smazat všechny kontakty? Tuto akci nelze vrátit zpět.",
   "pickYourselfTitle": "Vyberte sebe",
-  "pickYourselfMessage": "Vyberte svůj kontakt, abyste mohli začít se svými barvami. iOS to nemůže zjistit automaticky.",
+  "pickYourselfMessage": "Vyberte svůj kontakt, abyste mohli začít se svými barvami. iOS to nemůže zjistit automaticky.\n\nMůžete také podržet prst na kontaktu v libovolném panelu a nastavit se jako \"já\".",
   "pickYourselfButton": "Vybrat kontakt",
   "notNow": "Teď ne",
   "pickYourselfNotInList": "{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Podržte prst na kontaktu v tomto panelu a nastavte se jako \"já\".",
   "upgradeToPro": "Upgradovat na PRO",
   "restorePurchases": "Obnovit nákupy",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Nákup probíhá...",
   "purchaseSuccess": "PRO odemčeno! Děkujeme za nákup.",
   "purchaseFailed": "Nákup se nezdařil. Zkuste to znovu.",
-  "alreadyPro": "Již máte PRO."
+  "alreadyPro": "Již máte PRO.",
+  "selfContactSelectedToast": "{contactName} je nyní vybrán/a jako \"já\".",
+  "doubleTapSelfDescription": "Dvojitým klepnutím na panel přejdete k sobě",
+  "longPressSelfDescription": "Podržením prstu na kontaktu vyberete nové \"já\""
 }
-

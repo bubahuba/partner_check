@@ -51,11 +51,11 @@
   "deleteAllContacts": "Alle Kontakte löschen",
   "deleteAllContactsConfirm": "Sind Sie sicher, dass Sie alle Kontakte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
   "pickYourselfTitle": "Wähle dich selbst",
-  "pickYourselfMessage": "Wähle deinen Kontakt, um mit deinen Farben zu starten. iOS kann dies nicht automatisch erkennen.",
+  "pickYourselfMessage": "Wähle deinen Kontakt, um mit deinen Farben zu starten. iOS kann dies nicht automatisch erkennen.\n\nDu kannst auch einen Kontakt in einem der Fenster gedrückt halten, um dich als \"ich\" festzulegen.",
   "pickYourselfButton": "Kontakt wählen",
   "notNow": "Nicht jetzt",
   "pickYourselfNotInList": "{contactName} wurde in deinen geladenen Kontakten nicht gefunden. Wähle jemanden, der in der Liste ist.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Halte einen Kontakt in diesem Fenster gedrückt, um dich als \"ich\" festzulegen.",
   "upgradeToPro": "Auf PRO upgraden",
   "restorePurchases": "Käufe wiederherstellen",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Kauf wird durchgeführt...",
   "purchaseSuccess": "PRO freigeschaltet! Danke für deinen Kauf.",
   "purchaseFailed": "Kauf fehlgeschlagen. Bitte versuche es erneut.",
-  "alreadyPro": "Du hast bereits PRO."
+  "alreadyPro": "Du hast bereits PRO.",
+  "selfContactSelectedToast": "{contactName} ist jetzt als \"ich\" ausgewählt.",
+  "doubleTapSelfDescription": "Doppeltippen auf ein Fenster, um zu dir zu scrollen",
+  "longPressSelfDescription": "Kontakt gedrückt halten, um ein neues \"ich\" zu wählen"
 }
-

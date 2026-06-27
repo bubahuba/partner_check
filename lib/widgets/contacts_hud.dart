@@ -58,4 +58,3 @@ class ContactsHud extends StatelessWidget {
     );
   }
 }
-

@@ -29,4 +29,3 @@ class StoredContact {
         isFavorite: json['isFavorite'] ?? false,
       );
 }
-

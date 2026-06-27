@@ -113,15 +113,11 @@ class _UpgradeSheetState extends State<_UpgradeSheet> {
 
   Future<void> _restore(BuildContext context) async {
     final proService = context.read<ProSubscriptionService>();
-    final l10n = AppLocalizations.of(context)!;
 
     await proService.restorePurchases();
     if (!context.mounted) return;
 
     if (proService.isPro) {
-      ScaffoldMessenger.of(widget.parentContext).showSnackBar(
-        SnackBar(content: Text(l10n.purchaseSuccess)),
-      );
       Navigator.of(context).pop();
     }
   }
@@ -142,9 +138,8 @@ class _UpgradeSheetState extends State<_UpgradeSheet> {
         }
 
         final price = proService.proProduct?.price;
-        final upgradeLabel = price != null
-            ? '${l10n.upgradeToPro} ($price)'
-            : l10n.upgradeToPro;
+        final upgradeLabel =
+            price != null ? '${l10n.upgradeToPro} ($price)' : l10n.upgradeToPro;
 
         return Container(
           decoration: const BoxDecoration(
@@ -203,9 +198,8 @@ class _UpgradeSheetState extends State<_UpgradeSheet> {
                     ),
                     const SizedBox(height: 12),
                     TextButton(
-                      onPressed: proService.isLoading
-                          ? null
-                          : () => _restore(context),
+                      onPressed:
+                          proService.isLoading ? null : () => _restore(context),
                       child: Text(
                         l10n.restorePurchases,
                         style: const TextStyle(color: Colors.white70),

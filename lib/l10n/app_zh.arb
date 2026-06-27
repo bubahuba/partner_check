@@ -51,11 +51,11 @@
   "deleteAllContacts": "删除所有联系人",
   "deleteAllContactsConfirm": "您确定要删除所有联系人吗？此操作无法撤销。",
   "pickYourselfTitle": "选择你自己",
-  "pickYourselfMessage": "选择您的联系人，以便从您的颜色开始。iOS 无法自动检测。",
+  "pickYourselfMessage": "选择您的联系人，以便从您的颜色开始。iOS 无法自动检测。\n\n您也可以在任一窗格中长按联系人来将自己设为\"我\"。",
   "pickYourselfButton": "选择联系人",
   "notNow": "以后再说",
   "pickYourselfNotInList": "在已加载的联系人中未找到 {contactName}。请选择列表中的联系人。",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "在此窗格中长按联系人，将自己设为\"我\"。",
   "upgradeToPro": "升级到 PRO",
   "restorePurchases": "恢复购买",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "购买进行中...",
   "purchaseSuccess": "PRO 已解锁！感谢您的购买。",
   "purchaseFailed": "购买失败。请重试。",
-  "alreadyPro": "您已拥有 PRO。"
+  "alreadyPro": "您已拥有 PRO。",
+  "selfContactSelectedToast": "{contactName} 现已选为\"我\"。",
+  "doubleTapSelfDescription": "双击窗格可滚动到您自己",
+  "longPressSelfDescription": "长按联系人可选择新的\"我\""
 }
-

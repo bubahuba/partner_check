@@ -51,11 +51,11 @@
   "deleteAllContacts": "Eliminar todos los contactos",
   "deleteAllContactsConfirm": "¿Está seguro de que desea eliminar todos los contactos? Esta acción no se puede deshacer.",
   "pickYourselfTitle": "Selecciónate",
-  "pickYourselfMessage": "Elige tu contacto para empezar con tus colores. iOS no puede detectarlo automáticamente.",
+  "pickYourselfMessage": "Elige tu contacto para empezar con tus colores. iOS no puede detectarlo automáticamente.\n\nTambién puedes mantener pulsado un contacto en cualquier panel para establecerte como \"yo\".",
   "pickYourselfButton": "Elegir contacto",
   "notNow": "Ahora no",
   "pickYourselfNotInList": "{contactName} no se encontró en tus contactos cargados. Elige a alguien que esté en la lista.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Mantén pulsado un contacto en este panel para establecerte como \"yo\".",
   "upgradeToPro": "Actualizar a PRO",
   "restorePurchases": "Restaurar compras",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Compra en curso...",
   "purchaseSuccess": "¡PRO desbloqueado! Gracias por tu compra.",
   "purchaseFailed": "La compra falló. Inténtalo de nuevo.",
-  "alreadyPro": "Ya tienes PRO."
+  "alreadyPro": "Ya tienes PRO.",
+  "selfContactSelectedToast": "{contactName} ahora está seleccionado/a como \"yo\".",
+  "doubleTapSelfDescription": "Toca dos veces un panel para desplazarte hasta ti",
+  "longPressSelfDescription": "Mantén pulsado un contacto para elegir un nuevo \"yo\""
 }
-

@@ -242,7 +242,7 @@
   "@pickYourselfTitle": {
     "description": "Title for dialog asking user to pick their own contact on iOS"
   },
-  "pickYourselfMessage": "Choose your contact so you can start with your colors. iOS cannot detect this automatically.",
+  "pickYourselfMessage": "Choose your contact so you can start with your colors. iOS cannot detect this automatically.\n\nYou can also tap and hold a contact on either pane to set yourself as \"me\".",
   "@pickYourselfMessage": {
     "description": "Message explaining why user should pick their contact on iOS"
   },
@@ -263,9 +263,26 @@
       }
     }
   },
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Tap and hold a contact on this pane to set yourself as \"me\".",
   "@setMeWithLongPressHint": {
     "description": "Hint when double-tapping a pane without a saved me contact"
+  },
+  "selfContactSelectedToast": "{contactName} is now selected as \"me\".",
+  "@selfContactSelectedToast": {
+    "description": "Toast after user sets a contact as me via tap and hold",
+    "placeholders": {
+      "contactName": {
+        "type": "String"
+      }
+    }
+  },
+  "doubleTapSelfDescription": "Double-tap a pane to scroll to yourself",
+  "@doubleTapSelfDescription": {
+    "description": "About screen hint for double-tap to scroll to me contact"
+  },
+  "longPressSelfDescription": "Tap and hold a contact to select a new \"me\"",
+  "@longPressSelfDescription": {
+    "description": "About screen hint for tap and hold to change me contact"
   },
   "upgradeToPro": "Upgrade to PRO",
   "@upgradeToPro": {

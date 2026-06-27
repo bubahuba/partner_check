@@ -92,4 +92,3 @@ void showAddContactMenu(
     ),
   );
 }
-

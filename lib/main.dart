@@ -45,6 +45,19 @@ class PartnerCheck extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: (locale, supportedLocales) {
+        if (locale == null) {
+          return supportedLocales.first;
+        }
+        final languageCode =
+            locale.languageCode == 'iw' ? 'he' : locale.languageCode;
+        for (final supported in supportedLocales) {
+          if (supported.languageCode == languageCode) {
+            return supported;
+          }
+        }
+        return supportedLocales.first;
+      },
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.black,
         colorScheme: const ColorScheme.dark(

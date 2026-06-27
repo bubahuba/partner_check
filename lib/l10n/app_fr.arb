@@ -51,11 +51,11 @@
   "deleteAllContacts": "Supprimer tous les contacts",
   "deleteAllContactsConfirm": "Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée.",
   "pickYourselfTitle": "Sélectionnez-vous",
-  "pickYourselfMessage": "Choisissez votre contact pour commencer avec vos couleurs. iOS ne peut pas le détecter automatiquement.",
+  "pickYourselfMessage": "Choisissez votre contact pour commencer avec vos couleurs. iOS ne peut pas le détecter automatiquement.\n\nVous pouvez aussi appuyer longuement sur un contact dans l'un des panneaux pour vous définir comme « moi ».",
   "pickYourselfButton": "Choisir un contact",
   "notNow": "Pas maintenant",
   "pickYourselfNotInList": "{contactName} n'a pas été trouvé dans vos contacts chargés. Choisissez quelqu'un qui est dans la liste.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Appuyez longuement sur un contact dans ce panneau pour vous définir comme « moi ».",
   "upgradeToPro": "Passer à PRO",
   "restorePurchases": "Restaurer les achats",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Achat en cours...",
   "purchaseSuccess": "PRO débloqué ! Merci pour votre achat.",
   "purchaseFailed": "L'achat a échoué. Veuillez réessayer.",
-  "alreadyPro": "Vous avez déjà PRO."
+  "alreadyPro": "Vous avez déjà PRO.",
+  "selfContactSelectedToast": "{contactName} est maintenant sélectionné(e) comme « moi ».",
+  "doubleTapSelfDescription": "Double appui sur un panneau pour défiler jusqu'à vous",
+  "longPressSelfDescription": "Appui long sur un contact pour choisir un nouveau « moi »"
 }
-

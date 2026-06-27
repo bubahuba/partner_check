@@ -51,11 +51,11 @@
   "deleteAllContacts": "Alle contacten verwijderen",
   "deleteAllContactsConfirm": "Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
   "pickYourselfTitle": "Selecteer jezelf",
-  "pickYourselfMessage": "Kies je contact zodat je kunt beginnen met je kleuren. iOS kan dit niet automatisch detecteren.",
+  "pickYourselfMessage": "Kies je contact zodat je kunt beginnen met je kleuren. iOS kan dit niet automatisch detecteren.\n\nJe kunt ook een contact in een van beide panelen ingedrukt houden om jezelf als \"ik\" in te stellen.",
   "pickYourselfButton": "Contact kiezen",
   "notNow": "Niet nu",
   "pickYourselfNotInList": "{contactName} is niet gevonden in je geladen contacten. Kies iemand die in de lijst staat.",
-  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "setMeWithLongPressHint": "Houd een contact in dit paneel ingedrukt om jezelf als \"ik\" in te stellen.",
   "upgradeToPro": "Upgraden naar PRO",
   "restorePurchases": "Aankopen herstellen",
   "proVersion": "PartnerCheck Pro",
@@ -63,6 +63,8 @@
   "purchaseInProgress": "Aankoop bezig...",
   "purchaseSuccess": "PRO ontgrendeld! Bedankt voor je aankoop.",
   "purchaseFailed": "Aankoop mislukt. Probeer het opnieuw.",
-  "alreadyPro": "Je hebt al PRO."
+  "alreadyPro": "Je hebt al PRO.",
+  "selfContactSelectedToast": "{contactName} is nu geselecteerd als \"ik\".",
+  "doubleTapSelfDescription": "Dubbeltik op een paneel om naar jezelf te scrollen",
+  "longPressSelfDescription": "Houd een contact ingedrukt om een nieuwe \"ik\" te kiezen"
 }
-

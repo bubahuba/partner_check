@@ -11,7 +11,8 @@ class ContactCard extends StatelessWidget {
   final bool isMatch;
   final bool isHudVisible;
   final bool showNameFlash;
-  final String? activeFlashType; // 'base', 'overlay', 'cross1', 'cross2', or null
+  final String?
+      activeFlashType; // 'base', 'overlay', 'cross1', 'cross2', or null
   final AnimationController heartAnimationController;
   final AnimationController flashAnimationController;
   final bool showSelfContactFlash;
@@ -141,7 +142,7 @@ class ContactCard extends StatelessWidget {
 
   Widget _buildContent() {
     final shouldShowContent = isHudVisible || (isCurrentPage && showNameFlash);
-    
+
     if (!shouldShowContent) {
       return const SizedBox.shrink();
     }
@@ -168,9 +169,8 @@ class ContactCard extends StatelessWidget {
           : const AlwaysStoppedAnimation(0.0),
       builder: (context, child) {
         final shouldFlash = isCurrentPage && isMatch && showNameFlash;
-        final flashOpacity = shouldFlash
-            ? (heartAnimationController.value * 0.3 + 0.7)
-            : 1.0;
+        final flashOpacity =
+            shouldFlash ? (heartAnimationController.value * 0.3 + 0.7) : 1.0;
         return Opacity(
           opacity: flashOpacity,
           child: GestureDetector(
@@ -290,4 +290,3 @@ class ContactCard extends StatelessWidget {
     );
   }
 }
-
