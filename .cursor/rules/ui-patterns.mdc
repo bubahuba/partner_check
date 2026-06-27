@@ -46,7 +46,7 @@ Settings/About slide from trailing edge (RTL-aware via `directionality_utils.dar
 
 ## Self-contact widgets
 
-- `SelfContactHoldDetector` — short hold (500ms) jump to self; long hold (950ms) re-pick
+- `SelfContactHoldDetector` — long-press (500ms) sets pane contact as "me" with flash; double-tap scrolls to "me"
 - `SelfContactAnimatedBackground` — gradient from `SelfContactGradientPalette` on Settings/About
 
 ## Pro gating

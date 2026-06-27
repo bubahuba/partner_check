@@ -55,6 +55,7 @@
   "pickYourselfButton": "选择联系人",
   "notNow": "以后再说",
   "pickYourselfNotInList": "在已加载的联系人中未找到 {contactName}。请选择列表中的联系人。",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "升级到 PRO",
   "restorePurchases": "恢复购买",
   "proVersion": "PartnerCheck Pro",

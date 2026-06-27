@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../services/contact_storage_service.dart';
 import '../utils/self_contact_gradient.dart';
 
-/// Animated background gradient using the saved "me" contact inner/outer colors.
+/// Animated background gradient using the saved "me" contact colors (overlay-dominant).
 class SelfContactAnimatedBackground extends StatefulWidget {
   final Widget child;
   final int? selfContactColor;
@@ -29,9 +29,9 @@ class _SelfContactAnimatedBackgroundState
   void initState() {
     super.initState();
     _gradientController = AnimationController(
-      duration: const Duration(seconds: 5),
+      duration: const Duration(seconds: 8),
       vsync: this,
-    )..repeat(reverse: true);
+    )..repeat();
     _loadPalette();
   }
 

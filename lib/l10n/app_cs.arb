@@ -55,6 +55,7 @@
   "pickYourselfButton": "Vybrat kontakt",
   "notNow": "Teď ne",
   "pickYourselfNotInList": "{contactName} nebyl nalezen ve vašich načtených kontaktech. Vyberte někoho, kdo je v seznamu.",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "Upgradovat na PRO",
   "restorePurchases": "Obnovit nákupy",
   "proVersion": "PartnerCheck Pro",

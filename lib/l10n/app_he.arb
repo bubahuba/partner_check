@@ -55,6 +55,7 @@
   "pickYourselfButton": "בחר איש קשר",
   "notNow": "לא עכשיו",
   "pickYourselfNotInList": "{contactName} לא נמצא באנשי הקשר שנטענו. בחר מישהו שנמצא ברשימה.",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "שדרג ל-PRO",
   "restorePurchases": "שחזר רכישות",
   "proVersion": "PartnerCheck Pro",

@@ -55,6 +55,7 @@
   "pickYourselfButton": "Kapcsolat kiválasztása",
   "notNow": "Most nem",
   "pickYourselfNotInList": "A(z) {contactName} nem található a betöltött kapcsolatok között. Válassz valakit, aki szerepel a listában.",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "Frissítés PRO-ra",
   "restorePurchases": "Vásárlások visszaállítása",
   "proVersion": "PartnerCheck Pro",

@@ -772,6 +772,8 @@ class SettingsScreenState extends State<SettingsScreen>
     await _storageService.savePendingSelfContactPick(false);
     await _storageService.clearSelfContact();
 
+    await _storageService.markContactsBulkLoaded();
+
     // Close settings screen and navigate to contacts page
     if (mounted) {
       if (widget.onClose != null) {

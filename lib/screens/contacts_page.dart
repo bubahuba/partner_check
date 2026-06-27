@@ -83,6 +83,9 @@ class ContactsPageState extends State<ContactsPage>
   bool _shouldPromptSelfContactPick = false;
   bool _isApplyingBulkLoad = false;
   StoredSelfContact? _selfContact;
+  ScrollController? _selfContactHighlightPane;
+  late final AnimationController _selfContactHighlightController;
+  bool _suppressNextHudToggle = false;
   ProSubscriptionService? _proService;
   bool _wasPro = false;
 
@@ -103,6 +106,10 @@ class ContactsPageState extends State<ContactsPage>
       vsync: this,
     );
     _flashAnimationController2 = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _selfContactHighlightController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
@@ -497,6 +504,7 @@ class ContactsPageState extends State<ContactsPage>
     _heartAnimationController.dispose();
     _flashAnimationController1.dispose();
     _flashAnimationController2.dispose();
+    _selfContactHighlightController.dispose();
     super.dispose();
   }
 
@@ -961,6 +969,15 @@ class ContactsPageState extends State<ContactsPage>
     _saveScrollPositions();
   }
 
+  /// Restore scroll + match state after closing Settings/About without reloading contacts.
+  void _resumeContactsViewAfterOverlay() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _restoreCurrentScrollPositions();
+      _checkForMatch();
+    });
+  }
+
   void _restoreScrollPositions() {
     final displayedContacts = _displayedContacts;
 
@@ -1086,27 +1103,99 @@ class ContactsPageState extends State<ContactsPage>
     _selfContact = self;
   }
 
-  int? _indexForStoredSelfContact() {
-    if (_selfContact == null) return null;
-    return SelfContactFinder.findIndexForStoredSelf(_contacts, _selfContact!);
+  void _onPaneDoubleTap(ScrollController controller) {
+    _suppressNextHudToggle = true;
+    if (_selfContact != null) {
+      final index = SelfContactFinder.findIndexForStoredSelf(
+        _displayedContacts,
+        _selfContact!,
+      );
+      if (index != null) {
+        _scrollPaneToSelfIndex(controller, index);
+        return;
+      }
+    }
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.setMeWithLongPressHint)),
+    );
   }
 
-  Future<void> _goToSelfContact(ScrollController controller) async {
-    final index = _indexForStoredSelfContact();
-    if (index != null) {
-      _scrollPaneToSelfIndex(controller, index);
+  Future<void> _setSelfContactFromPane(ScrollController controller) async {
+    final contactIndex = _contactIndexForController(controller);
+    if (contactIndex == null) {
+      _cancelSelfContactHoldFlash();
       return;
     }
 
-    if (_selfContact != null) {
-      await _storageService.clearSelfContact();
-      _selfContact = null;
+    final contact = _displayedContacts[contactIndex];
+    final fullIndex = _contacts.indexWhere((c) => c.name == contact.name);
+    if (fullIndex < 0) {
+      _cancelSelfContactHoldFlash();
+      return;
     }
 
-    await _pickSelfContact(
-      showIntroDialog: false,
-      targetController: controller,
-    );
+    await _storageService.savePendingSelfContactPick(false);
+    await _saveSelfContactAt(fullIndex);
+    if (!mounted) return;
+    _suppressNextHudToggle = true;
+    await _selfContactHighlightController.reverse();
+    if (mounted) {
+      setState(() => _selfContactHighlightPane = null);
+    }
+  }
+
+  void _onSelfContactHoldReady(ScrollController controller) {
+    if (_contactIndexForController(controller) == null) return;
+    _beginSelfContactHoldFlash(controller);
+  }
+
+  void _beginSelfContactHoldFlash(ScrollController controller) {
+    final savedOffset1 =
+        _scrollController1.hasClients ? _scrollController1.offset : null;
+    final savedOffset2 =
+        _scrollController2.hasClients ? _scrollController2.offset : null;
+
+    setState(() => _selfContactHighlightPane = controller);
+    _restoreScrollOffsets(savedOffset1, savedOffset2);
+    _selfContactHighlightController.forward(from: 0);
+  }
+
+  void _cancelSelfContactHoldFlash() {
+    if (_selfContactHighlightPane == null) return;
+    _selfContactHighlightController.reverse().then((_) {
+      if (mounted) {
+        setState(() => _selfContactHighlightPane = null);
+      }
+    });
+  }
+
+  int? _contactIndexForController(ScrollController controller) {
+    if (!controller.hasClients) return null;
+    final width = controller.position.viewportDimension;
+    if (width <= 0) return null;
+
+    final displayed = _displayedContacts;
+    final page = (controller.offset / width).round();
+    if (page <= 0 || page > displayed.length) return null;
+    return page - 1;
+  }
+
+  void _restoreScrollOffsets(double? offset1, double? offset2) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      if (offset1 != null &&
+          _scrollController1.hasClients &&
+          _scrollController1.offset != offset1) {
+        _scrollController1.jumpTo(offset1);
+      }
+      if (offset2 != null &&
+          _scrollController2.hasClients &&
+          _scrollController2.offset != offset2) {
+        _scrollController2.jumpTo(offset2);
+      }
+    });
   }
 
   Future<void> _pickSelfContact({
@@ -2264,6 +2353,10 @@ class ContactsPageState extends State<ContactsPage>
   bool get _shouldShowHud => _isHudVisible || _displayedContacts.isEmpty;
 
   void _toggleHudVisibility() {
+    if (_suppressNextHudToggle) {
+      _suppressNextHudToggle = false;
+      return;
+    }
     setState(() {
       _isHudVisible = !_isHudVisible;
     });
@@ -2294,14 +2387,19 @@ class ContactsPageState extends State<ContactsPage>
     );
   }
 
-  Widget _wrapSelfContactHold(ScrollController controller, Widget child) {
-    return SelfContactHoldDetector(
-      onShortHold: () => _goToSelfContact(controller),
-      onLongHold: () => _pickSelfContact(
-        showIntroDialog: false,
-        targetController: controller,
+  Widget _wrapPaneWithSelfContactHold(
+    ScrollController controller,
+    Widget child,
+  ) {
+    return GestureDetector(
+      onDoubleTap: () => _onPaneDoubleTap(controller),
+      behavior: HitTestBehavior.translucent,
+      child: SelfContactHoldDetector(
+        onHoldReady: () => _onSelfContactHoldReady(controller),
+        onHoldComplete: () => _setSelfContactFromPane(controller),
+        onHoldCancel: _cancelSelfContactHoldFlash,
+        child: child,
       ),
-      child: child,
     );
   }
 
@@ -2350,35 +2448,26 @@ class ContactsPageState extends State<ContactsPage>
       itemBuilder: (context, index) {
         // First item is always the add contact card
         if (index == 0) {
-          return _wrapSelfContactHold(
-            controller,
-            AddContactCard(
-              height: height,
-              onTap: () => _showAddContactMenu(controller, isStartCard: true),
-            ),
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: true),
           );
         }
 
         // Last item is also the add contact card (only if there are contacts)
         if (displayedContacts.isNotEmpty &&
             index == displayedContacts.length + 1) {
-          return _wrapSelfContactHold(
-            controller,
-            AddContactCard(
-              height: height,
-              onTap: () => _showAddContactMenu(controller, isStartCard: false),
-            ),
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: false),
           );
         }
 
         // When no contacts, index 1 should also be the add contact card
         if (displayedContacts.isEmpty && index == 1) {
-          return _wrapSelfContactHold(
-            controller,
-            AddContactCard(
-              height: height,
-              onTap: () => _showAddContactMenu(controller, isStartCard: false),
-            ),
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: false),
           );
         }
 
@@ -2386,12 +2475,9 @@ class ContactsPageState extends State<ContactsPage>
         final contactIndex = index - 1;
         if (contactIndex < 0 || contactIndex >= displayedContacts.length) {
           // Should not happen, but return add contact card as fallback
-          return _wrapSelfContactHold(
-            controller,
-            AddContactCard(
-              height: height,
-              onTap: () => _showAddContactMenu(controller, isStartCard: false),
-            ),
+          return AddContactCard(
+            height: height,
+            onTap: () => _showAddContactMenu(controller, isStartCard: false),
           );
         }
         final contact = displayedContacts[contactIndex];
@@ -2419,27 +2505,29 @@ class ContactsPageState extends State<ContactsPage>
         final isOrderingActive = _orderingContact?.name == contact.name &&
             _lockedPaneController == controller;
 
-        return _wrapSelfContactHold(
-          controller,
-          ContactCard(
-            contact: contact,
-            height: height,
-            overlayHeight: _overlayHeight,
-            isCurrentPage: isCurrentPage,
-            isMatch: _isMatch,
-            isHudVisible: _isHudVisible,
-            showNameFlash: showNameFlash,
-            activeFlashType: activeFlashType,
-            heartAnimationController: heartAnimationController,
-            flashAnimationController: flashAnimationController,
-            onTap: _toggleHudVisibility,
-            onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
-            onEdit: _isHudVisible ? () => _editContact(contact) : null,
-            onToggleFavorite: () => _toggleFavorite(contact.name),
-            onReorder: () => _reorderContactsByMatch(contact, controller),
-            onDelete: () => _confirmDeleteContact(contact.name),
-            isOrderingActive: isOrderingActive,
-          ),
+        final showSelfContactFlash =
+            _selfContactHighlightPane == controller && isCurrentPage;
+
+        return ContactCard(
+          contact: contact,
+          height: height,
+          overlayHeight: _overlayHeight,
+          isCurrentPage: isCurrentPage,
+          isMatch: _isMatch,
+          isHudVisible: _isHudVisible,
+          showNameFlash: showNameFlash,
+          activeFlashType: activeFlashType,
+          heartAnimationController: heartAnimationController,
+          flashAnimationController: flashAnimationController,
+          showSelfContactFlash: showSelfContactFlash,
+          selfContactFlashController: _selfContactHighlightController,
+          onTap: _toggleHudVisibility,
+          onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
+          onEdit: _isHudVisible ? () => _editContact(contact) : null,
+          onToggleFavorite: () => _toggleFavorite(contact.name),
+          onReorder: () => _reorderContactsByMatch(contact, controller),
+          onDelete: () => _confirmDeleteContact(contact.name),
+          isOrderingActive: isOrderingActive,
         );
       },
     );
@@ -2559,28 +2647,34 @@ class ContactsPageState extends State<ContactsPage>
                 Row(
                   children: [
                     Expanded(
-                      child: _buildListView(
-                          _scrollController1,
-                          constraints.maxHeight,
-                          halfWidth,
-                          _currentPage1,
-                          false,
-                          _heartAnimationController,
-                          _flashAnimationController1,
-                          _baseMatch1,
-                          _overlayMatch1),
+                      child: _wrapPaneWithSelfContactHold(
+                        _scrollController1,
+                        _buildListView(
+                            _scrollController1,
+                            constraints.maxHeight,
+                            halfWidth,
+                            _currentPage1,
+                            false,
+                            _heartAnimationController,
+                            _flashAnimationController1,
+                            _baseMatch1,
+                            _overlayMatch1),
+                      ),
                     ),
                     Expanded(
-                      child: _buildListView(
-                          _scrollController2,
-                          constraints.maxHeight,
-                          halfWidth,
-                          _currentPage2,
-                          false,
-                          _heartAnimationController,
-                          _flashAnimationController2,
-                          _baseMatch2,
-                          _overlayMatch2),
+                      child: _wrapPaneWithSelfContactHold(
+                        _scrollController2,
+                        _buildListView(
+                            _scrollController2,
+                            constraints.maxHeight,
+                            halfWidth,
+                            _currentPage2,
+                            false,
+                            _heartAnimationController,
+                            _flashAnimationController2,
+                            _baseMatch2,
+                            _overlayMatch2),
+                      ),
                     ),
                   ],
                 ),
@@ -2588,7 +2682,8 @@ class ContactsPageState extends State<ContactsPage>
                   ContactsHud(
                     favoritesMode: _favoritesMode,
                     onSettings: () {
-                      // Save current scroll positions before opening settings
+                      _updateCurrentPagesFromScrollControllers();
+                      _saveScrollPositions();
                       _saveCurrentScrollPositions();
                       setState(() {
                         _showSettings = true;
@@ -2596,7 +2691,8 @@ class ContactsPageState extends State<ContactsPage>
                     },
                     onToggleFavorites: _toggleFavoritesMode,
                     onAbout: () {
-                      // Save current scroll positions before opening about
+                      _updateCurrentPagesFromScrollControllers();
+                      _saveScrollPositions();
                       _saveCurrentScrollPositions();
                       setState(() {
                         _showAbout = true;
@@ -2626,15 +2722,7 @@ class ContactsPageState extends State<ContactsPage>
                           return;
                         }
 
-                        // Reload contacts in case they were changed in settings
-                        await _loadContactsWithoutRestoringScroll();
-
-                        // Restore scroll positions after reload (page-based, handles list changes)
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _restoreScrollPositions();
-                          });
-                        });
+                        _resumeContactsViewAfterOverlay();
                       },
                     ),
                   ),
@@ -2646,10 +2734,7 @@ class ContactsPageState extends State<ContactsPage>
                         setState(() {
                           _showAbout = false;
                         });
-                        // Restore the saved scroll positions after layout
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _restoreCurrentScrollPositions();
-                        });
+                        _resumeContactsViewAfterOverlay();
                       },
                     ),
                   ),

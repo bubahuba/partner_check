@@ -35,8 +35,8 @@ description: Implements contact-related features in Partner Check — add/edit/d
 **iOS:** Set `pending_self_contact_pick`; on `ContactsPage` load show intro dialog → user picks from loaded list or device.
 
 **Runtime:**
-- Short hold (500ms) on list → `_goToSelfContact`
-- Long hold (950ms) → `_pickSelfContact`
+- Long-press (500ms) on a pane → flash preview, release sets current contact as "me"
+- Double-tap a pane → scroll to saved "me" contact, or snackbar hint if none set
 - Match stored self: `SelfContactFinder.findIndexForStoredSelf`
 
 ## Match / color logic

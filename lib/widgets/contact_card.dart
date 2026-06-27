@@ -14,6 +14,8 @@ class ContactCard extends StatelessWidget {
   final String? activeFlashType; // 'base', 'overlay', 'cross1', 'cross2', or null
   final AnimationController heartAnimationController;
   final AnimationController flashAnimationController;
+  final bool showSelfContactFlash;
+  final AnimationController? selfContactFlashController;
   final VoidCallback onTap;
   final ValueChanged<double> onVerticalDragUpdate;
   final VoidCallback? onEdit;
@@ -34,6 +36,8 @@ class ContactCard extends StatelessWidget {
     this.activeFlashType,
     required this.heartAnimationController,
     required this.flashAnimationController,
+    this.showSelfContactFlash = false,
+    this.selfContactFlashController,
     required this.onTap,
     required this.onVerticalDragUpdate,
     this.onEdit,
@@ -82,14 +86,23 @@ class ContactCard extends StatelessWidget {
     );
   }
 
+  AnimationController get _activeFlashController =>
+      showSelfContactFlash && selfContactFlashController != null
+          ? selfContactFlashController!
+          : flashAnimationController;
+
+  bool get _shouldFlashBase =>
+      isCurrentPage && (activeFlashType == 'base' || showSelfContactFlash);
+
+  bool get _shouldFlashOverlay =>
+      isCurrentPage && (activeFlashType == 'overlay' || showSelfContactFlash);
+
   Widget _buildBaseColorArea() {
     return AnimatedBuilder(
-      animation: flashAnimationController,
+      animation: _activeFlashController,
       builder: (context, child) {
-        final shouldFlashBase = isCurrentPage && activeFlashType == 'base';
-        final flashOpacity = shouldFlashBase
-            ? flashAnimationController.value * 0.6
-            : 0.0;
+        final flashOpacity =
+            _shouldFlashBase ? _activeFlashController.value * 0.6 : 0.0;
         return Stack(
           children: [
             Container(
@@ -107,12 +120,10 @@ class ContactCard extends StatelessWidget {
 
   Widget _buildOverlayColorArea() {
     return AnimatedBuilder(
-      animation: flashAnimationController,
+      animation: _activeFlashController,
       builder: (context, child) {
-        final shouldFlashOverlay = isCurrentPage && activeFlashType == 'overlay';
-        final flashOpacity = shouldFlashOverlay
-            ? flashAnimationController.value * 0.6
-            : 0.0;
+        final flashOpacity =
+            _shouldFlashOverlay ? _activeFlashController.value * 0.6 : 0.0;
         return Stack(
           children: [
             Container(

@@ -55,6 +55,7 @@
   "pickYourselfButton": "連絡先を選ぶ",
   "notNow": "後で",
   "pickYourselfNotInList": "{contactName} は読み込んだ連絡先に見つかりませんでした。リストにある人を選んでください。",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "PRO にアップグレード",
   "restorePurchases": "購入を復元",
   "proVersion": "PartnerCheck Pro",

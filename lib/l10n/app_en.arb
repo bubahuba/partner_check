@@ -263,6 +263,10 @@
       }
     }
   },
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
+  "@setMeWithLongPressHint": {
+    "description": "Hint when double-tapping a pane without a saved me contact"
+  },
   "upgradeToPro": "Upgrade to PRO",
   "@upgradeToPro": {
     "description": "Button to upgrade to PRO version"

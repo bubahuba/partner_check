@@ -55,6 +55,7 @@
   "pickYourselfButton": "Kontakt wählen",
   "notNow": "Nicht jetzt",
   "pickYourselfNotInList": "{contactName} wurde in deinen geladenen Kontakten nicht gefunden. Wähle jemanden, der in der Liste ist.",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "Auf PRO upgraden",
   "restorePurchases": "Käufe wiederherstellen",
   "proVersion": "PartnerCheck Pro",

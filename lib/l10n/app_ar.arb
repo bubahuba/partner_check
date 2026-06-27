@@ -55,6 +55,7 @@
   "pickYourselfButton": "اختر جهة اتصال",
   "notNow": "ليس الآن",
   "pickYourselfNotInList": "لم يتم العثور على {contactName} في جهات الاتصال المحملة. اختر شخصاً موجوداً في القائمة.",
+  "setMeWithLongPressHint": "Long-press a contact on this pane to set yourself as \"me\".",
   "upgradeToPro": "ترقية إلى PRO",
   "restorePurchases": "استعادة المشتريات",
   "proVersion": "PartnerCheck Pro",

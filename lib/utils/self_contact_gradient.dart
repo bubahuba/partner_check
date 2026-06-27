@@ -1,8 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'color_utils.dart';
 
-/// Base / inner, overlay / outer, and a blended accent for three-stop gradients.
+/// Contact-card colors for gradients: [inner] is the main base fill,
+/// [outer] is the bottom overlay strip (reversed hex), [accent] blends both.
 class SelfContactGradientPalette {
   final Color inner;
   final Color outer;
@@ -37,38 +40,33 @@ class SelfContactGradientPalette {
 }
 
 /// Animated three-color gradient stops derived from a [SelfContactGradientPalette].
+///
+/// Uses cosine waves so t=0 and t=1 match for seamless looping.
+/// [base] (main fill) leads the gradient; [strip] (overlay / reversed hex) blends mid-cycle.
 class SelfContactGradient {
   static Color _lerp(Color a, Color b, double t) => Color.lerp(a, b, t)!;
+
+  /// Smooth 0→1→0 loop; equal at t=0 and t=1 with continuous derivative.
+  static double _wave(double t, double phase) {
+    return (1 - math.cos(2 * math.pi * (t + phase))) / 2;
+  }
 
   static (Color, Color, Color) colorsAt(
     double t,
     SelfContactGradientPalette palette,
   ) {
-    final inner = palette.inner;
-    final outer = palette.outer;
+    final base = palette.inner;
+    final strip = palette.outer;
     final accent = palette.accent;
 
-    if (t < 0.33) {
-      final localT = t / 0.33;
-      return (
-        _lerp(inner, outer, localT),
-        outer,
-        accent,
-      );
-    }
-    if (t < 0.66) {
-      final localT = (t - 0.33) / 0.33;
-      return (
-        outer,
-        _lerp(outer, accent, localT),
-        accent,
-      );
-    }
-    final localT = (t - 0.66) / 0.34;
+    final wave1 = _wave(t, 0);
+    final wave2 = _wave(t, 1 / 3);
+    final wave3 = _wave(t, 2 / 3);
+
     return (
-      outer,
-      accent,
-      _lerp(accent, inner, localT),
+      _lerp(base, accent, wave1),
+      _lerp(base, strip, wave2 * 0.55),
+      _lerp(accent, base, wave3),
     );
   }
 }
