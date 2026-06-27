@@ -18,6 +18,7 @@ import '../widgets/contacts_hud.dart';
 import '../widgets/self_contact_hold_detector.dart';
 import 'settings_screen.dart';
 import '../utils/pro_gate.dart';
+import '../utils/snackbar_utils.dart';
 import '../services/pro_subscription_service.dart';
 import 'package:provider/provider.dart';
 import 'about_screen.dart';
@@ -513,9 +514,7 @@ class ContactsPageState extends State<ContactsPage>
     if (_proService!.isPro && !_wasPro) {
       if (!_showSettings) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.purchaseSuccess)),
-        );
+        showAppSnackBar(context, l10n.purchaseSuccess);
       }
       _handleProUnlocked();
     }
@@ -708,11 +707,10 @@ class ContactsPageState extends State<ContactsPage>
 
     if (mounted) {
       final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.contactAlreadyInList(contactName)),
-          duration: const Duration(seconds: 2),
-        ),
+      showAppSnackBar(
+        context,
+        l10n.contactAlreadyInList(contactName),
+        duration: const Duration(seconds: 2),
       );
       if (_displayedContacts.any((contact) => contact.name == contactName)) {
         _refreshPanesAfterContactListChange(
@@ -1104,9 +1102,7 @@ class ContactsPageState extends State<ContactsPage>
   void _showSelfContactSelectedToast(String contactName) {
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.selfContactSelectedToast(contactName))),
-    );
+    showAppSnackBar(context, l10n.selfContactSelectedToast(contactName));
   }
 
   Future<void> _saveSelfContactAt(int index) async {
@@ -1131,9 +1127,7 @@ class ContactsPageState extends State<ContactsPage>
     }
     if (!mounted) return;
     final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.setMeWithLongPressHint)),
-    );
+    showAppSnackBar(context, l10n.setMeWithLongPressHint);
   }
 
   Future<void> _setSelfContactFromPane(ScrollController controller) async {
@@ -1254,9 +1248,7 @@ class ContactsPageState extends State<ContactsPage>
 
       if (!await ensureContactsReadPermission()) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.contactsPermissionRequired)),
-          );
+          showAppSnackBar(context, l10n.contactsPermissionRequired);
         }
         return;
       }
@@ -1272,9 +1264,7 @@ class ContactsPageState extends State<ContactsPage>
       final contactName = contact.displayName ?? '';
       if (contactName.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.selectedContactNoName)),
-          );
+          showAppSnackBar(context, l10n.selectedContactNoName);
         }
         if (showIntroDialog) {
           continue;
@@ -1285,11 +1275,7 @@ class ContactsPageState extends State<ContactsPage>
       final index = SelfContactFinder.findIndexForContact(_contacts, contact);
       if (index == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.pickYourselfNotInList(contactName)),
-            ),
-          );
+          showAppSnackBar(context, l10n.pickYourselfNotInList(contactName));
         }
         if (showIntroDialog) {
           continue;
@@ -1352,18 +1338,17 @@ class ContactsPageState extends State<ContactsPage>
       if (!await ensureContactsReadPermission()) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.contactsPermissionRequired),
-              duration: const Duration(seconds: 5),
-              action: SnackBarAction(
-                label: l10n.settings,
-                textColor: Colors.black,
-                onPressed: () async {
-                  // Open app settings to allow user to enable permission
-                  await openAppSettings();
-                },
-              ),
+          showAppSnackBar(
+            context,
+            l10n.contactsPermissionRequired,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: l10n.settings,
+              textColor: Colors.black,
+              onPressed: () async {
+                // Open app settings to allow user to enable permission
+                await openAppSettings();
+              },
             ),
           );
         }
@@ -1384,12 +1369,8 @@ class ContactsPageState extends State<ContactsPage>
       if (contactName.isEmpty) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.selectedContactNoName),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          showAppSnackBar(context, l10n.selectedContactNoName,
+              duration: const Duration(seconds: 2));
         }
         return;
       }
@@ -1487,11 +1468,10 @@ class ContactsPageState extends State<ContactsPage>
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorPickingContact(e.toString())),
-            duration: const Duration(seconds: 2),
-          ),
+        showAppSnackBar(
+          context,
+          l10n.errorPickingContact(e.toString()),
+          duration: const Duration(seconds: 2),
         );
       }
     }
@@ -1583,11 +1563,10 @@ class ContactsPageState extends State<ContactsPage>
     if (_contacts.any((c) => c.name == newName && c.name != contact.name)) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.contactAlreadyInList(newName)),
-            duration: const Duration(seconds: 2),
-          ),
+        showAppSnackBar(
+          context,
+          l10n.contactAlreadyInList(newName),
+          duration: const Duration(seconds: 2),
         );
       }
       return;

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../services/pro_subscription_service.dart';
+import 'snackbar_utils.dart';
 
 Future<bool> ensureCanAddContact(BuildContext context, int currentCount) async {
   final proService = context.read<ProSubscriptionService>();
@@ -101,9 +102,7 @@ class _UpgradeSheetState extends State<_UpgradeSheet> {
     final l10n = AppLocalizations.of(context)!;
 
     if (proService.isPro) {
-      ScaffoldMessenger.of(widget.parentContext).showSnackBar(
-        SnackBar(content: Text(l10n.alreadyPro)),
-      );
+      showAppSnackBar(widget.parentContext, l10n.alreadyPro);
       Navigator.of(context).pop();
       return;
     }

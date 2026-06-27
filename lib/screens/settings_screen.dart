@@ -13,6 +13,7 @@ import '../utils/directionality_utils.dart';
 import '../utils/self_contact_finder.dart';
 import '../utils/phone_utils.dart';
 import '../utils/pro_gate.dart';
+import '../utils/snackbar_utils.dart';
 import '../utils/self_contact_gradient.dart';
 import '../services/pro_subscription_service.dart';
 import '../widgets/self_contact_animated_background.dart';
@@ -78,9 +79,7 @@ class SettingsScreenState extends State<SettingsScreen>
     if (!mounted || _proService == null) return;
     if (_proService!.isPro && !_wasPro) {
       final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.purchaseSuccess)),
-      );
+      showAppSnackBar(context, l10n.purchaseSuccess);
     }
     _wasPro = _proService!.isPro;
   }
@@ -139,9 +138,7 @@ class SettingsScreenState extends State<SettingsScreen>
     final l10n = AppLocalizations.of(context)!;
 
     if (proService.isPro) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.alreadyPro)),
-      );
+      showAppSnackBar(context, l10n.alreadyPro);
       return;
     }
 
@@ -156,9 +153,7 @@ class SettingsScreenState extends State<SettingsScreen>
     if (!mounted) return;
 
     if (proService.isPro) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.purchaseSuccess)),
-      );
+      showAppSnackBar(context, l10n.purchaseSuccess);
     }
   }
 
@@ -440,17 +435,16 @@ class SettingsScreenState extends State<SettingsScreen>
       if (!await ensureContactsReadPermission()) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.contactsPermissionRequired),
-              duration: const Duration(seconds: 5),
-              action: SnackBarAction(
-                label: l10n.settings,
-                textColor: Colors.black,
-                onPressed: () async {
-                  await openAppSettings();
-                },
-              ),
+          showAppSnackBar(
+            context,
+            l10n.contactsPermissionRequired,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: l10n.settings,
+              textColor: Colors.black,
+              onPressed: () async {
+                await openAppSettings();
+              },
             ),
           );
         }
@@ -471,12 +465,8 @@ class SettingsScreenState extends State<SettingsScreen>
       if (contactName.isEmpty) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.selectedContactNoName),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          showAppSnackBar(context, l10n.selectedContactNoName,
+              duration: const Duration(seconds: 2));
         }
         return;
       }
@@ -485,11 +475,10 @@ class SettingsScreenState extends State<SettingsScreen>
       if (contact.phones.isEmpty) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.noPhoneNumberMessage(contactName)),
-              duration: const Duration(seconds: 2),
-            ),
+          showAppSnackBar(
+            context,
+            l10n.noPhoneNumberMessage(contactName),
+            duration: const Duration(seconds: 2),
           );
         }
         return;
@@ -511,11 +500,10 @@ class SettingsScreenState extends State<SettingsScreen>
       if (existingContacts.any((c) => c.name == contactName)) {
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.contactAlreadyInList(contactName)),
-              duration: const Duration(seconds: 2),
-            ),
+          showAppSnackBar(
+            context,
+            l10n.contactAlreadyInList(contactName),
+            duration: const Duration(seconds: 2),
           );
         }
         return;
@@ -566,11 +554,10 @@ class SettingsScreenState extends State<SettingsScreen>
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorPickingContact(e.toString())),
-            duration: const Duration(seconds: 2),
-          ),
+        showAppSnackBar(
+          context,
+          l10n.errorPickingContact(e.toString()),
+          duration: const Duration(seconds: 2),
         );
       }
     }
@@ -660,11 +647,10 @@ class SettingsScreenState extends State<SettingsScreen>
     if (existingContacts.any((c) => c.name == contactName)) {
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.contactAlreadyInList(contactName)),
-            duration: const Duration(seconds: 2),
-          ),
+        showAppSnackBar(
+          context,
+          l10n.contactAlreadyInList(contactName),
+          duration: const Duration(seconds: 2),
         );
       }
       return;
@@ -810,18 +796,17 @@ class SettingsScreenState extends State<SettingsScreen>
         });
         if (mounted) {
           final l10n = AppLocalizations.of(context)!;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.contactsPermissionRequired),
-              duration: const Duration(seconds: 5),
-              action: SnackBarAction(
-                label: l10n.settings,
-                textColor: Colors.black,
-                onPressed: () async {
-                  // Open app settings to allow user to enable permission
-                  await openAppSettings();
-                },
-              ),
+          showAppSnackBar(
+            context,
+            l10n.contactsPermissionRequired,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: l10n.settings,
+              textColor: Colors.black,
+              onPressed: () async {
+                // Open app settings to allow user to enable permission
+                await openAppSettings();
+              },
             ),
           );
         }
@@ -892,11 +877,7 @@ class SettingsScreenState extends State<SettingsScreen>
       });
       if (mounted) {
         final l10n = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorLoadingContacts(e.toString())),
-          ),
-        );
+        showAppSnackBar(context, l10n.errorLoadingContacts(e.toString()));
       }
     }
   }
