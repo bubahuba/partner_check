@@ -91,9 +91,13 @@ class _UpgradeSheetState extends State<_UpgradeSheet> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-      _wasPro = context.read<ProSubscriptionService>().isPro;
+      final proService = context.read<ProSubscriptionService>();
+      _wasPro = proService.isPro;
+      if (!proService.isPro && proService.proProduct == null) {
+        await proService.refreshProducts();
+      }
     });
   }
 

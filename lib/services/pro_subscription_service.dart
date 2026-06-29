@@ -64,14 +64,36 @@ class ProSubscriptionService extends ChangeNotifier {
     final response = await _iap.queryProductDetails({productId});
     if (response.productDetails.isNotEmpty) {
       _proProduct = response.productDetails.first;
+      return;
     }
+
+    if (kDebugMode) {
+      debugPrint(
+        'IAP: product "$productId" unavailable. '
+        'notFoundIDs=${response.notFoundIDs}, error=${response.error?.message}',
+      );
+    }
+  }
+
+  /// Reloads store product details (e.g. when opening the upgrade sheet).
+  Future<void> refreshProducts() async {
+    if (!_isStoreAvailable || isWeb) return;
+
+    for (var attempt = 0; attempt < 3; attempt++) {
+      await _loadProducts();
+      if (_proProduct != null) break;
+      if (attempt < 2) {
+        await Future<void>.delayed(Duration(milliseconds: 400 * (attempt + 1)));
+      }
+    }
+    notifyListeners();
   }
 
   Future<void> purchasePro() async {
     if (_isPro || _isLoading || !_isStoreAvailable) return;
 
     if (_proProduct == null) {
-      await _loadProducts();
+      await refreshProducts();
     }
     final product = _proProduct;
     if (product == null) return;

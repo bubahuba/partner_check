@@ -160,10 +160,6 @@ class SettingsScreenState extends State<SettingsScreen>
 
     return Consumer<ProSubscriptionService>(
       builder: (context, proService, _) {
-        final price = proService.proProduct?.price;
-        final upgradeLabel =
-            price != null ? '${l10n.upgradeToPro} ($price)' : l10n.upgradeToPro;
-
         return Column(
           children: [
             GestureDetector(
@@ -207,7 +203,7 @@ class SettingsScreenState extends State<SettingsScreen>
                         ),
                       )
                     : Text(
-                        upgradeLabel,
+                        l10n.upgradeToPro,
                         style: TextStyle(fontSize: buttonFontSize * 0.9),
                       ),
               ),
