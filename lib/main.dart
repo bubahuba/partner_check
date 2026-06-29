@@ -7,6 +7,7 @@ import 'l10n/app_localizations.dart';
 import 'screens/initial_screen.dart';
 import 'services/pro_subscription_service.dart';
 import 'utils/desktop_scroll_behavior.dart';
+import 'utils/web_initial_locale.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,10 +40,13 @@ class PartnerCheck extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final webLocale = getWebInitialLocale();
+
     return MaterialApp(
       title: 'Partner Check',
       scrollBehavior: const DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
+      locale: webLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,

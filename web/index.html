@@ -37,6 +37,25 @@
   <link rel="manifest" href="manifest.json">
 
   <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var lang = params.get('lang');
+      if (!lang) return;
+
+      lang = lang.toLowerCase().split('-')[0];
+      var aliases = { cz: 'cs', iw: 'he' };
+      lang = aliases[lang] || lang;
+
+      var supported = [
+        'en', 'ar', 'he', 'cs', 'sk', 'zh', 'ja', 'nl', 'de', 'es',
+        'fr', 'hi', 'it', 'pl', 'hu', 'ru', 'pt',
+      ];
+      if (supported.indexOf(lang) === -1) return;
+
+      document.documentElement.lang = lang;
+    })();
+  </script>
+  <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker.register('pwa_service_worker.js').catch(function (err) {
