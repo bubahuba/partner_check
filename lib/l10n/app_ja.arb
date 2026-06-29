@@ -26,6 +26,7 @@
   "phoneNumberOptional": "電話番号（オプション）",
   "enterPhoneNumberToChangeColor": "色を変更するには電話番号を入力",
   "leavePhoneEmptyKeepColor": "現在の色を保持するには電話番号を空のままにします",
+  "phoneNumberMinDigits": "6桁以上入力してください",
   "addFromDevice": "デバイスから追加",
   "searchContacts": "連絡先を検索",
   "noDeviceContactsFound": "このデバイスに連絡先が見つかりません",

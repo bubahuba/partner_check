@@ -26,6 +26,7 @@
   "phoneNumberOptional": "Telefoonnummer (optioneel)",
   "enterPhoneNumberToChangeColor": "Voer telefoonnummer in om kleur te wijzigen",
   "leavePhoneEmptyKeepColor": "Laat telefoonnummer leeg om huidige kleur te behouden",
+  "phoneNumberMinDigits": "Voer minimaal 6 cijfers in",
   "addFromDevice": "Toevoegen vanaf apparaat",
   "searchContacts": "Contacten zoeken",
   "noDeviceContactsFound": "Geen contacten gevonden op dit apparaat",

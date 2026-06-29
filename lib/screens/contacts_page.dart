@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter/services.dart';
-import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import '../services/contacts_permission.dart';
 import 'dart:async';
@@ -9,12 +8,14 @@ import '../l10n/app_localizations.dart';
 import '../models.dart';
 import '../utils/match_calculator.dart';
 import '../utils/phone_utils.dart';
+import '../utils/platform_info.dart';
 import '../utils/self_contact_finder.dart';
 import '../services/contact_storage_service.dart';
 import '../widgets/contact_card.dart';
 import '../widgets/add_contact_card.dart';
 import '../widgets/contacts_hud.dart';
 import '../widgets/self_contact_hold_detector.dart';
+import '../widgets/stored_contact_picker_dialog.dart';
 import 'settings_screen.dart';
 import '../utils/pro_gate.dart';
 import '../utils/snackbar_utils.dart';
@@ -786,6 +787,8 @@ class ContactsPageState extends State<ContactsPage>
 
   Future<void> _loadContacts() async {
     final contacts = await _storageService.loadContacts();
+    final settingsAddedContact =
+        await _storageService.loadAndClearSettingsAddedContact();
     setState(() {
       _contacts = contacts;
       _updateFavoritesFromContacts();
@@ -795,8 +798,12 @@ class ContactsPageState extends State<ContactsPage>
     // Restore scroll positions from storage
     WidgetsBinding.instance.addPostFrameCallback((_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _restoreScrollPositions();
-        _maybePromptPickSelfContact();
+        if (settingsAddedContact != null) {
+          _finalizeAfterSettingsContactAdded(settingsAddedContact);
+        } else {
+          _restoreScrollPositions();
+          _maybePromptPickSelfContact();
+        }
       });
     });
   }
@@ -1111,7 +1118,7 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   void _maybePromptPickSelfContact() {
-    if (!_shouldPromptSelfContactPick || !Platform.isIOS) {
+    if (!_shouldPromptSelfContactPick || !needsSelfContactPickPrompt) {
       return;
     }
     _shouldPromptSelfContactPick = false;
@@ -1301,47 +1308,69 @@ class ContactsPageState extends State<ContactsPage>
         }
       }
 
-      if (!await ensureContactsReadPermission()) {
+      if (supportsDeviceContacts) {
+        if (!await ensureContactsReadPermission()) {
+          if (mounted) {
+            showAppSnackBar(
+              context,
+              l10n.contactsPermissionRequired,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: l10n.settings,
+                textColor: Colors.black,
+                onPressed: openContactsSettings,
+              ),
+            );
+          }
+          return;
+        }
+
+        if (!mounted) return;
+        final contact = await pickContactWithNameAndPhone(context);
+        if (contact == null) {
+          if (showIntroDialog) {
+            continue;
+          }
+          return;
+        }
+
+        final contactName = contact.displayName ?? '';
+        if (contactName.isEmpty) {
+          if (mounted) {
+            showAppSnackBar(context, l10n.selectedContactNoName);
+          }
+          if (showIntroDialog) {
+            continue;
+          }
+          return;
+        }
+
+        final index = SelfContactFinder.findIndexForContact(_contacts, contact);
+        if (index == null) {
+          if (mounted) {
+            showAppSnackBar(context, l10n.pickYourselfNotInList(contactName));
+          }
+          if (showIntroDialog) {
+            continue;
+          }
+          return;
+        }
+
+        await _storageService.savePendingSelfContactPick(false);
+        await _saveSelfContactAt(index);
+        _scrollPaneToSelfIndex(
+          targetController ?? _scrollController1,
+          index,
+        );
         if (mounted) {
-          showAppSnackBar(
-            context,
-            l10n.contactsPermissionRequired,
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: l10n.settings,
-              textColor: Colors.black,
-              onPressed: openContactsSettings,
-            ),
-          );
+          _showSelfContactSelectedToast(_contacts[index].name);
         }
         return;
       }
 
       if (!mounted) return;
-      final contact = await pickContactWithNameAndPhone(context);
-      if (contact == null) {
-        if (showIntroDialog) {
-          continue;
-        }
-        return;
-      }
-
-      final contactName = contact.displayName ?? '';
-      if (contactName.isEmpty) {
-        if (mounted) {
-          showAppSnackBar(context, l10n.selectedContactNoName);
-        }
-        if (showIntroDialog) {
-          continue;
-        }
-        return;
-      }
-
-      final index = SelfContactFinder.findIndexForContact(_contacts, contact);
+      final index = await showStoredContactPickerDialog(context, _contacts);
       if (index == null) {
-        if (mounted) {
-          showAppSnackBar(context, l10n.pickYourselfNotInList(contactName));
-        }
         if (showIntroDialog) {
           continue;
         }
@@ -1588,6 +1617,11 @@ class ContactsPageState extends State<ContactsPage>
                   ),
                   const SizedBox(height: 8),
                   Text(
+                    l10n.phoneNumberMinDigits,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
                     l10n.leavePhoneEmptyKeepColor,
                     style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
@@ -1603,12 +1637,19 @@ class ContactsPageState extends State<ContactsPage>
             TextButton(
               onPressed: () {
                 final name = nameController.text.trim();
-                if (name.isNotEmpty) {
-                  Navigator.of(context).pop({
-                    'name': name,
-                    'phone': phoneController.text.trim(),
-                  });
+                if (name.isEmpty) {
+                  return;
                 }
+                final rawPhone = phoneController.text.trim();
+                if (rawPhone.isNotEmpty &&
+                    !PhoneUtils.hasMinimumDigits(rawPhone)) {
+                  showAppSnackBar(context, l10n.phoneNumberMinDigits);
+                  return;
+                }
+                Navigator.of(context).pop({
+                  'name': name,
+                  'phone': PhoneUtils.sanitizePhoneNumber(rawPhone),
+                });
               },
               child: Text(l10n.save),
             ),
@@ -1739,6 +1780,11 @@ class ContactsPageState extends State<ContactsPage>
                 ),
                 keyboardType: TextInputType.phone,
               ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.phoneNumberMinDigits,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
             ],
           ),
         ),
@@ -1750,10 +1796,18 @@ class ContactsPageState extends State<ContactsPage>
           TextButton(
             onPressed: () {
               final name = nameController.text.trim();
-              final phone = phoneController.text.trim();
-              if (name.isNotEmpty && phone.isNotEmpty) {
-                Navigator.of(context).pop({'name': name, 'phone': phone});
+              final rawPhone = phoneController.text.trim();
+              if (name.isEmpty) {
+                return;
               }
+              if (!PhoneUtils.hasMinimumDigits(rawPhone)) {
+                showAppSnackBar(context, l10n.phoneNumberMinDigits);
+                return;
+              }
+              Navigator.of(context).pop({
+                'name': name,
+                'phone': PhoneUtils.sanitizePhoneNumber(rawPhone),
+              });
             },
             child: Text(l10n.add),
           ),
@@ -2437,6 +2491,14 @@ class ContactsPageState extends State<ContactsPage>
 
   void _showAddContactMenu(ScrollController controller,
       {bool isStartCard = false}) {
+    if (!supportsDeviceContacts) {
+      _addContactManually(
+        targetController: controller,
+        addAtStart: isStartCard,
+      );
+      return;
+    }
+
     showAddContactMenu(
       context,
       onAddFromDevice: () {
@@ -2787,6 +2849,15 @@ class ContactsPageState extends State<ContactsPage>
                             } else {
                               _finalizeAfterBulkLoad();
                             }
+                          });
+                          return;
+                        }
+
+                        if (addedContactName != null) {
+                          await _loadContactsWithoutRestoringScroll();
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            _finalizeAfterSettingsContactAdded(
+                                addedContactName);
                           });
                           return;
                         }

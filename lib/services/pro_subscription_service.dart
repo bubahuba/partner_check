@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utils/platform_info.dart';
+
 class ProSubscriptionService extends ChangeNotifier {
   static const int freeContactLimit = 10;
   static const String productId = 'partner_check_pro';
@@ -29,7 +31,20 @@ class ProSubscriptionService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     _isPro = prefs.getBool(_isProKey) ?? false;
 
-    _isStoreAvailable = await _iap.isAvailable();
+    if (isWeb) {
+      _isStoreAvailable = false;
+      await _unlockPro();
+      return;
+    }
+
+    try {
+      _isStoreAvailable = await _iap.isAvailable();
+    } catch (_) {
+      _isStoreAvailable = false;
+      notifyListeners();
+      return;
+    }
+
     if (!_isStoreAvailable) {
       notifyListeners();
       return;

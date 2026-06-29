@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/contacts_permission.dart';
@@ -8,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../models.dart';
 import '../services/contact_storage_service.dart';
 import '../utils/directionality_utils.dart';
+import '../utils/platform_info.dart';
 import '../utils/self_contact_finder.dart';
 import '../utils/phone_utils.dart';
 import '../utils/pro_gate.dart';
@@ -256,7 +256,7 @@ class SettingsScreenState extends State<SettingsScreen>
       List<StoredContact> storedContacts) async {
     var page1All = 0;
 
-    if (Platform.isAndroid) {
+    if (autoDetectsSelfContact) {
       try {
         final me = await FlutterContacts.profile.get(
           properties: contactsNameAndPhoneProperties,
@@ -278,7 +278,7 @@ class SettingsScreenState extends State<SettingsScreen>
         // Profile unavailable on this device; keep default scroll.
       }
       await _storageService.savePendingSelfContactPick(false);
-    } else if (Platform.isIOS) {
+    } else if (needsSelfContactPickPrompt) {
       await _storageService.savePendingSelfContactPick(true);
     }
 
@@ -353,6 +353,11 @@ class SettingsScreenState extends State<SettingsScreen>
   }
 
   void _showAddContactMenu() {
+    if (!supportsDeviceContacts) {
+      _addContactManually();
+      return;
+    }
+
     final l10n = AppLocalizations.of(context)!;
     final isPro = context.read<ProSubscriptionService>().isPro;
     showModalBottomSheet(
@@ -584,6 +589,11 @@ class SettingsScreenState extends State<SettingsScreen>
                 ),
                 keyboardType: TextInputType.phone,
               ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.phoneNumberMinDigits,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
             ],
           ),
         ),
@@ -595,10 +605,18 @@ class SettingsScreenState extends State<SettingsScreen>
           TextButton(
             onPressed: () {
               final name = nameController.text.trim();
-              final phone = phoneController.text.trim();
-              if (name.isNotEmpty && phone.isNotEmpty) {
-                Navigator.of(context).pop({'name': name, 'phone': phone});
+              final rawPhone = phoneController.text.trim();
+              if (name.isEmpty) {
+                return;
               }
+              if (!PhoneUtils.hasMinimumDigits(rawPhone)) {
+                showAppSnackBar(context, l10n.phoneNumberMinDigits);
+                return;
+              }
+              Navigator.of(context).pop({
+                'name': name,
+                'phone': PhoneUtils.sanitizePhoneNumber(rawPhone),
+              });
             },
             child: Text(l10n.add),
           ),
@@ -976,37 +994,38 @@ class SettingsScreenState extends State<SettingsScreen>
                           ),
                         ),
                         SizedBox(height: isPortrait ? 24 : 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              l10n.vibrations,
-                              style: TextStyle(
-                                fontSize: buttonFontSize * 0.9,
-                                color: Colors.white,
-                                shadows: const [
-                                  Shadow(
-                                    color: Colors.black26,
-                                    blurRadius: 8,
-                                  ),
-                                ],
+                        if (!isWeb)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                l10n.vibrations,
+                                style: TextStyle(
+                                  fontSize: buttonFontSize * 0.9,
+                                  color: Colors.white,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Switch(
-                              value: _vibrationsEnabled,
-                              onChanged: _toggleVibrations,
-                              activeThumbColor: Colors.white,
-                              activeTrackColor:
-                                  Colors.white.withValues(alpha: 0.7),
-                              inactiveThumbColor:
-                                  Colors.white.withValues(alpha: 0.5),
-                              inactiveTrackColor:
-                                  Colors.white.withValues(alpha: 0.3),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: isPortrait ? 24 : 16),
+                              const SizedBox(width: 12),
+                              Switch(
+                                value: _vibrationsEnabled,
+                                onChanged: _toggleVibrations,
+                                activeThumbColor: Colors.white,
+                                activeTrackColor:
+                                    Colors.white.withValues(alpha: 0.7),
+                                inactiveThumbColor:
+                                    Colors.white.withValues(alpha: 0.5),
+                                inactiveTrackColor:
+                                    Colors.white.withValues(alpha: 0.3),
+                              ),
+                            ],
+                          ),
+                        if (!isWeb) SizedBox(height: isPortrait ? 24 : 16),
                         _buildProSection(buttonFontSize),
                         SizedBox(height: isPortrait ? 24 : 16),
                         ElevatedButton.icon(

@@ -107,6 +107,9 @@ class AppLocalizations {
   String get leavePhoneEmptyKeepColor =>
       _localizedValues[locale.languageCode]?['leavePhoneEmptyKeepColor'] ??
       'Leave phone number empty to keep current color';
+  String get phoneNumberMinDigits =>
+      _localizedValues[locale.languageCode]?['phoneNumberMinDigits'] ??
+      'Enter at least 6 digits';
   String get addFromDevice =>
       _localizedValues[locale.languageCode]?['addFromDevice'] ??
       'Add from device';
@@ -265,6 +268,7 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': 'Enter phone number to change color',
       'leavePhoneEmptyKeepColor':
           'Leave phone number empty to keep current color',
+      'phoneNumberMinDigits': 'Enter at least 6 digits',
       'addFromDevice': 'Add from device',
       'searchContacts': 'Search contacts',
       'noDeviceContactsFound': 'No contacts found on this device',
@@ -346,6 +350,7 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': 'أدخل رقم الهاتف لتغيير اللون',
       'leavePhoneEmptyKeepColor':
           'اترك رقم الهاتف فارغاً للاحتفاظ باللون الحالي',
+      'phoneNumberMinDigits': 'أدخل 6 أرقام على الأقل',
       'addFromDevice': 'إضافة من الجهاز',
       'searchContacts': 'البحث في جهات الاتصال',
       'noDeviceContactsFound': 'لم يتم العثور على جهات اتصال على هذا الجهاز',
@@ -428,6 +433,7 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': 'הזן מספר טלפון כדי לשנות צבע',
       'leavePhoneEmptyKeepColor':
           'השאר את מספר הטלפון ריק כדי לשמור על הצבע הנוכחי',
+      'phoneNumberMinDigits': 'הזן לפחות 6 ספרות',
       'addFromDevice': 'הוסף מהמכשיר',
       'searchContacts': 'חיפוש אנשי קשר',
       'noDeviceContactsFound': 'לא נמצאו אנשי קשר במכשיר זה',
@@ -510,6 +516,7 @@ class AppLocalizations {
           'Zadejte telefonní číslo pro změnu barvy',
       'leavePhoneEmptyKeepColor':
           'Ponechte telefonní číslo prázdné pro zachování současné barvy',
+      'phoneNumberMinDigits': 'Zadejte alespoň 6 číslic',
       'addFromDevice': 'Přidat ze zařízení',
       'searchContacts': 'Hledat kontakty',
       'noDeviceContactsFound':
@@ -593,6 +600,7 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': 'Zadajte telefónne číslo na zmenu farby',
       'leavePhoneEmptyKeepColor':
           'Ponechajte telefónne číslo prázdne, aby sa zachovala aktuálna farba',
+      'phoneNumberMinDigits': 'Zadajte aspoň 6 číslic',
       'addFromDevice': 'Pridať zo zariadenia',
       'searchContacts': 'Hľadať kontakty',
       'noDeviceContactsFound': 'Na tomto zariadení sa nenašli žiadne kontakty',
@@ -673,6 +681,7 @@ class AppLocalizations {
       'phoneNumberOptional': '电话号码（可选）',
       'enterPhoneNumberToChangeColor': '输入电话号码以更改颜色',
       'leavePhoneEmptyKeepColor': '将电话号码留空以保持当前颜色',
+      'phoneNumberMinDigits': '至少输入6位数字',
       'addFromDevice': '从设备添加',
       'searchContacts': '搜索联系人',
       'noDeviceContactsFound': '此设备上未找到联系人',
@@ -747,6 +756,7 @@ class AppLocalizations {
       'phoneNumberOptional': '電話番号（オプション）',
       'enterPhoneNumberToChangeColor': '色を変更するには電話番号を入力',
       'leavePhoneEmptyKeepColor': '現在の色を保持するには電話番号を空のままにします',
+      'phoneNumberMinDigits': '6桁以上入力してください',
       'addFromDevice': 'デバイスから追加',
       'searchContacts': '連絡先を検索',
       'noDeviceContactsFound': 'このデバイスに連絡先が見つかりません',
@@ -828,6 +838,7 @@ class AppLocalizations {
           'Voer telefoonnummer in om kleur te wijzigen',
       'leavePhoneEmptyKeepColor':
           'Laat telefoonnummer leeg om huidige kleur te behouden',
+      'phoneNumberMinDigits': 'Voer minimaal 6 cijfers in',
       'addFromDevice': 'Toevoegen vanaf apparaat',
       'searchContacts': 'Contacten zoeken',
       'noDeviceContactsFound': 'Geen contacten gevonden op dit apparaat',
@@ -912,6 +923,7 @@ class AppLocalizations {
           'Telefonnummer eingeben, um Farbe zu ändern',
       'leavePhoneEmptyKeepColor':
           'Telefonnummer leer lassen, um aktuelle Farbe beizubehalten',
+      'phoneNumberMinDigits': 'Mindestens 6 Ziffern eingeben',
       'addFromDevice': 'Vom Gerät hinzufügen',
       'searchContacts': 'Kontakte suchen',
       'noDeviceContactsFound': 'Keine Kontakte auf diesem Gerät gefunden',
@@ -999,6 +1011,7 @@ class AppLocalizations {
           'Ingrese el número de teléfono para cambiar el color',
       'leavePhoneEmptyKeepColor':
           'Deje el número de teléfono vacío para mantener el color actual',
+      'phoneNumberMinDigits': 'Ingrese al menos 6 dígitos',
       'addFromDevice': 'Agregar desde dispositivo',
       'searchContacts': 'Buscar contactos',
       'noDeviceContactsFound':
@@ -1086,6 +1099,7 @@ class AppLocalizations {
           'Entrez le numéro de téléphone pour changer la couleur',
       'leavePhoneEmptyKeepColor':
           'Laissez le numéro de téléphone vide pour conserver la couleur actuelle',
+      'phoneNumberMinDigits': 'Entrez au moins 6 chiffres',
       'addFromDevice': 'Ajouter depuis l\'appareil',
       'searchContacts': 'Rechercher des contacts',
       'noDeviceContactsFound': 'Aucun contact trouvé sur cet appareil',
@@ -1172,6 +1186,7 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': 'रंग बदलने के लिए फ़ोन नंबर दर्ज करें',
       'leavePhoneEmptyKeepColor':
           'वर्तमान रंग बनाए रखने के लिए फ़ोन नंबर खाली छोड़ें',
+      'phoneNumberMinDigits': 'कम से कम 6 अंक दर्ज करें',
       'addFromDevice': 'डिवाइस से जोड़ें',
       'searchContacts': 'संपर्क खोजें',
       'noDeviceContactsFound': 'इस डिवाइस पर कोई संपर्क नहीं मिला',
@@ -1257,6 +1272,7 @@ class AppLocalizations {
           'Inserisci il numero di telefono per cambiare il colore',
       'leavePhoneEmptyKeepColor':
           'Lascia il numero di telefono vuoto per mantenere il colore attuale',
+      'phoneNumberMinDigits': 'Inserisci almeno 6 cifre',
       'addFromDevice': 'Aggiungi dal dispositivo',
       'searchContacts': 'Cerca contatti',
       'noDeviceContactsFound': 'Nessun contatto trovato su questo dispositivo',
@@ -1342,6 +1358,7 @@ class AppLocalizations {
           'Wprowadź numer telefonu, aby zmienić kolor',
       'leavePhoneEmptyKeepColor':
           'Pozostaw numer telefonu pusty, aby zachować aktualny kolor',
+      'phoneNumberMinDigits': 'Wprowadź co najmniej 6 cyfr',
       'addFromDevice': 'Dodaj z urządzenia',
       'searchContacts': 'Szukaj kontaktów',
       'noDeviceContactsFound': 'Nie znaleziono kontaktów na tym urządzeniu',
@@ -1426,6 +1443,7 @@ class AppLocalizations {
           'Adja meg a telefonszámot a szín megváltoztatásához',
       'leavePhoneEmptyKeepColor':
           'Hagyja üresen a telefonszámot az aktuális szín megtartásához',
+      'phoneNumberMinDigits': 'Adjon meg legalább 6 számjegyet',
       'addFromDevice': 'Hozzáadás eszközről',
       'searchContacts': 'Kapcsolatok keresése',
       'noDeviceContactsFound': 'Nem találhatók kapcsolatok ezen az eszközön',
@@ -1512,6 +1530,7 @@ class AppLocalizations {
           'Введите номер телефона, чтобы изменить цвет',
       'leavePhoneEmptyKeepColor':
           'Оставьте номер телефона пустым, чтобы сохранить текущий цвет',
+      'phoneNumberMinDigits': 'Введите не менее 6 цифр',
       'addFromDevice': 'Добавить с устройства',
       'searchContacts': 'Поиск контактов',
       'noDeviceContactsFound': 'На этом устройстве контакты не найдены',
@@ -1598,6 +1617,7 @@ class AppLocalizations {
           'Digite o número de telefone para alterar a cor',
       'leavePhoneEmptyKeepColor':
           'Deixe o número de telefone vazio para manter a cor atual',
+      'phoneNumberMinDigits': 'Digite pelo menos 6 dígitos',
       'addFromDevice': 'Adicionar do dispositivo',
       'searchContacts': 'Pesquisar contatos',
       'noDeviceContactsFound': 'Nenhum contato encontrado neste dispositivo',

@@ -26,6 +26,7 @@
   "phoneNumberOptional": "מספר טלפון (אופציונלי)",
   "enterPhoneNumberToChangeColor": "הזן מספר טלפון כדי לשנות צבע",
   "leavePhoneEmptyKeepColor": "השאר את מספר הטלפון ריק כדי לשמור על הצבע הנוכחי",
+  "phoneNumberMinDigits": "הזן לפחות 6 ספרות",
   "addFromDevice": "הוסף מהמכשיר",
   "searchContacts": "חיפוש אנשי קשר",
   "noDeviceContactsFound": "לא נמצאו אנשי קשר במכשיר זה",

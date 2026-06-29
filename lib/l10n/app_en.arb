@@ -124,6 +124,10 @@
   "@leavePhoneEmptyKeepColor": {
     "description": "Helper text for edit contact dialog"
   },
+  "phoneNumberMinDigits": "Enter at least 6 digits",
+  "@phoneNumberMinDigits": {
+    "description": "Validation/helper for manual phone number entry"
+  },
   "addFromDevice": "Add from device",
   "@addFromDevice": {
     "description": "Menu option to add contact from device"

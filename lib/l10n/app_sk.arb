@@ -26,6 +26,7 @@
   "phoneNumberOptional": "Telefónne číslo (voliteľné)",
   "enterPhoneNumberToChangeColor": "Zadajte telefónne číslo na zmenu farby",
   "leavePhoneEmptyKeepColor": "Ponechajte telefónne číslo prázdne, aby sa zachovala aktuálna farba",
+  "phoneNumberMinDigits": "Zadajte aspoň 6 číslic",
   "addFromDevice": "Pridať zo zariadenia",
   "searchContacts": "Hľadať kontakty",
   "noDeviceContactsFound": "Na tomto zariadení sa nenašli žiadne kontakty",

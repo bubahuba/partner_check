@@ -26,6 +26,7 @@
   "phoneNumberOptional": "Telefonszám (opcionális)",
   "enterPhoneNumberToChangeColor": "Adja meg a telefonszámot a szín megváltoztatásához",
   "leavePhoneEmptyKeepColor": "Hagyja üresen a telefonszámot az aktuális szín megtartásához",
+  "phoneNumberMinDigits": "Adjon meg legalább 6 számjegyet",
   "addFromDevice": "Hozzáadás eszközről",
   "searchContacts": "Kapcsolatok keresése",
   "noDeviceContactsFound": "Nem találhatók kapcsolatok ezen az eszközön",

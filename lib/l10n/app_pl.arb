@@ -26,6 +26,7 @@
   "phoneNumberOptional": "Numer telefonu (opcjonalny)",
   "enterPhoneNumberToChangeColor": "Wprowadź numer telefonu, aby zmienić kolor",
   "leavePhoneEmptyKeepColor": "Pozostaw numer telefonu pusty, aby zachować aktualny kolor",
+  "phoneNumberMinDigits": "Wprowadź co najmniej 6 cyfr",
   "addFromDevice": "Dodaj z urządzenia",
   "searchContacts": "Szukaj kontaktów",
   "noDeviceContactsFound": "Nie znaleziono kontaktów na tym urządzeniu",

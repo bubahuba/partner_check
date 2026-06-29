@@ -26,6 +26,7 @@
   "phoneNumberOptional": "电话号码（可选）",
   "enterPhoneNumberToChangeColor": "输入电话号码以更改颜色",
   "leavePhoneEmptyKeepColor": "将电话号码留空以保持当前颜色",
+  "phoneNumberMinDigits": "至少输入6位数字",
   "addFromDevice": "从设备添加",
   "searchContacts": "搜索联系人",
   "noDeviceContactsFound": "此设备上未找到联系人",

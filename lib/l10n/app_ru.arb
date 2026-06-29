@@ -26,6 +26,7 @@
   "phoneNumberOptional": "Номер телефона (необязательно)",
   "enterPhoneNumberToChangeColor": "Введите номер телефона, чтобы изменить цвет",
   "leavePhoneEmptyKeepColor": "Оставьте номер телефона пустым, чтобы сохранить текущий цвет",
+  "phoneNumberMinDigits": "Введите не менее 6 цифр",
   "addFromDevice": "Добавить с устройства",
   "searchContacts": "Поиск контактов",
   "noDeviceContactsFound": "На этом устройстве контакты не найдены",
