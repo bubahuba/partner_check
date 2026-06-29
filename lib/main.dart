@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'l10n/app_localizations.dart';
 import 'screens/initial_screen.dart';
 import 'services/pro_subscription_service.dart';
+import 'utils/desktop_scroll_behavior.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,7 @@ class PartnerCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Partner Check',
+      scrollBehavior: const DesktopScrollBehavior(),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [
         AppLocalizations.delegate,

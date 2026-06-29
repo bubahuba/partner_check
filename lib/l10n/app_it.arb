@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "Inserisci il numero di telefono per cambiare il colore",
   "leavePhoneEmptyKeepColor": "Lascia il numero di telefono vuoto per mantenere il colore attuale",
   "addFromDevice": "Aggiungi dal dispositivo",
+  "searchContacts": "Cerca contatti",
+  "noDeviceContactsFound": "Nessun contatto trovato su questo dispositivo",
   "addManually": "Aggiungi manualmente",
   "addContact": "Aggiungi contatto",
   "vibrations": "Vibrazioni",

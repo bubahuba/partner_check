@@ -110,6 +110,12 @@ class AppLocalizations {
   String get addFromDevice =>
       _localizedValues[locale.languageCode]?['addFromDevice'] ??
       'Add from device';
+  String get searchContacts =>
+      _localizedValues[locale.languageCode]?['searchContacts'] ??
+      'Search contacts';
+  String get noDeviceContactsFound =>
+      _localizedValues[locale.languageCode]?['noDeviceContactsFound'] ??
+      'No contacts found on this device';
   String get addManually =>
       _localizedValues[locale.languageCode]?['addManually'] ?? 'Add manually';
   String get addContact =>
@@ -260,6 +266,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Leave phone number empty to keep current color',
       'addFromDevice': 'Add from device',
+      'searchContacts': 'Search contacts',
+      'noDeviceContactsFound': 'No contacts found on this device',
       'addManually': 'Add manually',
       'addContact': 'Add Contact',
       'vibrations': 'Vibrations',
@@ -339,6 +347,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'اترك رقم الهاتف فارغاً للاحتفاظ باللون الحالي',
       'addFromDevice': 'إضافة من الجهاز',
+      'searchContacts': 'البحث في جهات الاتصال',
+      'noDeviceContactsFound': 'لم يتم العثور على جهات اتصال على هذا الجهاز',
       'addManually': 'إضافة يدوياً',
       'addContact': 'إضافة جهة اتصال',
       'vibrations': 'الاهتزاز',
@@ -419,6 +429,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'השאר את מספר הטלפון ריק כדי לשמור על הצבע הנוכחי',
       'addFromDevice': 'הוסף מהמכשיר',
+      'searchContacts': 'חיפוש אנשי קשר',
+      'noDeviceContactsFound': 'לא נמצאו אנשי קשר במכשיר זה',
       'addManually': 'הוסף ידנית',
       'addContact': 'הוסף איש קשר',
       'vibrations': 'רטט',
@@ -499,6 +511,9 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Ponechte telefonní číslo prázdné pro zachování současné barvy',
       'addFromDevice': 'Přidat ze zařízení',
+      'searchContacts': 'Hledat kontakty',
+      'noDeviceContactsFound':
+          'Na tomto zařízení nebyly nalezeny žádné kontakty',
       'addManually': 'Přidat ručně',
       'addContact': 'Přidat kontakt',
       'vibrations': 'Vibrace',
@@ -579,6 +594,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Ponechajte telefónne číslo prázdne, aby sa zachovala aktuálna farba',
       'addFromDevice': 'Pridať zo zariadenia',
+      'searchContacts': 'Hľadať kontakty',
+      'noDeviceContactsFound': 'Na tomto zariadení sa nenašli žiadne kontakty',
       'addManually': 'Pridať ručne',
       'addContact': 'Pridať kontakt',
       'vibrations': 'Vibrácie',
@@ -657,6 +674,8 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': '输入电话号码以更改颜色',
       'leavePhoneEmptyKeepColor': '将电话号码留空以保持当前颜色',
       'addFromDevice': '从设备添加',
+      'searchContacts': '搜索联系人',
+      'noDeviceContactsFound': '此设备上未找到联系人',
       'addManually': '手动添加',
       'addContact': '添加联系人',
       'vibrations': '振动',
@@ -729,6 +748,8 @@ class AppLocalizations {
       'enterPhoneNumberToChangeColor': '色を変更するには電話番号を入力',
       'leavePhoneEmptyKeepColor': '現在の色を保持するには電話番号を空のままにします',
       'addFromDevice': 'デバイスから追加',
+      'searchContacts': '連絡先を検索',
+      'noDeviceContactsFound': 'このデバイスに連絡先が見つかりません',
       'addManually': '手動で追加',
       'addContact': '連絡先を追加',
       'vibrations': '振動',
@@ -808,6 +829,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Laat telefoonnummer leeg om huidige kleur te behouden',
       'addFromDevice': 'Toevoegen vanaf apparaat',
+      'searchContacts': 'Contacten zoeken',
+      'noDeviceContactsFound': 'Geen contacten gevonden op dit apparaat',
       'addManually': 'Handmatig toevoegen',
       'addContact': 'Contact toevoegen',
       'vibrations': 'Trillingen',
@@ -890,6 +913,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Telefonnummer leer lassen, um aktuelle Farbe beizubehalten',
       'addFromDevice': 'Vom Gerät hinzufügen',
+      'searchContacts': 'Kontakte suchen',
+      'noDeviceContactsFound': 'Keine Kontakte auf diesem Gerät gefunden',
       'addManually': 'Manuell hinzufügen',
       'addContact': 'Kontakt hinzufügen',
       'vibrations': 'Vibrationen',
@@ -975,6 +1000,9 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Deje el número de teléfono vacío para mantener el color actual',
       'addFromDevice': 'Agregar desde dispositivo',
+      'searchContacts': 'Buscar contactos',
+      'noDeviceContactsFound':
+          'No se encontraron contactos en este dispositivo',
       'addManually': 'Agregar manualmente',
       'addContact': 'Agregar contacto',
       'vibrations': 'Vibraciones',
@@ -1059,6 +1087,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Laissez le numéro de téléphone vide pour conserver la couleur actuelle',
       'addFromDevice': 'Ajouter depuis l\'appareil',
+      'searchContacts': 'Rechercher des contacts',
+      'noDeviceContactsFound': 'Aucun contact trouvé sur cet appareil',
       'addManually': 'Ajouter manuellement',
       'addContact': 'Ajouter un contact',
       'vibrations': 'Vibrations',
@@ -1143,6 +1173,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'वर्तमान रंग बनाए रखने के लिए फ़ोन नंबर खाली छोड़ें',
       'addFromDevice': 'डिवाइस से जोड़ें',
+      'searchContacts': 'संपर्क खोजें',
+      'noDeviceContactsFound': 'इस डिवाइस पर कोई संपर्क नहीं मिला',
       'addManually': 'मैन्युअली जोड़ें',
       'addContact': 'संपर्क जोड़ें',
       'vibrations': 'कंपन',
@@ -1226,6 +1258,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Lascia il numero di telefono vuoto per mantenere il colore attuale',
       'addFromDevice': 'Aggiungi dal dispositivo',
+      'searchContacts': 'Cerca contatti',
+      'noDeviceContactsFound': 'Nessun contatto trovato su questo dispositivo',
       'addManually': 'Aggiungi manualmente',
       'addContact': 'Aggiungi contatto',
       'vibrations': 'Vibrazioni',
@@ -1309,6 +1343,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Pozostaw numer telefonu pusty, aby zachować aktualny kolor',
       'addFromDevice': 'Dodaj z urządzenia',
+      'searchContacts': 'Szukaj kontaktów',
+      'noDeviceContactsFound': 'Nie znaleziono kontaktów na tym urządzeniu',
       'addManually': 'Dodaj ręcznie',
       'addContact': 'Dodaj kontakt',
       'vibrations': 'Wibracje',
@@ -1391,6 +1427,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Hagyja üresen a telefonszámot az aktuális szín megtartásához',
       'addFromDevice': 'Hozzáadás eszközről',
+      'searchContacts': 'Kapcsolatok keresése',
+      'noDeviceContactsFound': 'Nem találhatók kapcsolatok ezen az eszközön',
       'addManually': 'Manuális hozzáadás',
       'addContact': 'Kapcsolat hozzáadása',
       'vibrations': 'Rezgések',
@@ -1475,6 +1513,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Оставьте номер телефона пустым, чтобы сохранить текущий цвет',
       'addFromDevice': 'Добавить с устройства',
+      'searchContacts': 'Поиск контактов',
+      'noDeviceContactsFound': 'На этом устройстве контакты не найдены',
       'addManually': 'Добавить вручную',
       'addContact': 'Добавить контакт',
       'vibrations': 'Вибрация',
@@ -1559,6 +1599,8 @@ class AppLocalizations {
       'leavePhoneEmptyKeepColor':
           'Deixe o número de telefone vazio para manter a cor atual',
       'addFromDevice': 'Adicionar do dispositivo',
+      'searchContacts': 'Pesquisar contatos',
+      'noDeviceContactsFound': 'Nenhum contato encontrado neste dispositivo',
       'addManually': 'Adicionar manualmente',
       'addContact': 'Adicionar contato',
       'vibrations': 'Vibrações',

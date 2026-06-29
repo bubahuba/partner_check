@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import '../services/contacts_permission.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import '../l10n/app_localizations.dart';
 import '../models.dart';
@@ -897,6 +896,62 @@ class ContactsPageState extends State<ContactsPage>
     });
   }
 
+  /// After adding one contact from settings: scroll to it and start match sorting.
+  void _finalizeAfterSettingsContactAdded(String contactName,
+      {int attemptsLeft = 40}) {
+    if (!mounted) return;
+
+    if (!_scrollController1.hasClients || !_scrollController2.hasClients) {
+      if (attemptsLeft <= 0) {
+        setState(() => _isApplyingBulkLoad = false);
+        return;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _finalizeAfterSettingsContactAdded(contactName,
+            attemptsLeft: attemptsLeft - 1);
+      });
+      return;
+    }
+
+    final width1 = _scrollController1.position.viewportDimension;
+    final width2 = _scrollController2.position.viewportDimension;
+    if (width1 <= 0 || width2 <= 0) {
+      if (attemptsLeft <= 0) {
+        setState(() => _isApplyingBulkLoad = false);
+        return;
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _finalizeAfterSettingsContactAdded(contactName,
+            attemptsLeft: attemptsLeft - 1);
+      });
+      return;
+    }
+
+    setState(() => _isApplyingBulkLoad = false);
+
+    final displayedContacts = _displayedContacts;
+    if (!displayedContacts.any((contact) => contact.name == contactName)) {
+      _checkForMatch();
+      return;
+    }
+
+    final targetController = _lastScrolledController ?? _scrollController1;
+
+    _refreshPanesAfterContactListChange(
+      targetController: targetController,
+      anchorContactName: contactName,
+    );
+
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (!mounted) return;
+      final contactIndex =
+          _displayedContacts.indexWhere((c) => c.name == contactName);
+      if (contactIndex == -1) return;
+      _reorderContactsByMatch(
+          _displayedContacts[contactIndex], targetController);
+    });
+  }
+
   /// Save current scroll positions from scroll controllers
   void _saveCurrentScrollPositions() {
     if (_scrollController1.hasClients) {
@@ -1248,12 +1303,22 @@ class ContactsPageState extends State<ContactsPage>
 
       if (!await ensureContactsReadPermission()) {
         if (mounted) {
-          showAppSnackBar(context, l10n.contactsPermissionRequired);
+          showAppSnackBar(
+            context,
+            l10n.contactsPermissionRequired,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: l10n.settings,
+              textColor: Colors.black,
+              onPressed: openContactsSettings,
+            ),
+          );
         }
         return;
       }
 
-      final contact = await pickContactWithNameAndPhone();
+      if (!mounted) return;
+      final contact = await pickContactWithNameAndPhone(context);
       if (contact == null) {
         if (showIntroDialog) {
           continue;
@@ -1345,18 +1410,16 @@ class ContactsPageState extends State<ContactsPage>
             action: SnackBarAction(
               label: l10n.settings,
               textColor: Colors.black,
-              onPressed: () async {
-                // Open app settings to allow user to enable permission
-                await openAppSettings();
-              },
+              onPressed: openContactsSettings,
             ),
           );
         }
         return;
       }
 
+      if (!mounted) return;
       // Open native contact picker
-      final Contact? contact = await pickContactWithNameAndPhone();
+      final Contact? contact = await pickContactWithNameAndPhone(context);
 
       if (contact == null) {
         // User cancelled
@@ -2711,12 +2774,19 @@ class ContactsPageState extends State<ContactsPage>
                         });
                         _loadVibrationsSetting();
 
+                        final addedContactName = await _storageService
+                            .loadAndClearSettingsAddedContact();
                         final bulkLoaded = await _storageService
                             .loadAndClearContactsBulkLoaded();
                         if (bulkLoaded) {
                           await _prepareForBulkLoadClose();
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _finalizeAfterBulkLoad();
+                            if (addedContactName != null) {
+                              _finalizeAfterSettingsContactAdded(
+                                  addedContactName);
+                            } else {
+                              _finalizeAfterBulkLoad();
+                            }
                           });
                           return;
                         }

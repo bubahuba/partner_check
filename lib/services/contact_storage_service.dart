@@ -19,6 +19,7 @@ class ContactStorageService {
   static const String _selfContactNameKey = 'self_contact_name';
   static const String _selfContactColorKey = 'self_contact_color';
   static const String _contactsBulkLoadedKey = 'contacts_bulk_loaded';
+  static const String _settingsAddedContactKey = 'settings_added_contact_name';
 
   /// Load contacts from storage
   Future<List<StoredContact>> loadContacts() async {
@@ -200,6 +201,22 @@ class ContactStorageService {
       await prefs.remove(_contactsBulkLoadedKey);
     }
     return value;
+  }
+
+  /// Marks that settings added a single contact that should be selected for sorting.
+  Future<void> markSettingsAddedContact(String contactName) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_contactsBulkLoadedKey, true);
+    await prefs.setString(_settingsAddedContactKey, contactName);
+  }
+
+  Future<String?> loadAndClearSettingsAddedContact() async {
+    final prefs = await SharedPreferences.getInstance();
+    final name = prefs.getString(_settingsAddedContactKey);
+    if (name != null) {
+      await prefs.remove(_settingsAddedContactKey);
+    }
+    return name;
   }
 }
 

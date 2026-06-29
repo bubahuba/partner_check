@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "Voer telefoonnummer in om kleur te wijzigen",
   "leavePhoneEmptyKeepColor": "Laat telefoonnummer leeg om huidige kleur te behouden",
   "addFromDevice": "Toevoegen vanaf apparaat",
+  "searchContacts": "Contacten zoeken",
+  "noDeviceContactsFound": "Geen contacten gevonden op dit apparaat",
   "addManually": "Handmatig toevoegen",
   "addContact": "Contact toevoegen",
   "vibrations": "Trillingen",

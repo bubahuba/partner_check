@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "הזן מספר טלפון כדי לשנות צבע",
   "leavePhoneEmptyKeepColor": "השאר את מספר הטלפון ריק כדי לשמור על הצבע הנוכחי",
   "addFromDevice": "הוסף מהמכשיר",
+  "searchContacts": "חיפוש אנשי קשר",
+  "noDeviceContactsFound": "לא נמצאו אנשי קשר במכשיר זה",
   "addManually": "הוסף ידנית",
   "addContact": "הוסף איש קשר",
   "vibrations": "רטט",

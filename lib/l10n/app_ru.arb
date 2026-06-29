@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "Введите номер телефона, чтобы изменить цвет",
   "leavePhoneEmptyKeepColor": "Оставьте номер телефона пустым, чтобы сохранить текущий цвет",
   "addFromDevice": "Добавить с устройства",
+  "searchContacts": "Поиск контактов",
+  "noDeviceContactsFound": "На этом устройстве контакты не найдены",
   "addManually": "Добавить вручную",
   "addContact": "Добавить контакт",
   "vibrations": "Вибрация",

@@ -4,9 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/contacts_permission.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../l10n/app_localizations.dart';
-import 'dart:convert';
 import '../models.dart';
 import '../services/contact_storage_service.dart';
 import '../utils/directionality_utils.dart';
@@ -375,7 +373,9 @@ class SettingsScreenState extends State<SettingsScreen>
                     style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pickAndAddContactFromDevice();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) _pickAndAddContactFromDevice();
+                  });
                 },
               ),
               const Divider(color: Colors.grey),
@@ -385,7 +385,9 @@ class SettingsScreenState extends State<SettingsScreen>
                     style: const TextStyle(color: Colors.white)),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _addContactManually();
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) _addContactManually();
+                  });
                 },
               ),
               const Divider(color: Colors.grey),
@@ -442,17 +444,16 @@ class SettingsScreenState extends State<SettingsScreen>
             action: SnackBarAction(
               label: l10n.settings,
               textColor: Colors.black,
-              onPressed: () async {
-                await openAppSettings();
-              },
+              onPressed: openContactsSettings,
             ),
           );
         }
         return;
       }
 
+      if (!mounted) return;
       // Open native contact picker
-      final Contact? contact = await pickContactWithNameAndPhone();
+      final Contact? contact = await pickContactWithNameAndPhone(context);
 
       if (contact == null) {
         // User cancelled
@@ -486,15 +487,7 @@ class SettingsScreenState extends State<SettingsScreen>
 
       final phoneNumber = contact.phones.first.number;
 
-      // Load existing contacts
-      final prefs = await SharedPreferences.getInstance();
-      final storedData = prefs.getString('stored_contacts');
-      List<StoredContact> existingContacts = [];
-      if (storedData != null) {
-        final List<dynamic> jsonList = json.decode(storedData);
-        existingContacts =
-            jsonList.map((json) => StoredContact.fromJson(json)).toList();
-      }
+      final existingContacts = await _storageService.loadContacts();
 
       // Check for duplicates
       if (existingContacts.any((c) => c.name == contactName)) {
@@ -509,29 +502,14 @@ class SettingsScreenState extends State<SettingsScreen>
         return;
       }
 
-      // Calculate color from phone number
-      final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
-      int colorValue = 0;
-      if (digits.isNotEmpty) {
-        final hexDigits = digits.length >= 6
-            ? digits.substring(digits.length - 6)
-            : digits.padLeft(6, '0');
-        colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
-      }
-
-      // Create new contact
       final newContact = StoredContact(
         name: contactName,
-        color: colorValue,
+        color: PhoneUtils.colorFromPhoneNumber(phoneNumber),
       );
 
-      // Add to existing contacts
       existingContacts.add(newContact);
-
-      // Save to storage
-      final jsonList =
-          existingContacts.map((contact) => contact.toJson()).toList();
-      await prefs.setString('stored_contacts', json.encode(jsonList));
+      await _storageService.saveContacts(existingContacts);
+      await _storageService.markSettingsAddedContact(contactName);
 
       // Close settings screen
       if (mounted) {
@@ -633,15 +611,7 @@ class SettingsScreenState extends State<SettingsScreen>
     final contactName = result['name']!;
     final phoneNumber = result['phone']!;
 
-    // Load existing contacts
-    final prefs = await SharedPreferences.getInstance();
-    final storedData = prefs.getString('stored_contacts');
-    List<StoredContact> existingContacts = [];
-    if (storedData != null) {
-      final List<dynamic> jsonList = json.decode(storedData);
-      existingContacts =
-          jsonList.map((json) => StoredContact.fromJson(json)).toList();
-    }
+    final existingContacts = await _storageService.loadContacts();
 
     // Check for duplicates
     if (existingContacts.any((c) => c.name == contactName)) {
@@ -656,29 +626,14 @@ class SettingsScreenState extends State<SettingsScreen>
       return;
     }
 
-    // Calculate color from phone number
-    final digits = phoneNumber.replaceAll(RegExp(r'\D'), '');
-    int colorValue = 0;
-    if (digits.isNotEmpty) {
-      final hexDigits = digits.length >= 6
-          ? digits.substring(digits.length - 6)
-          : digits.padLeft(6, '0');
-      colorValue = int.tryParse(hexDigits, radix: 16) ?? 0;
-    }
-
-    // Create new contact
     final newContact = StoredContact(
       name: contactName,
-      color: colorValue,
+      color: PhoneUtils.colorFromPhoneNumber(phoneNumber),
     );
 
-    // Add to existing contacts
     existingContacts.add(newContact);
-
-    // Save to storage
-    final jsonList =
-        existingContacts.map((contact) => contact.toJson()).toList();
-    await prefs.setString('stored_contacts', json.encode(jsonList));
+    await _storageService.saveContacts(existingContacts);
+    await _storageService.markSettingsAddedContact(contactName);
 
     // Close settings screen
     if (mounted) {
@@ -803,10 +758,7 @@ class SettingsScreenState extends State<SettingsScreen>
             action: SnackBarAction(
               label: l10n.settings,
               textColor: Colors.black,
-              onPressed: () async {
-                // Open app settings to allow user to enable permission
-                await openAppSettings();
-              },
+              onPressed: openContactsSettings,
             ),
           );
         }

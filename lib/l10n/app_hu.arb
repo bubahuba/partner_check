@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "Adja meg a telefonszámot a szín megváltoztatásához",
   "leavePhoneEmptyKeepColor": "Hagyja üresen a telefonszámot az aktuális szín megtartásához",
   "addFromDevice": "Hozzáadás eszközről",
+  "searchContacts": "Kapcsolatok keresése",
+  "noDeviceContactsFound": "Nem találhatók kapcsolatok ezen az eszközön",
   "addManually": "Manuális hozzáadás",
   "addContact": "Kapcsolat hozzáadása",
   "vibrations": "Rezgések",

@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "Zadajte telefónne číslo na zmenu farby",
   "leavePhoneEmptyKeepColor": "Ponechajte telefónne číslo prázdne, aby sa zachovala aktuálna farba",
   "addFromDevice": "Pridať zo zariadenia",
+  "searchContacts": "Hľadať kontakty",
+  "noDeviceContactsFound": "Na tomto zariadení sa nenašli žiadne kontakty",
   "addManually": "Pridať ručne",
   "addContact": "Pridať kontakt",
   "vibrations": "Vibrácie",

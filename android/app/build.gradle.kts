@@ -4,6 +4,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Read version from pubspec.yaml so Android Studio builds stay in sync.
+// flutter.versionCode in local.properties is only refreshed by `flutter run` / `flutter build`.
+val pubspecVersion =
+    run {
+        val pubspec = rootProject.layout.projectDirectory.file("../pubspec.yaml").asFile
+        val match =
+            Regex("""^version:\s*(\S+)""", RegexOption.MULTILINE)
+                .find(pubspec.readText())
+                ?: throw GradleException("Could not find version in ${pubspec.path}")
+        val parts = match.groupValues[1].split("+")
+        parts[0] to (parts.getOrNull(1)?.toIntOrNull() ?: 1)
+    }
+
 android {
     namespace = "cz.shadowHub.partnerCheck"
     compileSdk = flutter.compileSdkVersion
@@ -21,8 +34,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        versionCode = pubspecVersion.second
+        versionName = pubspecVersion.first
     }
 
     buildTypes {

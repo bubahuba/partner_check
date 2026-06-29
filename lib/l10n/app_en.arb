@@ -128,6 +128,14 @@
   "@addFromDevice": {
     "description": "Menu option to add contact from device"
   },
+  "searchContacts": "Search contacts",
+  "@searchContacts": {
+    "description": "Search field hint in macOS device contact picker"
+  },
+  "noDeviceContactsFound": "No contacts found on this device",
+  "@noDeviceContactsFound": {
+    "description": "Empty state in macOS device contact picker"
+  },
   "addManually": "Add manually",
   "@addManually": {
     "description": "Menu option to add contact manually"

@@ -27,6 +27,8 @@
   "enterPhoneNumberToChangeColor": "रंग बदलने के लिए फ़ोन नंबर दर्ज करें",
   "leavePhoneEmptyKeepColor": "वर्तमान रंग बनाए रखने के लिए फ़ोन नंबर खाली छोड़ें",
   "addFromDevice": "डिवाइस से जोड़ें",
+  "searchContacts": "संपर्क खोजें",
+  "noDeviceContactsFound": "इस डिवाइस पर कोई संपर्क नहीं मिला",
   "addManually": "मैन्युअली जोड़ें",
   "addContact": "संपर्क जोड़ें",
   "vibrations": "कंपन",
