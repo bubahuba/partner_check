@@ -13,6 +13,8 @@
 
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
+    Production (served at /app/): run `./build_web.sh` or
+    `flutter build web --base-href=/app/`.
   -->
   <base href="$FLUTTER_BASE_HREF">
 
@@ -21,6 +23,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Partner Check — compare contact compatibility via phone-number colors.">
   <meta name="theme-color" content="#000000">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QBHLEN5ZE2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-QBHLEN5ZE2');
+  </script>
 
   <!-- PWA / iOS -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -43,12 +55,12 @@
       if (!lang) return;
 
       lang = lang.toLowerCase().split('-')[0];
-      var aliases = { cz: 'cs', iw: 'he' };
+      var aliases = { cz: 'cs', iw: 'he', uk: 'ua' };
       lang = aliases[lang] || lang;
 
       var supported = [
         'en', 'ar', 'he', 'cs', 'sk', 'zh', 'ja', 'nl', 'de', 'es',
-        'fr', 'hi', 'it', 'pl', 'hu', 'ru', 'pt',
+        'fr', 'hi', 'it', 'pl', 'hu', 'ru', 'pt', 'ua',
       ];
       if (supported.indexOf(lang) === -1) return;
 
@@ -65,7 +77,7 @@
     }
   </script>
 </head>
-<body style="background: url('appicon.png') no-repeat center center; background-size: cover; background-attachment: fixed;">
+<body style="background: #000 url('background.jpg') no-repeat center center; background-size: cover; background-attachment: fixed;">
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

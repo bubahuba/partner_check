@@ -30,10 +30,22 @@ class AppLocalizations {
     Locale('hu'),
     Locale('ru'),
     Locale('pt'),
+    Locale('ua'),
   ];
 
   static bool isRtlLanguage(String languageCode) {
     return languageCode == 'ar' || languageCode == 'he';
+  }
+
+  static String normalizeLanguageCode(String languageCode) {
+    switch (languageCode) {
+      case 'iw':
+        return 'he';
+      case 'uk':
+        return 'ua';
+      default:
+        return languageCode;
+    }
   }
 
   bool get isRtl => isRtlLanguage(locale.languageCode);
@@ -236,6 +248,38 @@ class AppLocalizations {
   String get alreadyPro =>
       _localizedValues[locale.languageCode]?['alreadyPro'] ??
       'You already have PRO.';
+  String tetrisForecastWeeks(int weeks) =>
+      (_localizedValues[locale.languageCode]?['tetrisForecastWeeks'] ??
+              'Forecast for {weeks} weeks')
+          .replaceAll('{weeks}', '$weeks');
+  String tetrisNewRecord(int weeks) =>
+      (_localizedValues[locale.languageCode]?['tetrisNewRecord'] ??
+              'New record: {weeks} weeks!')
+          .replaceAll('{weeks}', '$weeks');
+  String get tetrisNeedTwoContacts =>
+      _localizedValues[locale.languageCode]?['tetrisNeedTwoContacts'] ??
+      'Select two contacts to play Tetris';
+  String tetrisWeeks(int weeks) =>
+      (_localizedValues[locale.languageCode]?['tetrisWeeks'] ??
+              'Weeks: {weeks}')
+          .replaceAll('{weeks}', '$weeks');
+  String get tetrisPlayersTitle =>
+      _localizedValues[locale.languageCode]?['tetrisPlayersTitle'] ??
+      'Tetris players';
+  String get tetrisNoRecords =>
+      _localizedValues[locale.languageCode]?['tetrisNoRecords'] ??
+      'No records yet';
+  String get tetrisPause =>
+      _localizedValues[locale.languageCode]?['tetrisPause'] ?? 'Pause';
+  String get tetrisResume =>
+      _localizedValues[locale.languageCode]?['tetrisResume'] ?? 'Resume';
+  String get tetrisStartNewGame =>
+      _localizedValues[locale.languageCode]?['tetrisStartNewGame'] ??
+      'Start new game';
+  String tetrisNewRecordCelebration(int weeks) =>
+      (_localizedValues[locale.languageCode]?['tetrisNewRecordCelebration'] ??
+              'New high score! {weeks} weeks!')
+          .replaceAll('{weeks}', '$weeks');
 
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
@@ -319,6 +363,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO unlocked! Thank you for your purchase.',
       'purchaseFailed': 'Purchase failed. Please try again.',
       'alreadyPro': 'You already have PRO.',
+      'tetrisForecastWeeks': 'Forecast for {weeks} weeks',
+      'tetrisNewRecord': 'New record: {weeks} weeks!',
+      'tetrisNeedTwoContacts': 'Select two contacts to play Tetris',
+      'tetrisWeeks': 'Weeks: {weeks}',
+      'tetrisPlayersTitle': 'Tetris players',
+      'tetrisNoRecords': 'No records yet',
+      'tetrisPause': 'Pause',
+      'tetrisResume': 'Resume',
+      'tetrisStartNewGame': 'Start new game',
+      'tetrisNewRecordCelebration': 'New high score! {weeks} weeks!',
     },
     'ar': {
       'appTitle': 'Partner Check',
@@ -402,6 +456,16 @@ class AppLocalizations {
       'purchaseSuccess': 'تم فتح PRO! شكراً لشرائك.',
       'purchaseFailed': 'فشل الشراء. يرجى المحاولة مرة أخرى.',
       'alreadyPro': 'لديك PRO بالفعل.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'he': {
       'appTitle': 'Partner Check',
@@ -484,6 +548,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO נפתח! תודה על הרכישה.',
       'purchaseFailed': 'הרכישה נכשלה. נסה שוב.',
       'alreadyPro': 'כבר יש לך PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'cs': {
       'appTitle': 'Partner Check',
@@ -569,6 +643,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO odemčeno! Děkujeme za nákup.',
       'purchaseFailed': 'Nákup se nezdařil. Zkuste to znovu.',
       'alreadyPro': 'Již máte PRO.',
+      'tetrisForecastWeeks': "Prognóza na {weeks} týdnů",
+      'tetrisNewRecord': "Nový rekord: {weeks} týdnů!",
+      'tetrisNeedTwoContacts': "Vyberte dva kontakty pro hru Tetris",
+      'tetrisWeeks': "Týdny: {weeks}",
+      'tetrisPlayersTitle': "Tetris hráči",
+      'tetrisNoRecords': "Zatím žádné záznamy",
+      'tetrisPause': "Pauza",
+      'tetrisResume': "Pokračovat",
+      'tetrisStartNewGame': "Nová hra",
+      'tetrisNewRecordCelebration': "Nový rekord! {weeks} týdnů!",
     },
     'sk': {
       'appTitle': 'Partner Check',
@@ -652,6 +736,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO odomknuté! Ďakujeme za nákup.',
       'purchaseFailed': 'Nákup zlyhal. Skúste to znova.',
       'alreadyPro': 'Už máte PRO.',
+      'tetrisForecastWeeks': "Prognóza na {weeks} týždňov",
+      'tetrisNewRecord': "Nový rekord: {weeks} týždňov!",
+      'tetrisNeedTwoContacts': "Vyberte dva kontakty na hranie Tetrisu",
+      'tetrisWeeks': "Týždne: {weeks}",
+      'tetrisPlayersTitle': "Tetris hráči",
+      'tetrisNoRecords': "Zatiaľ žiadne záznamy",
+      'tetrisPause': "Pauza",
+      'tetrisResume': "Pokračovať",
+      'tetrisStartNewGame': "Nová hra",
+      'tetrisNewRecordCelebration': "Nový rekord! {weeks} týždňov!",
     },
     'zh': {
       'appTitle': 'Partner Check',
@@ -727,6 +821,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO 已解锁！感谢您的购买。',
       'purchaseFailed': '购买失败。请重试。',
       'alreadyPro': '您已拥有 PRO。',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'ja': {
       'appTitle': 'Partner Check',
@@ -805,6 +909,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO が解除されました！ご購入ありがとうございます。',
       'purchaseFailed': '購入に失敗しました。もう一度お試しください。',
       'alreadyPro': 'すでに PRO をお持ちです。',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'nl': {
       'appTitle': 'Partner Check',
@@ -891,6 +1005,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO ontgrendeld! Bedankt voor je aankoop.',
       'purchaseFailed': 'Aankoop mislukt. Probeer het opnieuw.',
       'alreadyPro': 'Je hebt al PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'de': {
       'appTitle': 'Partner Check',
@@ -978,6 +1102,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO freigeschaltet! Danke für deinen Kauf.',
       'purchaseFailed': 'Kauf fehlgeschlagen. Bitte versuche es erneut.',
       'alreadyPro': 'Du hast bereits PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'es': {
       'appTitle': 'Partner Check',
@@ -1066,6 +1200,16 @@ class AppLocalizations {
       'purchaseSuccess': '¡PRO desbloqueado! Gracias por tu compra.',
       'purchaseFailed': 'La compra falló. Inténtalo de nuevo.',
       'alreadyPro': 'Ya tienes PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'fr': {
       'appTitle': 'Partner Check',
@@ -1155,6 +1299,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO débloqué ! Merci pour votre achat.',
       'purchaseFailed': 'L\'achat a échoué. Veuillez réessayer.',
       'alreadyPro': 'Vous avez déjà PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'hi': {
       'appTitle': 'Partner Check',
@@ -1240,6 +1394,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO अनलॉक हो गया! आपकी खरीदारी के लिए धन्यवाद।',
       'purchaseFailed': 'खरीदारी विफल। कृपया पुनः प्रयास करें।',
       'alreadyPro': 'आपके पास पहले से PRO है।',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'it': {
       'appTitle': 'Partner Check',
@@ -1326,6 +1490,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO sbloccato! Grazie per l\'acquisto.',
       'purchaseFailed': 'Acquisto non riuscito. Riprova.',
       'alreadyPro': 'Hai già PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'pl': {
       'appTitle': 'Partner Check',
@@ -1411,6 +1585,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO odblokowane! Dziękujemy za zakup.',
       'purchaseFailed': 'Zakup nie powiódł się. Spróbuj ponownie.',
       'alreadyPro': 'Masz już PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'hu': {
       'appTitle': 'Partner Check',
@@ -1498,6 +1682,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO feloldva! Köszönjük a vásárlást.',
       'purchaseFailed': 'A vásárlás sikertelen. Próbáld újra.',
       'alreadyPro': 'Már van PRO-d.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'ru': {
       'appTitle': 'Partner Check',
@@ -1584,6 +1778,16 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO разблокирован! Спасибо за покупку.',
       'purchaseFailed': 'Покупка не удалась. Попробуйте снова.',
       'alreadyPro': 'У вас уже есть PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
     'pt': {
       'appTitle': 'Partner Check',
@@ -1672,6 +1876,111 @@ class AppLocalizations {
       'purchaseSuccess': 'PRO desbloqueado! Obrigado pela sua compra.',
       'purchaseFailed': 'A compra falhou. Tente novamente.',
       'alreadyPro': 'Já tem PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
+    },
+    'ua': {
+      'appTitle': 'Partner Check',
+      'contactsPermissionRequired': 'Потрібен дозвіл на контакти',
+      'contactLimitReached': 'Досягнуто ліміт контактів',
+      'contactLimitMessage':
+          'Ви досягли максимуму в 10 контактів у безкоштовній версії.\n\nОновіться до PartnerCheck Pro, щоб додавати необмежену кількість контактів.',
+      'ok': 'OK',
+      'cancel': 'Скасувати',
+      'delete': 'Видалити',
+      'save': 'Зберегти',
+      'add': 'Додати',
+      'close': 'Закрити',
+      'selectedContactNoName': 'У вибраного контакта немає імені',
+      'contactAlreadyInList': '{contactName} уже в списку',
+      'noPhoneNumber': 'Немає номера телефону',
+      'noPhoneNumberMessage':
+          '{contactName} не має номера телефону. Будь ласка, оберіть контакт з номером телефону.',
+      'errorPickingContact': 'Помилка при виборі контакта: {error}',
+      'deleteContact': 'Видалити контакт',
+      'deleteContactConfirm': 'Ви впевнені, що хочете видалити {contactName}?',
+      'addContactManually': 'Додати контакт вручну',
+      'editContact': 'Редагувати контакт',
+      'name': 'Ім\'я',
+      'enterContactName': 'Введіть ім\'я контакта',
+      'phoneNumber': 'Номер телефону',
+      'enterPhoneNumber': 'Введіть номер телефону',
+      'phoneNumberOptional': 'Номер телефону (необов\'язково)',
+      'enterPhoneNumberToChangeColor':
+          'Введіть номер телефону, щоб змінити колір',
+      'leavePhoneEmptyKeepColor':
+          'Залиште номер телефону порожнім, щоб зберегти поточний колір',
+      'phoneNumberMinDigits': 'Введіть щонайменше 6 цифр',
+      'addFromDevice': 'Додати з пристрою',
+      'searchContacts': 'Пошук контактів',
+      'noDeviceContactsFound': 'На цьому пристрої контакти не знайдено',
+      'addManually': 'Додати вручну',
+      'addContact': 'Додати контакт',
+      'vibrations': 'Вібрація',
+      'loadContacts': 'Завантажити контакти',
+      'loadAllContacts': 'Завантажити всі контакти',
+      'permissionRequired': 'Потрібен дозвіл',
+      'permissionRequiredMessage':
+          'Цей застосунок потребує доступу до ваших контактів для перевірки сумісності партнерів. Будь ласка, надайте дозвіл у налаштуваннях.',
+      'openSettings': 'Відкрити налаштування',
+      'settings': 'Налаштування',
+      'contactsPermissionDenied': 'Дозволу на контакти відхилено',
+      'permissionDenied': 'Дозволу відхилено: {status}',
+      'errorLoadingContacts': 'Помилка при завантаженні контактів: {error}',
+      'partnerCheckFree': 'PartnerCheck Free',
+      'loading': 'Завантаження...',
+      'loadingContactsFromDevice': 'Читання контактів із пристрою...',
+      'loadingContactsProgress': '{current} з {total}',
+      'aboutTitle': 'Про застосунок',
+      'aboutText':
+          'Кожна людина має телефон (або більше)\n\nкожен телефон має останні 6 цифр\n\nкожні 6 цифр мають колір (у шістнадцятковому коді)\n\nкожен колір має людину (?)\n\nЗбігів не буває!\n\nЦей застосунок надає унікальну можливість по-іншому поглянути на світ телефонних номерів, що належать конкретним людям. Перегляньте всі можливі комбінації та переконайтеся, що збігів не існує.\n\nЗбігається чи ні?',
+      'heartIconDescription': 'Позначити контакт як обраний',
+      'chartIconDescription': 'Перевпорядкувати контакти за кількістю збігів',
+      'trashIconDescription': 'Видалити контакт',
+      'deleteAllContacts': 'Видалити всі контакти',
+      'deleteAllContactsConfirm':
+          'Ви впевнені, що хочете видалити всі контакти? Цю дію неможливо скасувати.',
+      'pickYourselfTitle': 'Оберіть себе',
+      'pickYourselfMessage':
+          'Оберіть свій контакт, щоб почати зі своїх кольорів. iOS не може визначити це автоматично.\n\nВи також можете натиснути та утримувати контакт на будь-якій панелі, щоб установити себе як «я».',
+      'pickYourselfButton': 'Обрати контакт',
+      'notNow': 'Не зараз',
+      'pickYourselfNotInList':
+          '{contactName} не знайдено в завантажених контактах. Оберіть когось зі списку.',
+      'setMeWithLongPressHint':
+          'Натисніть і утримуйте контакт на цій панелі, щоб установити себе як «я».',
+      'selfContactSelectedToast': '{contactName} тепер обрано(а) як «я».',
+      'doubleTapSelfDescription':
+          'Подвійне натискання на панель, щоб прокрутити до себе',
+      'longPressSelfDescription':
+          'Натисніть і утримуйте контакт, щоб обрати нове «я»',
+      'upgradeToPro': 'Перейти на PRO',
+      'restorePurchases': 'Відновити покупки',
+      'proVersion': 'PartnerCheck Pro',
+      'proFeatureLoadAllContacts':
+          'Завантаження всіх контактів із пристрою — функція PRO. Оновіться, щоб імпортувати всю адресну книгу одразу.',
+      'purchaseInProgress': 'Покупка виконується...',
+      'purchaseSuccess': 'PRO розблоковано! Дякуємо за покупку.',
+      'purchaseFailed': 'Покупку не вдалося здійснити. Спробуйте ще раз.',
+      'alreadyPro': 'У вас уже є PRO.',
+      'tetrisForecastWeeks': "Forecast for {weeks} weeks",
+      'tetrisNewRecord': "New record: {weeks} weeks!",
+      'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'tetrisWeeks': "Weeks: {weeks}",
+      'tetrisPlayersTitle': "Tetris players",
+      'tetrisNoRecords': "No records yet",
+      'tetrisPause': "Pause",
+      'tetrisResume': "Resume",
+      'tetrisStartNewGame': "Start new game",
+      'tetrisNewRecordCelebration': "New high score! {weeks} weeks!",
     },
   };
 }
@@ -1683,7 +1992,7 @@ class _AppLocalizationsDelegate
   @override
   bool isSupported(Locale locale) {
     final languageCode =
-        locale.languageCode == 'iw' ? 'he' : locale.languageCode;
+        AppLocalizations.normalizeLanguageCode(locale.languageCode);
     return [
       'en',
       'ar',
@@ -1702,13 +2011,14 @@ class _AppLocalizationsDelegate
       'hu',
       'ru',
       'pt',
+      'ua',
     ].contains(languageCode);
   }
 
   @override
   Future<AppLocalizations> load(Locale locale) async {
     final languageCode =
-        locale.languageCode == 'iw' ? 'he' : locale.languageCode;
+        AppLocalizations.normalizeLanguageCode(locale.languageCode);
     return AppLocalizations(Locale(languageCode));
   }
 

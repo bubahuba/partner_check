@@ -69,5 +69,15 @@
   "alreadyPro": "У вас уже есть PRO.",
   "selfContactSelectedToast": "{contactName} теперь выбран(а) как «я».",
   "doubleTapSelfDescription": "Двойное нажатие на панель, чтобы прокрутить к себе",
-  "longPressSelfDescription": "Нажмите и удерживайте контакт, чтобы выбрать новое «я»"
+  "longPressSelfDescription": "Нажмите и удерживайте контакт, чтобы выбрать новое «я»",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }

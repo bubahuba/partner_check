@@ -69,5 +69,15 @@
   "alreadyPro": "Ya tienes PRO.",
   "selfContactSelectedToast": "{contactName} ahora está seleccionado/a como \"yo\".",
   "doubleTapSelfDescription": "Toca dos veces un panel para desplazarte hasta ti",
-  "longPressSelfDescription": "Mantén pulsado un contacto para elegir un nuevo \"yo\""
+  "longPressSelfDescription": "Mantén pulsado un contacto para elegir un nuevo \"yo\"",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }

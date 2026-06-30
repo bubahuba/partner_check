@@ -69,5 +69,15 @@
   "alreadyPro": "כבר יש לך PRO.",
   "selfContactSelectedToast": "{contactName} נבחר/ת עכשיו כ\"אני\".",
   "doubleTapSelfDescription": "הקשה כפולה על לוח כדי לגלול אליך",
-  "longPressSelfDescription": "לחיצה ארוכה על איש קשר כדי לבחור \"אני\" חדש"
+  "longPressSelfDescription": "לחיצה ארוכה על איש קשר כדי לבחור \"אני\" חדש",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }

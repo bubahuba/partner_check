@@ -69,5 +69,15 @@
   "alreadyPro": "すでに PRO をお持ちです。",
   "selfContactSelectedToast": "{contactName} が「自分」として選択されました。",
   "doubleTapSelfDescription": "ペインをダブルタップすると自分までスクロール",
-  "longPressSelfDescription": "連絡先を長押しして新しい「自分」を選択"
+  "longPressSelfDescription": "連絡先を長押しして新しい「自分」を選択",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }

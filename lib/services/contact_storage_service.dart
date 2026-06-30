@@ -20,6 +20,7 @@ class ContactStorageService {
   static const String _selfContactColorKey = 'self_contact_color';
   static const String _contactsBulkLoadedKey = 'contacts_bulk_loaded';
   static const String _settingsAddedContactKey = 'settings_added_contact_name';
+  static const String _tetrisRecordsKey = 'tetris_player_records';
 
   /// Load contacts from storage
   Future<List<StoredContact>> loadContacts() async {
@@ -217,6 +218,48 @@ class ContactStorageService {
       await prefs.remove(_settingsAddedContactKey);
     }
     return name;
+  }
+
+  /// Load Tetris high-score records for contact pairs.
+  Future<List<TetrisPlayerRecord>> loadTetrisRecords() async {
+    final prefs = await SharedPreferences.getInstance();
+    final storedData = prefs.getString(_tetrisRecordsKey);
+    if (storedData == null) return [];
+
+    final List<dynamic> jsonList = json.decode(storedData);
+    return jsonList
+        .map(
+            (item) => TetrisPlayerRecord.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Persist Tetris high-score records.
+  Future<void> saveTetrisRecords(List<TetrisPlayerRecord> records) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonList = records.map((record) => record.toJson()).toList();
+    await prefs.setString(_tetrisRecordsKey, json.encode(jsonList));
+  }
+
+  /// Updates the record for [session]'s pair when [weeks] beats the prior best.
+  /// Returns true when a new record was saved.
+  Future<bool> upsertTetrisRecordIfBetter(
+    TetrisSession session,
+    int weeks,
+  ) async {
+    final records = await loadTetrisRecords();
+    final key = session.pairKeyValue;
+    final index = records.indexWhere((record) => record.pairKeyValue == key);
+
+    if (index >= 0) {
+      final existing = records[index];
+      if (weeks <= existing.bestWeeks) return false;
+      records[index] = TetrisPlayerRecord.fromSession(session, weeks);
+    } else {
+      records.add(TetrisPlayerRecord.fromSession(session, weeks));
+    }
+
+    await saveTetrisRecords(records);
+    return true;
   }
 }
 

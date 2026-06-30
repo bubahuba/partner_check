@@ -6,6 +6,7 @@ class ContactsHud extends StatelessWidget {
   final VoidCallback onSettings;
   final VoidCallback onToggleFavorites;
   final VoidCallback onAbout;
+  final VoidCallback onTetris;
 
   const ContactsHud({
     super.key,
@@ -13,6 +14,7 @@ class ContactsHud extends StatelessWidget {
     required this.onSettings,
     required this.onToggleFavorites,
     required this.onAbout,
+    required this.onTetris,
   });
 
   @override
@@ -49,6 +51,16 @@ class ContactsHud extends StatelessWidget {
               color: Colors.white,
             ),
             onPressed: onAbout,
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.transparent,
+            ),
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.grid_view,
+              color: Colors.white,
+            ),
+            onPressed: onTetris,
             style: IconButton.styleFrom(
               backgroundColor: Colors.transparent,
             ),

@@ -69,5 +69,15 @@
   "alreadyPro": "Je hebt al PRO.",
   "selfContactSelectedToast": "{contactName} is nu geselecteerd als \"ik\".",
   "doubleTapSelfDescription": "Dubbeltik op een paneel om naar jezelf te scrollen",
-  "longPressSelfDescription": "Houd een contact ingedrukt om een nieuwe \"ik\" te kiezen"
+  "longPressSelfDescription": "Houd een contact ingedrukt om een nieuwe \"ik\" te kiezen",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }

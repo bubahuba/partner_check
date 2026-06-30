@@ -69,5 +69,15 @@
   "alreadyPro": "Már van PRO-d.",
   "selfContactSelectedToast": "{contactName} most \"én\"-ként van kiválasztva.",
   "doubleTapSelfDescription": "Dupla koppintás egy panelen, hogy magadhoz görgess",
-  "longPressSelfDescription": "Tartsd nyomva a kapcsolatot új \"én\" választásához"
+  "longPressSelfDescription": "Tartsd nyomva a kapcsolatot új \"én\" választásához",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }

@@ -15,6 +15,7 @@ import '../utils/snackbar_utils.dart';
 import '../utils/self_contact_gradient.dart';
 import '../services/pro_subscription_service.dart';
 import '../widgets/self_contact_animated_background.dart';
+import '../widgets/contact_input_dialog.dart';
 import 'package:provider/provider.dart';
 import 'contacts_page.dart';
 
@@ -550,74 +551,9 @@ class SettingsScreenState extends State<SettingsScreen>
     }
     if (!mounted) return;
 
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final l10n = AppLocalizations.of(context)!;
-
-    final result = await showDialog<Map<String, String>>(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.addContactManually,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.name,
-                  hintText: l10n.enterContactName,
-                ),
-                autofocus: true,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  labelText: l10n.phoneNumber,
-                  hintText: l10n.enterPhoneNumber,
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.phoneNumberMinDigits,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              final name = nameController.text.trim();
-              final rawPhone = phoneController.text.trim();
-              if (name.isEmpty) {
-                return;
-              }
-              if (!PhoneUtils.hasMinimumDigits(rawPhone)) {
-                showAppSnackBar(context, l10n.phoneNumberMinDigits);
-                return;
-              }
-              Navigator.of(context).pop({
-                'name': name,
-                'phone': PhoneUtils.sanitizePhoneNumber(rawPhone),
-              });
-            },
-            child: Text(l10n.add),
-          ),
-        ],
-      ),
+    final result = await showContactInputDialog(
+      context,
+      mode: ContactInputDialogMode.add,
     );
 
     if (result == null) return;

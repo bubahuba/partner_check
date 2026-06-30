@@ -15,6 +15,7 @@ import '../widgets/contact_card.dart';
 import '../widgets/add_contact_card.dart';
 import '../widgets/contacts_hud.dart';
 import '../widgets/self_contact_hold_detector.dart';
+import '../widgets/contact_input_dialog.dart';
 import '../widgets/stored_contact_picker_dialog.dart';
 import 'settings_screen.dart';
 import '../utils/pro_gate.dart';
@@ -22,6 +23,7 @@ import '../utils/snackbar_utils.dart';
 import '../services/pro_subscription_service.dart';
 import 'package:provider/provider.dart';
 import 'about_screen.dart';
+import 'tetris_screen.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -1570,92 +1572,10 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   Future<void> _editContact(StoredContact contact) async {
-    final nameController = TextEditingController(text: contact.name);
-    final phoneController = TextEditingController();
-
-    // We need to reverse-engineer the phone number from the color
-    // Since we don't store the phone number, we'll just show an empty field
-    // and let the user enter a new one if they want to change the color
-
-    final l10n = AppLocalizations.of(context)!;
-    final result = await showDialog<Map<String, String>>(
-      context: context,
-      builder: (context) {
-        final mediaQuery = MediaQuery.of(context);
-        return AlertDialog(
-          content: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: mediaQuery.size.height,
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.editContact,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                      labelText: l10n.name,
-                      hintText: l10n.enterContactName,
-                    ),
-                    autofocus: true,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: phoneController,
-                    decoration: InputDecoration(
-                      labelText: l10n.phoneNumberOptional,
-                      hintText: l10n.enterPhoneNumberToChangeColor,
-                    ),
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.phoneNumberMinDigits,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.leavePhoneEmptyKeepColor,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                final name = nameController.text.trim();
-                if (name.isEmpty) {
-                  return;
-                }
-                final rawPhone = phoneController.text.trim();
-                if (rawPhone.isNotEmpty &&
-                    !PhoneUtils.hasMinimumDigits(rawPhone)) {
-                  showAppSnackBar(context, l10n.phoneNumberMinDigits);
-                  return;
-                }
-                Navigator.of(context).pop({
-                  'name': name,
-                  'phone': PhoneUtils.sanitizePhoneNumber(rawPhone),
-                });
-              },
-              child: Text(l10n.save),
-            ),
-          ],
-        );
-      },
+    final result = await showContactInputDialog(
+      context,
+      mode: ContactInputDialogMode.edit,
+      initialName: contact.name,
     );
 
     if (result == null) return;
@@ -1745,74 +1665,9 @@ class ContactsPageState extends State<ContactsPage>
     }
     if (!mounted) return;
 
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final l10n = AppLocalizations.of(context)!;
-
-    final result = await showDialog<Map<String, String>>(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.addContactManually,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  labelText: l10n.name,
-                  hintText: l10n.enterContactName,
-                ),
-                autofocus: true,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  labelText: l10n.phoneNumber,
-                  hintText: l10n.enterPhoneNumber,
-                ),
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                l10n.phoneNumberMinDigits,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              final name = nameController.text.trim();
-              final rawPhone = phoneController.text.trim();
-              if (name.isEmpty) {
-                return;
-              }
-              if (!PhoneUtils.hasMinimumDigits(rawPhone)) {
-                showAppSnackBar(context, l10n.phoneNumberMinDigits);
-                return;
-              }
-              Navigator.of(context).pop({
-                'name': name,
-                'phone': PhoneUtils.sanitizePhoneNumber(rawPhone),
-              });
-            },
-            child: Text(l10n.add),
-          ),
-        ],
-      ),
+    final result = await showContactInputDialog(
+      context,
+      mode: ContactInputDialogMode.add,
     );
 
     if (result == null) return;
@@ -2469,6 +2324,46 @@ class ContactsPageState extends State<ContactsPage>
 
   bool get _shouldShowHud => _isHudVisible || _displayedContacts.isEmpty;
 
+  TetrisSession? _currentTetrisSession() {
+    final displayedContacts = _displayedContacts;
+    if (_isOnPlusButton(_scrollController1, displayedContacts) ||
+        _isOnPlusButton(_scrollController2, displayedContacts)) {
+      return null;
+    }
+    if (displayedContacts.length < 2 ||
+        _currentPage1 >= displayedContacts.length ||
+        _currentPage2 >= displayedContacts.length) {
+      return null;
+    }
+
+    final contact1 = displayedContacts[_currentPage1];
+    final contact2 = displayedContacts[_currentPage2];
+    return TetrisSession(
+      contact1Name: contact1.name,
+      contact1Color: contact1.color,
+      contact2Name: contact2.name,
+      contact2Color: contact2.color,
+    );
+  }
+
+  void _openTetris() {
+    _updateCurrentPagesFromScrollControllers();
+    _suppressNextHudToggle = true;
+    final session = _currentTetrisSession();
+    if (session == null) {
+      showAppSnackBar(
+        context,
+        AppLocalizations.of(context)!.tetrisNeedTwoContacts,
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => TetrisScreen(session: session),
+      ),
+    );
+  }
+
   void _toggleHudVisibility() {
     if (_suppressNextHudToggle) {
       _suppressNextHudToggle = false;
@@ -2824,6 +2719,7 @@ class ContactsPageState extends State<ContactsPage>
                         _showAbout = true;
                       });
                     },
+                    onTetris: _openTetris,
                   ),
                 if (_showSettings)
                   Positioned.fill(

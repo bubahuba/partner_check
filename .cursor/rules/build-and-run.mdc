@@ -1,0 +1,18 @@
+---
+description: Dev-run and signed production build commands for Android, iOS, web, and macOS
+globs: scripts/**,android/**,ios/**,web/**,macos/**,build_web.sh
+alwaysApply: false
+---
+
+# Build & run commands
+
+Use scripts in [`scripts/`](../scripts/) or invoke slash skills (`/dev-android`, `/build-ios-prod`, etc.).
+
+| Dev | Prod (signed release) |
+|-----|------------------------|
+| `./scripts/dev_android.sh` | `./scripts/build_android_prod.sh` (needs `android/key.properties`) |
+| `./scripts/dev_ios.sh` | `./scripts/build_ios_prod.sh` |
+| `./scripts/dev_web.sh` | `./scripts/build_web_prod.sh` |
+| `./scripts/dev_macos.sh` | `./scripts/build_macos_prod.sh` |
+
+Full index: `partner-check-builds` skill. Before release builds, run `flutter analyze` per `flutter-verify` skill.

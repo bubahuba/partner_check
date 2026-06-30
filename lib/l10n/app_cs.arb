@@ -69,5 +69,15 @@
   "alreadyPro": "Již máte PRO.",
   "selfContactSelectedToast": "{contactName} je nyní vybrán/a jako \"já\".",
   "doubleTapSelfDescription": "Dvojitým klepnutím na panel přejdete k sobě",
-  "longPressSelfDescription": "Podržením prstu na kontaktu vyberete nové \"já\""
+  "longPressSelfDescription": "Podržením prstu na kontaktu vyberete nové \"já\"",
+  "tetrisForecastWeeks": "Prognóza na {weeks} týdnů",
+  "tetrisNewRecord": "Nový rekord: {weeks} týdnů!",
+  "tetrisNeedTwoContacts": "Vyberte dva kontakty pro hru Tetris",
+  "tetrisWeeks": "Týdny: {weeks}",
+  "tetrisPlayersTitle": "Tetris hráči",
+  "tetrisNoRecords": "Zatím žádné záznamy",
+  "tetrisPause": "Pauza",
+  "tetrisResume": "Pokračovat",
+  "tetrisStartNewGame": "Nová hra",
+  "tetrisNewRecordCelebration": "Nový rekord! {weeks} týdnů!"
 }

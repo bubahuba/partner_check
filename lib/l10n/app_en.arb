@@ -327,6 +327,46 @@
   "alreadyPro": "You already have PRO.",
   "@alreadyPro": {
     "description": "Message when user already has PRO"
+  },
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "@tetrisForecastWeeks": {
+    "description": "Snackbar when a Tetris game ends, showing week forecast score"
+  },
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "@tetrisNewRecord": {
+    "description": "Snackbar when the player beats the prior Tetris record for a contact pair"
+  },
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "@tetrisNeedTwoContacts": {
+    "description": "Snackbar when Tetris is opened without two valid contacts selected"
+  },
+  "tetrisWeeks": "Weeks: {weeks}",
+  "@tetrisWeeks": {
+    "description": "Tetris week counter label"
+  },
+  "tetrisPlayersTitle": "Tetris players",
+  "@tetrisPlayersTitle": {
+    "description": "Title for the Tetris high-score screen"
+  },
+  "tetrisNoRecords": "No records yet",
+  "@tetrisNoRecords": {
+    "description": "Empty state on the Tetris players screen"
+  },
+  "tetrisPause": "Pause",
+  "@tetrisPause": {
+    "description": "Pause Tetris game"
+  },
+  "tetrisResume": "Resume",
+  "@tetrisResume": {
+    "description": "Resume a paused Tetris game"
+  },
+  "tetrisStartNewGame": "Start new game",
+  "@tetrisStartNewGame": {
+    "description": "Button on the Tetris game-over overlay to begin a fresh round"
+  },
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!",
+  "@tetrisNewRecordCelebration": {
+    "description": "Celebratory headline on the Tetris game-over overlay when the player sets a new record"
   }
 }
 

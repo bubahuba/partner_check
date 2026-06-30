@@ -59,7 +59,7 @@ class PartnerCheck extends StatelessWidget {
           return supportedLocales.first;
         }
         final languageCode =
-            locale.languageCode == 'iw' ? 'he' : locale.languageCode;
+            AppLocalizations.normalizeLanguageCode(locale.languageCode);
         for (final supported in supportedLocales) {
           if (supported.languageCode == languageCode) {
             return supported;

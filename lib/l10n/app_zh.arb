@@ -69,5 +69,15 @@
   "alreadyPro": "您已拥有 PRO。",
   "selfContactSelectedToast": "{contactName} 现已选为\"我\"。",
   "doubleTapSelfDescription": "双击窗格可滚动到您自己",
-  "longPressSelfDescription": "长按联系人可选择新的\"我\""
+  "longPressSelfDescription": "长按联系人可选择新的\"我\"",
+  "tetrisForecastWeeks": "Forecast for {weeks} weeks",
+  "tetrisNewRecord": "New record: {weeks} weeks!",
+  "tetrisNeedTwoContacts": "Select two contacts to play Tetris",
+  "tetrisWeeks": "Weeks: {weeks}",
+  "tetrisPlayersTitle": "Tetris players",
+  "tetrisNoRecords": "No records yet",
+  "tetrisPause": "Pause",
+  "tetrisResume": "Resume",
+  "tetrisStartNewGame": "Start new game",
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
 }
