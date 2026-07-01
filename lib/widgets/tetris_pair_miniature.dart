@@ -51,13 +51,13 @@ class TetrisPairMiniature extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
-                        shadows: const [
-                          Shadow(blurRadius: 4, color: Colors.black54),
-                        ],
-                      ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                    shadows: const [
+                      Shadow(blurRadius: 4, color: Colors.black54),
+                    ],
+                  ),
                 ),
               ),
             ),

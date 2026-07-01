@@ -63,6 +63,16 @@ class TetrisEngine {
     _paused = paused;
   }
 
+  /// Spawns the first active piece and draws it without starting the drop timer.
+  void spawnInitialPiece() {
+    if (_gameOver || _currentPiece != null) return;
+    _currentPiece = _randomPiece();
+    onPieceSpawned?.call(_currentPiece!.fill);
+    _syncActivePieceOnMap();
+    _newOb = false;
+    _lastTick = DateTime.now();
+  }
+
   void setSoftDrop(bool active) {
     _speedMs = active ? dropSpeedMs : originalSpeedMs;
   }

@@ -242,6 +242,14 @@
   "@trashIconDescription": {
     "description": "Description for the trash icon"
   },
+  "tetrisIconDescription": "Play Tetris with your colors",
+  "@tetrisIconDescription": {
+    "description": "Description for the Tetris icon on the about screen"
+  },
+  "tetrisLinkCopied": "Link copied",
+  "@tetrisLinkCopied": {
+    "description": "Snackbar after copying a shared Tetris link"
+  },
   "deleteAllContacts": "Delete all contacts",
   "@deleteAllContacts": {
     "description": "Button text to delete all contacts"
@@ -344,7 +352,7 @@
   "@tetrisWeeks": {
     "description": "Tetris week counter label"
   },
-  "tetrisPlayersTitle": "Tetris players",
+  "tetrisPlayersTitle": "Hall of fame",
   "@tetrisPlayersTitle": {
     "description": "Title for the Tetris high-score screen"
   },

@@ -78,22 +78,25 @@ class _TetrisSessionBackgroundState extends State<TetrisSessionBackground>
             ),
           ),
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Colors.white.withValues(alpha: 0.1),
-                      Colors.transparent,
-                      Colors.white.withValues(alpha: 0.05),
-                    ],
-                    stops: const [0.0, 0.5, 1.0],
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: 0.1),
+                        Colors.transparent,
+                        Colors.white.withValues(alpha: 0.05),
+                      ],
+                      stops: const [0.0, 0.5, 1.0],
+                    ),
                   ),
                 ),
               ),
-              child!,
+              Positioned.fill(child: child!),
             ],
           ),
         );

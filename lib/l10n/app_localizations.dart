@@ -190,6 +190,12 @@ class AppLocalizations {
   String get trashIconDescription =>
       _localizedValues[locale.languageCode]?['trashIconDescription'] ??
       'Delete contact';
+  String get tetrisIconDescription =>
+      _localizedValues[locale.languageCode]?['tetrisIconDescription'] ??
+      'Play Tetris with your colors';
+  String get tetrisLinkCopied =>
+      _localizedValues[locale.languageCode]?['tetrisLinkCopied'] ??
+      'Link copied';
   String get deleteAllContacts =>
       _localizedValues[locale.languageCode]?['deleteAllContacts'] ??
       'Delete all contacts';
@@ -265,7 +271,7 @@ class AppLocalizations {
           .replaceAll('{weeks}', '$weeks');
   String get tetrisPlayersTitle =>
       _localizedValues[locale.languageCode]?['tetrisPlayersTitle'] ??
-      'Tetris players';
+      'Hall of fame';
   String get tetrisNoRecords =>
       _localizedValues[locale.languageCode]?['tetrisNoRecords'] ??
       'No records yet';
@@ -339,6 +345,8 @@ class AppLocalizations {
       'heartIconDescription': 'Mark contact as favorite',
       'chartIconDescription': 'Reorder contacts by match count',
       'trashIconDescription': 'Delete contact',
+      'tetrisIconDescription': 'Play Tetris with your colors',
+      'tetrisLinkCopied': 'Link copied',
       'deleteAllContacts': 'Delete all contacts',
       'deleteAllContactsConfirm':
           'Are you sure you want to delete all contacts? This action cannot be undone.',
@@ -367,7 +375,7 @@ class AppLocalizations {
       'tetrisNewRecord': 'New record: {weeks} weeks!',
       'tetrisNeedTwoContacts': 'Select two contacts to play Tetris',
       'tetrisWeeks': 'Weeks: {weeks}',
-      'tetrisPlayersTitle': 'Tetris players',
+      'tetrisPlayersTitle': 'Hall of fame',
       'tetrisNoRecords': 'No records yet',
       'tetrisPause': 'Pause',
       'tetrisResume': 'Resume',
@@ -431,6 +439,8 @@ class AppLocalizations {
       'heartIconDescription': 'تعليم جهة الاتصال كمفضلة',
       'chartIconDescription': 'إعادة ترتيب جهات الاتصال حسب عدد التطابقات',
       'trashIconDescription': 'حذف جهة الاتصال',
+      'tetrisIconDescription': "العب Tetris بألوانك",
+      'tetrisLinkCopied': "تم نسخ الرابط",
       'deleteAllContacts': 'حذف جميع جهات الاتصال',
       'deleteAllContactsConfirm':
           'هل أنت متأكد أنك تريد حذف جميع جهات الاتصال؟ لا يمكن التراجع عن هذا الإجراء.',
@@ -460,7 +470,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "قاعة المشاهير",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -524,6 +534,8 @@ class AppLocalizations {
       'heartIconDescription': 'סמן איש קשר כמועדף',
       'chartIconDescription': 'סדר מחדש אנשי קשר לפי מספר ההתאמות',
       'trashIconDescription': 'מחק איש קשר',
+      'tetrisIconDescription': "שחקו טטריס עם הצבעים שלכם",
+      'tetrisLinkCopied': "הקישור הועתק",
       'deleteAllContacts': 'מחק את כל אנשי הקשר',
       'deleteAllContactsConfirm':
           'האם אתה בטוח שברצונך למחוק את כל אנשי הקשר? לא ניתן לבטל פעולה זו.',
@@ -552,7 +564,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "היכל התהילה",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -618,6 +630,8 @@ class AppLocalizations {
       'heartIconDescription': 'Označit kontakt jako oblíbený',
       'chartIconDescription': 'Seřadit kontakty podle počtu shod',
       'trashIconDescription': 'Smazat kontakt',
+      'tetrisIconDescription': "Hrajte Tetris se svými barvami",
+      'tetrisLinkCopied': "Odkaz zkopírován",
       'deleteAllContacts': 'Smazat všechny kontakty',
       'deleteAllContactsConfirm':
           'Opravdu chcete smazat všechny kontakty? Tuto akci nelze vrátit zpět.',
@@ -647,7 +661,7 @@ class AppLocalizations {
       'tetrisNewRecord': "Nový rekord: {weeks} týdnů!",
       'tetrisNeedTwoContacts': "Vyberte dva kontakty pro hru Tetris",
       'tetrisWeeks': "Týdny: {weeks}",
-      'tetrisPlayersTitle': "Tetris hráči",
+      'tetrisPlayersTitle': "Síň slávy",
       'tetrisNoRecords': "Zatím žádné záznamy",
       'tetrisPause': "Pauza",
       'tetrisResume': "Pokračovat",
@@ -711,6 +725,8 @@ class AppLocalizations {
       'heartIconDescription': 'Označiť kontakt ako obľúbený',
       'chartIconDescription': 'Zoradiť kontakty podľa počtu zhôd',
       'trashIconDescription': 'Vymazať kontakt',
+      'tetrisIconDescription': "Hrajte Tetris so svojimi farbami",
+      'tetrisLinkCopied': "Odkaz skopírovaný",
       'deleteAllContacts': 'Vymazať všetky kontakty',
       'deleteAllContactsConfirm':
           'Naozaj chcete vymazať všetky kontakty? Túto akciu nie je možné vrátiť späť.',
@@ -740,7 +756,7 @@ class AppLocalizations {
       'tetrisNewRecord': "Nový rekord: {weeks} týždňov!",
       'tetrisNeedTwoContacts': "Vyberte dva kontakty na hranie Tetrisu",
       'tetrisWeeks': "Týždne: {weeks}",
-      'tetrisPlayersTitle': "Tetris hráči",
+      'tetrisPlayersTitle': "Sieň slávy",
       'tetrisNoRecords': "Zatiaľ žiadne záznamy",
       'tetrisPause': "Pauza",
       'tetrisResume': "Pokračovať",
@@ -801,6 +817,8 @@ class AppLocalizations {
       'heartIconDescription': '将联系人标记为收藏',
       'chartIconDescription': '按匹配数重新排序联系人',
       'trashIconDescription': '删除联系人',
+      'tetrisIconDescription': "用你的颜色玩俄罗斯方块",
+      'tetrisLinkCopied': "链接已复制",
       'deleteAllContacts': '删除所有联系人',
       'deleteAllContactsConfirm': '您确定要删除所有联系人吗？此操作无法撤销。',
       'pickYourselfTitle': '选择你自己',
@@ -825,7 +843,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "名人堂",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -887,6 +905,8 @@ class AppLocalizations {
       'heartIconDescription': '連絡先をお気に入りとしてマーク',
       'chartIconDescription': '一致数で連絡先を並べ替え',
       'trashIconDescription': '連絡先を削除',
+      'tetrisIconDescription': "あなたの色でテトリスをプレイ",
+      'tetrisLinkCopied': "リンクをコピーしました",
       'deleteAllContacts': 'すべての連絡先を削除',
       'deleteAllContactsConfirm': 'すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。',
       'pickYourselfTitle': '自分を選択',
@@ -913,7 +933,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "殿堂",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -979,6 +999,8 @@ class AppLocalizations {
       'heartIconDescription': 'Contact als favoriet markeren',
       'chartIconDescription': 'Contacten sorteren op aantal matches',
       'trashIconDescription': 'Contact verwijderen',
+      'tetrisIconDescription': "Speel Tetris met je kleuren",
+      'tetrisLinkCopied': "Link gekopieerd",
       'deleteAllContacts': 'Alle contacten verwijderen',
       'deleteAllContactsConfirm':
           'Weet u zeker dat u alle contacten wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.',
@@ -1009,7 +1031,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Eregalerij",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1075,6 +1097,8 @@ class AppLocalizations {
       'chartIconDescription':
           'Kontakte nach Anzahl der Übereinstimmungen sortieren',
       'trashIconDescription': 'Kontakt löschen',
+      'tetrisIconDescription': "Spiele Tetris mit deinen Farben",
+      'tetrisLinkCopied': "Link kopiert",
       'deleteAllContacts': 'Alle Kontakte löschen',
       'deleteAllContactsConfirm':
           'Sind Sie sicher, dass Sie alle Kontakte löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.',
@@ -1106,7 +1130,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Ruhmeshalle",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1173,6 +1197,8 @@ class AppLocalizations {
       'heartIconDescription': 'Marcar contacto como favorito',
       'chartIconDescription': 'Reordenar contactos por número de coincidencias',
       'trashIconDescription': 'Eliminar contacto',
+      'tetrisIconDescription': "Juega Tetris con tus colores",
+      'tetrisLinkCopied': "Enlace copiado",
       'deleteAllContacts': 'Eliminar todos los contactos',
       'deleteAllContactsConfirm':
           '¿Está seguro de que desea eliminar todos los contactos? Esta acción no se puede deshacer.',
@@ -1204,7 +1230,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Salón de la fama",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1272,6 +1298,8 @@ class AppLocalizations {
       'chartIconDescription':
           'Réorganiser les contacts par nombre de correspondances',
       'trashIconDescription': 'Supprimer le contact',
+      'tetrisIconDescription': "Jouez à Tetris avec vos couleurs",
+      'tetrisLinkCopied': "Lien copié",
       'deleteAllContacts': 'Supprimer tous les contacts',
       'deleteAllContactsConfirm':
           'Êtes-vous sûr de vouloir supprimer tous les contacts ? Cette action ne peut pas être annulée.',
@@ -1303,7 +1331,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Temple de la renommée",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1368,6 +1396,8 @@ class AppLocalizations {
       'chartIconDescription':
           'मेल की संख्या के अनुसार संपर्कों को क्रमबद्ध करें',
       'trashIconDescription': 'संपर्क हटाएँ',
+      'tetrisIconDescription': "अपने रंगों के साथ टेट्रिस खेलें",
+      'tetrisLinkCopied': "लिंक कॉपी हो गया",
       'deleteAllContacts': 'सभी संपर्क हटाएँ',
       'deleteAllContactsConfirm':
           'क्या आप वाकई सभी संपर्क हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
@@ -1398,7 +1428,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "हॉल ऑफ फेम",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1463,6 +1493,8 @@ class AppLocalizations {
       'heartIconDescription': 'Segna contatto come preferito',
       'chartIconDescription': 'Riordina contatti per numero di corrispondenze',
       'trashIconDescription': 'Elimina contatto',
+      'tetrisIconDescription': "Gioca a Tetris con i tuoi colori",
+      'tetrisLinkCopied': "Link copiato",
       'deleteAllContacts': 'Elimina tutti i contatti',
       'deleteAllContactsConfirm':
           'Sei sicuro di voler eliminare tutti i contatti? Questa azione non può essere annullata.',
@@ -1494,7 +1526,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Sala della fama",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1559,6 +1591,8 @@ class AppLocalizations {
       'heartIconDescription': 'Oznacz kontakt jako ulubiony',
       'chartIconDescription': 'Przeładuj kontakty według liczby dopasowań',
       'trashIconDescription': 'Usuń kontakt',
+      'tetrisIconDescription': "Graj w Tetris swoimi kolorami",
+      'tetrisLinkCopied': "Link skopiowany",
       'deleteAllContacts': 'Usuń wszystkie kontakty',
       'deleteAllContactsConfirm':
           'Czy na pewno chcesz usunąć wszystkie kontakty? Tej akcji nie można cofnąć.',
@@ -1589,7 +1623,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Galeria sław",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1655,6 +1689,8 @@ class AppLocalizations {
       'chartIconDescription':
           'Kapcsolatok újrarendezése egyezések száma szerint',
       'trashIconDescription': 'Kapcsolat törlése',
+      'tetrisIconDescription': "Játssz Tetrist a színeiddel",
+      'tetrisLinkCopied': "Link másolva",
       'deleteAllContacts': 'Összes kapcsolat törlése',
       'deleteAllContactsConfirm':
           'Biztosan törölni szeretné az összes kapcsolatot? Ez a művelet nem vonható vissza.',
@@ -1686,7 +1722,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Hírességek csarnoka",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1752,6 +1788,8 @@ class AppLocalizations {
       'chartIconDescription':
           'Переупорядочить контакты по количеству совпадений',
       'trashIconDescription': 'Удалить контакт',
+      'tetrisIconDescription': "Играйте в Tetris своими цветами",
+      'tetrisLinkCopied': "Ссылка скопирована",
       'deleteAllContacts': 'Удалить все контакты',
       'deleteAllContactsConfirm':
           'Вы уверены, что хотите удалить все контакты? Это действие нельзя отменить.',
@@ -1782,7 +1820,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Зал славы",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1849,6 +1887,8 @@ class AppLocalizations {
       'chartIconDescription':
           'Reordenar contatos por número de correspondências',
       'trashIconDescription': 'Excluir contato',
+      'tetrisIconDescription': "Jogue Tetris com as suas cores",
+      'tetrisLinkCopied': "Link copiado",
       'deleteAllContacts': 'Excluir todos os contatos',
       'deleteAllContactsConfirm':
           'Tem certeza de que deseja excluir todos os contatos? Esta ação não pode ser desfeita.',
@@ -1880,7 +1920,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Hall da fama",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",
@@ -1945,6 +1985,8 @@ class AppLocalizations {
       'heartIconDescription': 'Позначити контакт як обраний',
       'chartIconDescription': 'Перевпорядкувати контакти за кількістю збігів',
       'trashIconDescription': 'Видалити контакт',
+      'tetrisIconDescription': "Грайте в Tetris своїми кольорами",
+      'tetrisLinkCopied': "Посилання скопійовано",
       'deleteAllContacts': 'Видалити всі контакти',
       'deleteAllContactsConfirm':
           'Ви впевнені, що хочете видалити всі контакти? Цю дію неможливо скасувати.',
@@ -1975,7 +2017,7 @@ class AppLocalizations {
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
       'tetrisWeeks': "Weeks: {weeks}",
-      'tetrisPlayersTitle': "Tetris players",
+      'tetrisPlayersTitle': "Зал слави",
       'tetrisNoRecords': "No records yet",
       'tetrisPause': "Pause",
       'tetrisResume': "Resume",

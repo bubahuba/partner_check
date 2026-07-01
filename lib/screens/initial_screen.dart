@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import '../services/contact_storage_service.dart';
+import '../utils/web_deep_link.dart';
 import 'contacts_page.dart';
 import 'settings_screen.dart';
+import 'tetris_screen.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -12,6 +16,7 @@ class InitialScreen extends StatefulWidget {
 
 class InitialScreenState extends State<InitialScreen> {
   bool? _hasContacts;
+  WebDeepLink? _webDeepLink;
 
   @override
   void initState() {
@@ -20,10 +25,22 @@ class InitialScreenState extends State<InitialScreen> {
   }
 
   Future<void> _loadInitialRoute() async {
+    WebDeepLink? webDeepLink;
+    if (kIsWeb) {
+      webDeepLink = parseWebDeepLink(Uri.base);
+    }
+
     final contacts = await ContactStorageService().loadContacts();
     if (!mounted) return;
     setState(() {
       _hasContacts = contacts.isNotEmpty;
+      _webDeepLink = webDeepLink;
+    });
+  }
+
+  void _closeWebDeepLink() {
+    setState(() {
+      _webDeepLink = null;
     });
   }
 
@@ -35,6 +52,15 @@ class InitialScreenState extends State<InitialScreen> {
         body: Center(
           child: CircularProgressIndicator(color: Colors.white),
         ),
+      );
+    }
+
+    final webDeepLink = _webDeepLink;
+    if (webDeepLink != null) {
+      return TetrisScreen(
+        session: webDeepLink.session,
+        isSharedLaunch: true,
+        onClose: _closeWebDeepLink,
       );
     }
 

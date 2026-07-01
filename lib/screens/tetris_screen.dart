@@ -9,8 +9,12 @@ import '../game/tetris_engine.dart';
 import '../l10n/app_localizations.dart';
 import '../models.dart';
 import '../services/contact_storage_service.dart';
+import '../utils/tetris_link_sharing.dart';
 import '../utils/tetris_session_colors.dart';
+import '../utils/tetris_share_codec.dart';
 import '../utils/tetris_web_keyboard.dart';
+import '../widgets/icons/back_icon.dart';
+import '../widgets/icons/share_icon.dart';
 import '../widgets/tetris_board.dart';
 import '../widgets/tetris_board_touch_handler.dart';
 import '../widgets/tetris_game_over_overlay.dart';
@@ -19,10 +23,14 @@ import 'tetris_players_screen.dart';
 
 class TetrisScreen extends StatefulWidget {
   final TetrisSession session;
+  final bool isSharedLaunch;
+  final VoidCallback? onClose;
 
   const TetrisScreen({
     super.key,
     required this.session,
+    this.isSharedLaunch = false,
+    this.onClose,
   });
 
   @override
@@ -45,6 +53,7 @@ class _TetrisScreenState extends State<TetrisScreen> {
   bool _rightHighlighted = false;
   bool _downHighlighted = false;
   Timer? _controlPulseTimer;
+  bool _awaitingFirstInput = false;
 
   @override
   void initState() {
@@ -57,9 +66,16 @@ class _TetrisScreenState extends State<TetrisScreen> {
       pieceColors: _sessionPieceColors,
       onPieceSpawned: _onPieceSpawned,
     );
+    _beginPausedWithFirstPiece();
     _startTimers();
     HardwareKeyboard.instance.addHandler(_handleHardwareKey);
     installTetrisWebKeyboardFix(onGameKey: _handleWebGameKey);
+  }
+
+  void _beginPausedWithFirstPiece() {
+    _engine.spawnInitialPiece();
+    _engine.setPaused(true);
+    _awaitingFirstInput = true;
   }
 
   void _onPieceSpawned(Color pieceColor) {
@@ -74,15 +90,28 @@ class _TetrisScreenState extends State<TetrisScreen> {
   }
 
   void _handleWebGameKey(String key) {
-    if (key != 'ArrowUp' ||
-        _engine.isGameOver ||
-        _engine.isPaused ||
-        !mounted) {
+    if (key != 'ArrowUp' || _engine.isGameOver || !mounted) {
+      return;
+    }
+    _resumeFromFirstInput();
+    if (_engine.isPaused) {
+      if (mounted) setState(() {});
       return;
     }
     _engine.rotate();
     _pulseControlHighlight(setRotate: true);
   }
+
+  void _resumeFromFirstInput() {
+    if (!_awaitingFirstInput) return;
+    _awaitingFirstInput = false;
+    if (_engine.isPaused) {
+      _engine.setPaused(false);
+    }
+  }
+
+  bool get _touchEnabled =>
+      !_engine.isGameOver && (!_engine.isPaused || _awaitingFirstInput);
 
   void _setControlHighlight({
     bool? rotate,
@@ -138,8 +167,11 @@ class _TetrisScreenState extends State<TetrisScreen> {
   Future<void> _handleGameOver(int weeks) async {
     if (!mounted) return;
 
-    final isNewRecord =
-        await _storageService.upsertTetrisRecordIfBetter(widget.session, weeks);
+    var isNewRecord = false;
+    if (!widget.isSharedLaunch) {
+      isNewRecord = await _storageService.upsertTetrisRecordIfBetter(
+          widget.session, weeks);
+    }
     if (!mounted) return;
 
     setState(() {
@@ -155,12 +187,16 @@ class _TetrisScreenState extends State<TetrisScreen> {
       _isNewRecord = false;
       _backgroundColor1 = backgroundPair.$1;
       _backgroundColor2 = backgroundPair.$2;
+      _beginPausedWithFirstPiece();
     });
   }
 
   void _togglePause() {
     if (_engine.isGameOver) return;
     setState(() {
+      if (_engine.isPaused) {
+        _awaitingFirstInput = false;
+      }
       _engine.setPaused(!_engine.isPaused);
     });
   }
@@ -182,6 +218,18 @@ class _TetrisScreenState extends State<TetrisScreen> {
 
     if (!mounted || _engine.isGameOver || wasPaused) return;
     setState(() => _engine.setPaused(false));
+  }
+
+  Future<void> _shareTetrisLink() async {
+    final languageCode = AppLocalizations.normalizeLanguageCode(
+      Localizations.localeOf(context).languageCode,
+    );
+    final url = buildTetrisShareUrl(
+      languageCode: languageCode,
+      color1: widget.session.contact1Color,
+      color2: widget.session.contact2Color,
+    );
+    await shareTetrisLink(context, url);
   }
 
   @override
@@ -232,35 +280,50 @@ class _TetrisScreenState extends State<TetrisScreen> {
 
     if (_engine.isGameOver) return false;
 
+    final wasAwaiting = _awaitingFirstInput;
+    _resumeFromFirstInput();
+
     final key = event.logicalKey;
     if (_isRotateKey(event)) {
       final webArrowUp = kIsWeb &&
           (event.logicalKey == LogicalKeyboardKey.arrowUp ||
               event.physicalKey == PhysicalKeyboardKey.arrowUp);
-      if (!webArrowUp && !_engine.isPaused) {
+      if (webArrowUp) {
+        if (wasAwaiting && mounted) setState(() {});
+        return wasAwaiting;
+      }
+      if (!_engine.isPaused) {
         _rotateHighlighted = true;
         _engine.rotate();
-      }
-      if (webArrowUp) {
-        return false;
+      } else if (wasAwaiting && mounted) {
+        setState(() {});
       }
     } else if (key == LogicalKeyboardKey.arrowDown) {
       _downHighlighted = true;
       _engine.setSoftDrop(true);
     } else if (key == LogicalKeyboardKey.keyS) {
-      _togglePause();
+      if (!wasAwaiting) {
+        _togglePause();
+      } else if (mounted) {
+        setState(() {});
+      }
     } else if (key == LogicalKeyboardKey.arrowLeft) {
       if (!_engine.isPaused) {
         _leftHighlighted = true;
         _engine.moveLeft();
+      } else if (wasAwaiting && mounted) {
+        setState(() {});
       }
     } else if (key == LogicalKeyboardKey.arrowRight) {
       if (!_engine.isPaused) {
         _rightHighlighted = true;
         _engine.moveRight();
+      } else if (wasAwaiting && mounted) {
+        setState(() {});
       }
     } else {
-      return false;
+      if (wasAwaiting && mounted) setState(() {});
+      return wasAwaiting;
     }
 
     if (mounted) setState(() {});
@@ -287,26 +350,30 @@ class _TetrisScreenState extends State<TetrisScreen> {
       width: boardSize.width,
       height: boardSize.height,
       child: TetrisBoardTouchHandler(
-        enabled: !isGameOver && !_engine.isPaused,
+        enabled: _touchEnabled,
         boardWidth: boardSize.width,
         onMoveLeft: () {
+          _resumeFromFirstInput();
           if (_engine.isPaused) return;
           _engine.moveLeft();
           _setControlHighlight(left: true, right: false);
           setState(() {});
         },
         onMoveRight: () {
+          _resumeFromFirstInput();
           if (_engine.isPaused) return;
           _engine.moveRight();
           _setControlHighlight(right: true, left: false);
           setState(() {});
         },
         onRotate: () {
+          _resumeFromFirstInput();
           if (_engine.isPaused) return;
           _engine.rotate();
           _pulseControlHighlight(setRotate: true);
         },
         onHardDrop: () {
+          _resumeFromFirstInput();
           if (_engine.isPaused) return;
           _engine.hardDrop();
           _pulseControlHighlight(setDown: true);
@@ -340,30 +407,41 @@ class _TetrisScreenState extends State<TetrisScreen> {
       onMoveLeftDown: () => _setControlHighlight(left: true, right: false),
       onMoveLeftUp: () => _setControlHighlight(left: false),
       onMoveLeft: () {
+        _resumeFromFirstInput();
         if (!_engine.isPaused) {
           _engine.moveLeft();
+          setState(() {});
+        } else {
           setState(() {});
         }
       },
       onMoveRightDown: () => _setControlHighlight(right: true, left: false),
       onMoveRightUp: () => _setControlHighlight(right: false),
       onMoveRight: () {
+        _resumeFromFirstInput();
         if (!_engine.isPaused) {
           _engine.moveRight();
+          setState(() {});
+        } else {
           setState(() {});
         }
       },
       onRotateDown: () => _setControlHighlight(rotate: true),
       onRotateUp: () => _setControlHighlight(rotate: false),
       onRotate: () {
+        _resumeFromFirstInput();
         if (!_engine.isPaused) {
           _engine.rotate();
+          setState(() {});
+        } else {
           setState(() {});
         }
       },
       onSoftDropDown: () {
+        _resumeFromFirstInput();
         _setControlHighlight(down: true);
         _engine.setSoftDrop(true);
+        setState(() {});
       },
       onSoftDropUp: () {
         _setControlHighlight(down: false);
@@ -378,8 +456,19 @@ class _TetrisScreenState extends State<TetrisScreen> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       foregroundColor: Colors.white,
+      leading: widget.onClose == null
+          ? null
+          : IconButton(
+              icon: const BackIcon(),
+              onPressed: widget.onClose,
+            ),
+      automaticallyImplyLeading: widget.onClose == null,
       title: Text(l10n.tetrisWeeks(_engine.weeks)),
       actions: [
+        IconButton(
+          icon: const ShareIcon(),
+          onPressed: _shareTetrisLink,
+        ),
         IconButton(
           icon: const Icon(Icons.emoji_events),
           tooltip: l10n.tetrisPlayersTitle,
@@ -431,7 +520,14 @@ class _TetrisScreenState extends State<TetrisScreen> {
 
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => _focusNode.requestFocus(),
+                  onTap: () {
+                    final hadAwaiting = _awaitingFirstInput;
+                    _resumeFromFirstInput();
+                    if (hadAwaiting) {
+                      setState(() {});
+                    }
+                    _focusNode.requestFocus();
+                  },
                   child: isLandscape
                       ? Column(
                           children: [
@@ -452,34 +548,32 @@ class _TetrisScreenState extends State<TetrisScreen> {
                             controls,
                           ],
                         )
-                      : Stack(
-                          alignment: Alignment.topCenter,
+                      : Column(
                           children: [
-                            buildBoard(
-                              Size(
-                                constraints.maxWidth,
-                                constraints.maxHeight,
-                              ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      Colors.black.withValues(alpha: 0.55),
-                                    ],
+                            Expanded(
+                              child: Center(
+                                child: buildBoard(
+                                  Size(
+                                    constraints.maxWidth,
+                                    constraints.maxHeight,
                                   ),
                                 ),
-                                child: SafeArea(
-                                  top: false,
-                                  child: controls,
+                              ),
+                            ),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withValues(alpha: 0.55),
+                                  ],
                                 ),
+                              ),
+                              child: SafeArea(
+                                top: false,
+                                child: controls,
                               ),
                             ),
                           ],
@@ -624,9 +718,11 @@ class _TetrisControlButton extends StatelessWidget {
               ? Colors.white.withValues(alpha: 0.28)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: highlighted
-              ? Border.all(color: Colors.white.withValues(alpha: 0.45))
-              : null,
+          border: Border.all(
+            color: highlighted
+                ? Colors.white.withValues(alpha: 0.45)
+                : Colors.transparent,
+          ),
         ),
         padding: const EdgeInsets.all(12),
         child: Icon(icon, color: Colors.white, size: 32),

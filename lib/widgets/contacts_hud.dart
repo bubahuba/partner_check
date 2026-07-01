@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'icons/favorites_icon.dart';
+import 'icons/help_icon.dart';
+import 'icons/settings_icon.dart';
+import 'icons/tetris_icon.dart';
+
 /// HUD (Heads-Up Display) widget for contacts page
 class ContactsHud extends StatelessWidget {
   final bool favoritesMode;
@@ -31,40 +36,28 @@ class ContactsHud extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                ),
+                icon: const SettingsIcon(),
                 onPressed: onSettings,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.transparent,
                 ),
               ),
               IconButton(
-                icon: Icon(
-                  favoritesMode ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.white,
-                ),
+                icon: FavoritesIcon(filled: favoritesMode),
                 onPressed: onToggleFavorites,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.transparent,
                 ),
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.help_outline,
-                  color: Colors.white,
-                ),
+                icon: const HelpIcon(),
                 onPressed: onAbout,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.transparent,
                 ),
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.grid_view,
-                  color: Colors.white,
-                ),
+                icon: const TetrisIcon(),
                 onPressed: onTetris,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.transparent,

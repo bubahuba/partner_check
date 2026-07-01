@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../utils/directionality_utils.dart';
+import '../widgets/icons/back_hand_icon.dart';
+import '../widgets/icons/back_icon.dart';
+import '../widgets/icons/chart_icon.dart';
+import '../widgets/icons/favorites_icon.dart';
+import '../widgets/icons/tetris_icon.dart';
+import '../widgets/icons/touch_app_icon.dart';
+import '../widgets/icons/trash_icon.dart';
 import '../widgets/self_contact_animated_background.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -150,6 +157,17 @@ class AboutScreenState extends State<AboutScreen>
                                 final iconDescriptionFontSize = isPortrait
                                     ? (screenWidth * 0.035).clamp(12.0, 16.0)
                                     : (screenHeight * 0.03).clamp(12.0, 14.0);
+                                final descriptionStyle = TextStyle(
+                                  fontSize: iconDescriptionFontSize,
+                                  color: Colors.white,
+                                  height: 1.4,
+                                  shadows: const [
+                                    Shadow(
+                                      color: Colors.black26,
+                                      blurRadius: 8,
+                                    ),
+                                  ],
+                                );
 
                                 return Container(
                                   padding: EdgeInsets.all(spacing),
@@ -164,154 +182,42 @@ class AboutScreenState extends State<AboutScreen>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.favorite_border,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              l10n.heartIconDescription,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    iconDescriptionFontSize,
-                                                color: Colors.white,
-                                                height: 1.4,
-                                                shadows: const [
-                                                  Shadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 8,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      _AboutIconRow(
+                                        icon: const FavoritesIcon(
+                                          filled: false,
+                                        ),
+                                        text: l10n.heartIconDescription,
+                                        style: descriptionStyle,
                                       ),
                                       SizedBox(height: spacing),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.bar_chart,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              l10n.chartIconDescription,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    iconDescriptionFontSize,
-                                                color: Colors.white,
-                                                height: 1.4,
-                                                shadows: const [
-                                                  Shadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 8,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      _AboutIconRow(
+                                        icon: const ChartIcon(),
+                                        text: l10n.chartIconDescription,
+                                        style: descriptionStyle,
                                       ),
                                       SizedBox(height: spacing),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.delete_outline,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              l10n.trashIconDescription,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    iconDescriptionFontSize,
-                                                color: Colors.white,
-                                                height: 1.4,
-                                                shadows: const [
-                                                  Shadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 8,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      _AboutIconRow(
+                                        icon: const TrashIcon(),
+                                        text: l10n.trashIconDescription,
+                                        style: descriptionStyle,
                                       ),
                                       SizedBox(height: spacing),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.touch_app,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              l10n.doubleTapSelfDescription,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    iconDescriptionFontSize,
-                                                color: Colors.white,
-                                                height: 1.4,
-                                                shadows: const [
-                                                  Shadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 8,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      _AboutIconRow(
+                                        icon: const TetrisIcon(),
+                                        text: l10n.tetrisIconDescription,
+                                        style: descriptionStyle,
                                       ),
                                       SizedBox(height: spacing),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Icon(
-                                            Icons.back_hand_outlined,
-                                            color: Colors.white,
-                                            size: 24,
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              l10n.longPressSelfDescription,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    iconDescriptionFontSize,
-                                                color: Colors.white,
-                                                height: 1.4,
-                                                shadows: const [
-                                                  Shadow(
-                                                    color: Colors.black26,
-                                                    blurRadius: 8,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                      _AboutIconRow(
+                                        icon: const TouchAppIcon(),
+                                        text: l10n.doubleTapSelfDescription,
+                                        style: descriptionStyle,
+                                      ),
+                                      SizedBox(height: spacing),
+                                      _AboutIconRow(
+                                        icon: const BackHandIcon(),
+                                        text: l10n.longPressSelfDescription,
+                                        style: descriptionStyle,
                                       ),
                                     ],
                                   ),
@@ -335,10 +241,7 @@ class AboutScreenState extends State<AboutScreen>
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      ),
+                      icon: const BackIcon(),
                       onPressed: _handleClose,
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.transparent,
@@ -351,6 +254,32 @@ class AboutScreenState extends State<AboutScreen>
           ),
         ),
       ),
+    );
+  }
+}
+
+class _AboutIconRow extends StatelessWidget {
+  final Widget icon;
+  final String text;
+  final TextStyle style;
+
+  const _AboutIconRow({
+    required this.icon,
+    required this.text,
+    required this.style,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        icon,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(text, style: style),
+        ),
+      ],
     );
   }
 }
