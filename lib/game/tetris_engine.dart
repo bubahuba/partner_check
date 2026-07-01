@@ -10,7 +10,7 @@ class TetrisEngine {
   static const int dropSpeedMs = 50;
 
   final List<Color> pieceColors;
-  final void Function(Color landedColor)? onPieceLanded;
+  final void Function(Color pieceColor)? onPieceSpawned;
   final Random _random = Random();
 
   late List<List<TetrisCell>> _map;
@@ -29,7 +29,7 @@ class TetrisEngine {
 
   TetrisEngine({
     required this.pieceColors,
-    this.onPieceLanded,
+    this.onPieceSpawned,
   }) {
     resetGame();
   }
@@ -97,6 +97,7 @@ class TetrisEngine {
 
     if (_newOb) {
       _currentPiece = _randomPiece();
+      onPieceSpawned?.call(_currentPiece!.fill);
     }
 
     _syncActivePieceOnMap();
@@ -124,10 +125,6 @@ class TetrisEngine {
             _settleActivePiece();
             _gameOver = true;
             return finalWeeks;
-          }
-          final landed = _currentPiece?.fill;
-          if (landed != null) {
-            onPieceLanded?.call(landed);
           }
           _speedMs = originalSpeedMs;
           _newOb = false;
@@ -168,6 +165,19 @@ class TetrisEngine {
       }
     }
     return false;
+  }
+
+  /// Instantly drops the active piece to the lowest valid row.
+  bool hardDrop() {
+    if (_currentPiece == null) return false;
+    while (_fitsPiece(_orientation, hPos: _hPos, vPos: _vPos + 1)) {
+      _vPos += 1;
+    }
+    _glue = true;
+    _speedMs = originalSpeedMs;
+    _syncActivePieceOnMap();
+    _lastTick = DateTime.now();
+    return true;
   }
 
   /// Whether [orientation] fits at [hPos]/[vPos] inside the playfield.

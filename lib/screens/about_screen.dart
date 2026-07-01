@@ -6,8 +6,16 @@ import '../widgets/self_contact_animated_background.dart';
 class AboutScreen extends StatefulWidget {
   final VoidCallback? onClose;
   final int? selfContactColor;
+  final Color? gradientInner;
+  final Color? gradientOuter;
 
-  const AboutScreen({super.key, this.onClose, this.selfContactColor});
+  const AboutScreen({
+    super.key,
+    this.onClose,
+    this.selfContactColor,
+    this.gradientInner,
+    this.gradientOuter,
+  });
 
   @override
   AboutScreenState createState() => AboutScreenState();
@@ -58,6 +66,8 @@ class AboutScreenState extends State<AboutScreen>
       child: Scaffold(
         body: SelfContactAnimatedBackground(
           selfContactColor: widget.selfContactColor,
+          gradientInner: widget.gradientInner,
+          gradientOuter: widget.gradientOuter,
           child: Stack(
             children: [
               SafeArea(
@@ -317,16 +327,23 @@ class AboutScreenState extends State<AboutScreen>
                 ),
               ),
               Positioned(
-                top: 10,
+                top: 0,
                 left: 0,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  onPressed: _handleClose,
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.transparent,
+                child: SafeArea(
+                  bottom: false,
+                  right: false,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                      ),
+                      onPressed: _handleClose,
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
                   ),
                 ),
               ),

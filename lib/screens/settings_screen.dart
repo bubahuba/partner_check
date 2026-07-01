@@ -26,12 +26,16 @@ class SettingsScreen extends StatefulWidget {
   /// visible, so the contacts page can refresh before the panel slides away.
   final Future<void> Function()? onPrepareClose;
   final int? selfContactColor;
+  final Color? gradientInner;
+  final Color? gradientOuter;
 
   const SettingsScreen({
     super.key,
     this.onClose,
     this.onPrepareClose,
     this.selfContactColor,
+    this.gradientInner,
+    this.gradientOuter,
   });
 
   @override
@@ -105,10 +109,14 @@ class SettingsScreenState extends State<SettingsScreen>
     super.dispose();
   }
 
-  Color get _accentColor => widget.selfContactColor != null
-      ? SelfContactGradientPalette.fromColorValue(widget.selfContactColor!)
-          .inner
-      : SelfContactGradientPalette.defaultInner;
+  Color get _accentColor {
+    if (widget.gradientInner != null) return widget.gradientInner!;
+    if (widget.selfContactColor != null) {
+      return SelfContactGradientPalette.fromColorValue(widget.selfContactColor!)
+          .inner;
+    }
+    return SelfContactGradientPalette.defaultInner;
+  }
 
   void _openContactsPage() {
     Navigator.of(context).pushReplacement(
@@ -800,26 +808,12 @@ class SettingsScreenState extends State<SettingsScreen>
         backgroundColor: Colors.black,
         body: SelfContactAnimatedBackground(
           selfContactColor: widget.selfContactColor,
-          child: SafeArea(
-            child: Stack(
-              children: [
-                // Back arrow button at the same position as HUD settings button
-                Positioned(
-                  top: 10,
-                  left: 0,
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                    ),
-                    onPressed: _handleClose,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                    ),
-                  ),
-                ),
-                // Content
-                LayoutBuilder(
+          gradientInner: widget.gradientInner,
+          gradientOuter: widget.gradientOuter,
+          child: Stack(
+            children: [
+              SafeArea(
+                child: LayoutBuilder(
                   builder: (context, constraints) {
                     final isPortrait =
                         constraints.maxHeight > constraints.maxWidth;
@@ -1056,9 +1050,30 @@ class SettingsScreenState extends State<SettingsScreen>
                     }
                   },
                 ),
-                if (_isLoading) _buildLoadContactsOverlay(),
-              ],
-            ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: SafeArea(
+                  bottom: false,
+                  right: false,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                      ),
+                      onPressed: _handleClose,
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              if (_isLoading) _buildLoadContactsOverlay(),
+            ],
           ),
         ),
       ),

@@ -7,6 +7,7 @@ import 'dart:async';
 import '../l10n/app_localizations.dart';
 import '../models.dart';
 import '../utils/match_calculator.dart';
+import '../utils/color_utils.dart';
 import '../utils/phone_utils.dart';
 import '../utils/platform_info.dart';
 import '../utils/self_contact_finder.dart';
@@ -2346,6 +2347,27 @@ class ContactsPageState extends State<ContactsPage>
     );
   }
 
+  /// Base colors from the contact cards currently shown in each pane.
+  (Color, Color)? _currentDisplayGradientPair() {
+    final displayedContacts = _displayedContacts;
+    if (_isOnPlusButton(_scrollController1, displayedContacts) ||
+        _isOnPlusButton(_scrollController2, displayedContacts)) {
+      return null;
+    }
+    if (displayedContacts.isEmpty ||
+        _currentPage1 >= displayedContacts.length ||
+        _currentPage2 >= displayedContacts.length) {
+      return null;
+    }
+
+    final contact1 = displayedContacts[_currentPage1];
+    final contact2 = displayedContacts[_currentPage2];
+    return (
+      ColorUtils.colorFromValue(contact1.color),
+      ColorUtils.colorFromValue(contact2.color),
+    );
+  }
+
   void _openTetris() {
     _updateCurrentPagesFromScrollControllers();
     _suppressNextHudToggle = true;
@@ -2662,120 +2684,134 @@ class ContactsPageState extends State<ContactsPage>
             });
           }
 
-          return SafeArea(
-            child: Stack(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _wrapPaneWithSelfContactHold(
-                        _scrollController1,
-                        _buildListView(
-                            _scrollController1,
-                            constraints.maxHeight,
-                            halfWidth,
-                            _currentPage1,
-                            false,
-                            _heartAnimationController,
-                            _flashAnimationController1,
-                            _baseMatch1,
-                            _overlayMatch1),
-                      ),
+          return Stack(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: _wrapPaneWithSelfContactHold(
+                      _scrollController1,
+                      _buildListView(
+                          _scrollController1,
+                          constraints.maxHeight,
+                          halfWidth,
+                          _currentPage1,
+                          false,
+                          _heartAnimationController,
+                          _flashAnimationController1,
+                          _baseMatch1,
+                          _overlayMatch1),
                     ),
-                    Expanded(
-                      child: _wrapPaneWithSelfContactHold(
-                        _scrollController2,
-                        _buildListView(
-                            _scrollController2,
-                            constraints.maxHeight,
-                            halfWidth,
-                            _currentPage2,
-                            false,
-                            _heartAnimationController,
-                            _flashAnimationController2,
-                            _baseMatch2,
-                            _overlayMatch2),
-                      ),
-                    ),
-                  ],
-                ),
-                if (_shouldShowHud)
-                  ContactsHud(
-                    favoritesMode: _favoritesMode,
-                    onSettings: () {
-                      _updateCurrentPagesFromScrollControllers();
-                      _saveScrollPositions();
-                      _saveCurrentScrollPositions();
-                      setState(() {
-                        _showSettings = true;
-                      });
-                    },
-                    onToggleFavorites: _toggleFavoritesMode,
-                    onAbout: () {
-                      _updateCurrentPagesFromScrollControllers();
-                      _saveScrollPositions();
-                      _saveCurrentScrollPositions();
-                      setState(() {
-                        _showAbout = true;
-                      });
-                    },
-                    onTetris: _openTetris,
                   ),
-                if (_showSettings)
-                  Positioned.fill(
-                    child: SettingsScreen(
-                      selfContactColor: _selfContact?.color,
-                      onPrepareClose: _prepareForBulkLoadClose,
-                      onClose: () async {
-                        setState(() {
-                          _showSettings = false;
-                        });
-                        _loadVibrationsSetting();
+                  Expanded(
+                    child: _wrapPaneWithSelfContactHold(
+                      _scrollController2,
+                      _buildListView(
+                          _scrollController2,
+                          constraints.maxHeight,
+                          halfWidth,
+                          _currentPage2,
+                          false,
+                          _heartAnimationController,
+                          _flashAnimationController2,
+                          _baseMatch2,
+                          _overlayMatch2),
+                    ),
+                  ),
+                ],
+              ),
+              if (_shouldShowHud)
+                ContactsHud(
+                  favoritesMode: _favoritesMode,
+                  onSettings: () {
+                    _updateCurrentPagesFromScrollControllers();
+                    _saveScrollPositions();
+                    _saveCurrentScrollPositions();
+                    setState(() {
+                      _showSettings = true;
+                    });
+                  },
+                  onToggleFavorites: _toggleFavoritesMode,
+                  onAbout: () {
+                    _updateCurrentPagesFromScrollControllers();
+                    _saveScrollPositions();
+                    _saveCurrentScrollPositions();
+                    setState(() {
+                      _showAbout = true;
+                    });
+                  },
+                  onTetris: _openTetris,
+                ),
+              if (_showSettings)
+                Positioned.fill(
+                  child: Builder(
+                    builder: (context) {
+                      final gradientPair = _currentDisplayGradientPair();
+                      return SettingsScreen(
+                        selfContactColor:
+                            gradientPair == null ? _selfContact?.color : null,
+                        gradientInner: gradientPair?.$1,
+                        gradientOuter: gradientPair?.$2,
+                        onPrepareClose: _prepareForBulkLoadClose,
+                        onClose: () async {
+                          setState(() {
+                            _showSettings = false;
+                          });
+                          _loadVibrationsSetting();
 
-                        final addedContactName = await _storageService
-                            .loadAndClearSettingsAddedContact();
-                        final bulkLoaded = await _storageService
-                            .loadAndClearContactsBulkLoaded();
-                        if (bulkLoaded) {
-                          await _prepareForBulkLoadClose();
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            if (addedContactName != null) {
+                          final addedContactName = await _storageService
+                              .loadAndClearSettingsAddedContact();
+                          final bulkLoaded = await _storageService
+                              .loadAndClearContactsBulkLoaded();
+                          if (bulkLoaded) {
+                            await _prepareForBulkLoadClose();
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (addedContactName != null) {
+                                _finalizeAfterSettingsContactAdded(
+                                    addedContactName);
+                              } else {
+                                _finalizeAfterBulkLoad();
+                              }
+                            });
+                            return;
+                          }
+
+                          if (addedContactName != null) {
+                            await _loadContactsWithoutRestoringScroll();
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
                               _finalizeAfterSettingsContactAdded(
                                   addedContactName);
-                            } else {
-                              _finalizeAfterBulkLoad();
-                            }
-                          });
-                          return;
-                        }
+                            });
+                            return;
+                          }
 
-                        if (addedContactName != null) {
-                          await _loadContactsWithoutRestoringScroll();
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            _finalizeAfterSettingsContactAdded(
-                                addedContactName);
+                          _resumeContactsViewAfterOverlay();
+                        },
+                      );
+                    },
+                  ),
+                ),
+              if (_showAbout)
+                Positioned.fill(
+                  child: Builder(
+                    builder: (context) {
+                      final gradientPair = _currentDisplayGradientPair();
+                      return AboutScreen(
+                        selfContactColor:
+                            gradientPair == null ? _selfContact?.color : null,
+                        gradientInner: gradientPair?.$1,
+                        gradientOuter: gradientPair?.$2,
+                        onClose: () {
+                          setState(() {
+                            _showAbout = false;
                           });
-                          return;
-                        }
-
-                        _resumeContactsViewAfterOverlay();
-                      },
-                    ),
+                          _resumeContactsViewAfterOverlay();
+                        },
+                      );
+                    },
                   ),
-                if (_showAbout)
-                  Positioned.fill(
-                    child: AboutScreen(
-                      selfContactColor: _selfContact?.color,
-                      onClose: () {
-                        setState(() {
-                          _showAbout = false;
-                        });
-                        _resumeContactsViewAfterOverlay();
-                      },
-                    ),
-                  ),
-              ],
-            ),
+                ),
+            ],
           );
         }));
   }

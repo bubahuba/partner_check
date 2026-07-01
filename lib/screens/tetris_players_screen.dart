@@ -61,68 +61,66 @@ class _TetrisPlayersScreenState extends State<TetrisPlayersScreen> {
             widget.backgroundColor1 ?? SelfContactGradientPalette.defaultInner,
         color2:
             widget.backgroundColor2 ?? SelfContactGradientPalette.defaultOuter,
-        child: SafeArea(
-          child: Center(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final maxWidth = tetrisPlayfieldMaxWidth(
-                  context,
-                  availableHeight: constraints.maxHeight,
-                );
-                return SizedBox(
-                  width: maxWidth,
-                  child: _loading
-                      ? const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        )
-                      : _records.isEmpty
-                          ? Center(
-                              child: Text(
-                                l10n.tetrisNoRecords,
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            )
-                          : ListView.separated(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 16,
-                              ),
-                              itemCount: _records.length,
-                              separatorBuilder: (_, __) => Divider(
-                                height: 24,
-                                color: Colors.white.withValues(alpha: 0.3),
-                              ),
-                              itemBuilder: (context, index) {
-                                final record = _records[index];
-                                return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: TetrisPairRowMiniatures(
-                                        contact1Name: record.contact1Name,
-                                        contact1Color: record.contact1Color,
-                                        contact2Name: record.contact2Name,
-                                        contact2Color: record.contact2Color,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      l10n.tetrisWeeks(record.bestWeeks),
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                    ),
-                                  ],
-                                );
-                              },
+        child: Center(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final maxWidth = tetrisPlayfieldMaxWidth(
+                context,
+                availableHeight: constraints.maxHeight,
+              );
+              return SizedBox(
+                width: maxWidth,
+                child: _loading
+                    ? const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      )
+                    : _records.isEmpty
+                        ? Center(
+                            child: Text(
+                              l10n.tetrisNoRecords,
+                              style: const TextStyle(color: Colors.white),
                             ),
-                );
-              },
-            ),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 16,
+                            ),
+                            itemCount: _records.length,
+                            separatorBuilder: (_, __) => Divider(
+                              height: 24,
+                              color: Colors.white.withValues(alpha: 0.3),
+                            ),
+                            itemBuilder: (context, index) {
+                              final record = _records[index];
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: TetrisPairRowMiniatures(
+                                      contact1Name: record.contact1Name,
+                                      contact1Color: record.contact1Color,
+                                      contact2Name: record.contact2Name,
+                                      contact2Color: record.contact2Color,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    l10n.tetrisWeeks(record.bestWeeks),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+              );
+            },
           ),
         ),
       ),

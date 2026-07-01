@@ -3,15 +3,19 @@ import 'package:flutter/material.dart';
 import '../services/contact_storage_service.dart';
 import '../utils/self_contact_gradient.dart';
 
-/// Animated background gradient using the saved "me" contact colors (overlay-dominant).
+/// Animated background gradient using contact colors (overlay-dominant).
 class SelfContactAnimatedBackground extends StatefulWidget {
   final Widget child;
   final int? selfContactColor;
+  final Color? gradientInner;
+  final Color? gradientOuter;
 
   const SelfContactAnimatedBackground({
     super.key,
     required this.child,
     this.selfContactColor,
+    this.gradientInner,
+    this.gradientOuter,
   });
 
   @override
@@ -26,24 +30,31 @@ class _SelfContactAnimatedBackgroundState
   SelfContactGradientPalette _palette = SelfContactGradientPalette.defaults;
 
   @override
+  void didUpdateWidget(SelfContactAnimatedBackground oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selfContactColor != widget.selfContactColor ||
+        oldWidget.gradientInner != widget.gradientInner ||
+        oldWidget.gradientOuter != widget.gradientOuter) {
+      _resolvePalette();
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     _gradientController = AnimationController(
       duration: const Duration(seconds: 8),
       vsync: this,
     )..repeat();
-    _loadPalette();
+    _resolvePalette();
   }
 
-  @override
-  void didUpdateWidget(SelfContactAnimatedBackground oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.selfContactColor != widget.selfContactColor) {
-      _applyPalette(widget.selfContactColor);
+  Future<void> _resolvePalette() async {
+    if (widget.gradientInner != null && widget.gradientOuter != null) {
+      _applyExplicitPalette(widget.gradientInner!, widget.gradientOuter!);
+      return;
     }
-  }
 
-  Future<void> _loadPalette() async {
     if (widget.selfContactColor != null) {
       _applyPalette(widget.selfContactColor);
       return;
@@ -52,6 +63,17 @@ class _SelfContactAnimatedBackgroundState
     final self = await ContactStorageService().loadSelfContact();
     if (!mounted) return;
     _applyPalette(self?.color);
+  }
+
+  void _applyExplicitPalette(Color inner, Color outer) {
+    setState(() {
+      _palette = SelfContactGradientPalette(
+        inner: inner,
+        outer: outer,
+        accent: Color.lerp(inner, outer, 0.5) ??
+            SelfContactGradientPalette.defaultAccent,
+      );
+    });
   }
 
   void _applyPalette(int? colorValue) {

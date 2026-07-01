@@ -20,52 +20,59 @@ class ContactsHud extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: 10,
+      top: 0,
       left: 0,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
-            onPressed: onSettings,
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.transparent,
-            ),
+      child: SafeArea(
+        bottom: false,
+        right: false,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.settings,
+                  color: Colors.white,
+                ),
+                onPressed: onSettings,
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  favoritesMode ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.white,
+                ),
+                onPressed: onToggleFavorites,
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.help_outline,
+                  color: Colors.white,
+                ),
+                onPressed: onAbout,
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.grid_view,
+                  color: Colors.white,
+                ),
+                onPressed: onTetris,
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            ],
           ),
-          IconButton(
-            icon: Icon(
-              favoritesMode ? Icons.favorite : Icons.favorite_border,
-              color: Colors.white,
-            ),
-            onPressed: onToggleFavorites,
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.transparent,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.help_outline,
-              color: Colors.white,
-            ),
-            onPressed: onAbout,
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.transparent,
-            ),
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.grid_view,
-              color: Colors.white,
-            ),
-            onPressed: onTetris,
-            style: IconButton.styleFrom(
-              backgroundColor: Colors.transparent,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

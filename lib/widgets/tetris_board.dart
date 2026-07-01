@@ -1,20 +1,28 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import '../game/tetris_engine.dart';
+
+/// Largest playfield that fits inside [maxWidth] x [maxHeight].
+Size tetrisPlayfieldSize(double maxWidth, double maxHeight) {
+  const aspect = TetrisEngine.hCount / TetrisEngine.vCount;
+  final heightFromWidth = maxWidth / aspect;
+  if (heightFromWidth <= maxHeight) {
+    return Size(maxWidth, heightFromWidth);
+  }
+  return Size(maxHeight * aspect, maxHeight);
+}
 
 /// Shared playfield width so Tetris screens align with the board aspect ratio.
 double tetrisPlayfieldMaxWidth(
   BuildContext context, {
   double horizontalPadding = 16,
   double? availableHeight,
+  double? availableWidth,
 }) {
   final size = MediaQuery.sizeOf(context);
   final height = availableHeight ?? size.height;
-  final byHeight = height * TetrisEngine.hCount / TetrisEngine.vCount;
-  final byWidth = size.width - horizontalPadding * 2;
-  return min(byHeight, byWidth);
+  final width = availableWidth ?? size.width - horizontalPadding * 2;
+  return tetrisPlayfieldSize(width, height).width;
 }
 
 /// Renders the Tetris playfield using [CustomPainter].
