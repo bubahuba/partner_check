@@ -51,6 +51,7 @@ class ContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       onVerticalDragUpdate: (details) {
         onVerticalDragUpdate(details.delta.dy);

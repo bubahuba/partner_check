@@ -6,13 +6,13 @@
       "scale" : "1x"
     },
     {
+      "filename" : "LaunchImage.png",
       "appearances" : [
         {
           "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "appicon-romanticdark.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -22,13 +22,13 @@
       "scale" : "2x"
     },
     {
+      "filename" : "LaunchImage@2x.png",
       "appearances" : [
         {
           "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "appicon-romanticdark 1.jpg",
       "idiom" : "universal",
       "scale" : "2x"
     },
@@ -38,13 +38,13 @@
       "scale" : "3x"
     },
     {
+      "filename" : "LaunchImage@3x.png",
       "appearances" : [
         {
           "appearance" : "luminosity",
           "value" : "dark"
         }
       ],
-      "filename" : "appicon-romanticdark 2.jpg",
       "idiom" : "universal",
       "scale" : "3x"
     }

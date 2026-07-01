@@ -2601,7 +2601,7 @@ class ContactsPageState extends State<ContactsPage>
           flashAnimationController: flashAnimationController,
           showSelfContactFlash: showSelfContactFlash,
           selfContactFlashController: _selfContactHighlightController,
-          onTap: () {},
+          onTap: _toggleHudVisibility,
           onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
           onEdit: _isHudVisible ? () => _editContact(contact) : null,
           onToggleFavorite: () => _toggleFavorite(contact.name),
