@@ -98,12 +98,12 @@ def main():
         (192, 'mipmap-xxxhdpi'),
     ]
     
-    print("\nGenerating Android icons...")
+    print("\nGenerating Android foreground icons...")
     for size, folder in android_sizes:
         android_dir = f'android/app/src/main/res/{folder}'
         os.makedirs(android_dir, exist_ok=True)
-        resize_and_save(source_image, size, os.path.join(android_dir, 'ic_launcher.png'))
         resize_and_save_foreground(source_image, size, os.path.join(android_dir, 'ic_launcher_foreground.webp'))
+    print("Run generate_android_icons.py for ic_launcher.webp / ic_launcher_round.webp")
     
     # Web icons
     web_sizes = [

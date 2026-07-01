@@ -24,7 +24,9 @@ sips -z 180 180 appIcon.png --out web/icons/apple-touch-icon.png && \
 sips -z 192 192 appIcon.png --out web/icons/Icon-192.png && \
 sips -z 512 512 appIcon.png --out web/icons/Icon-512.png && \
 cp web/icons/Icon-192.png web/icons/Icon-maskable-192.png && \
-cp web/icons/Icon-512.png web/icons/Icon-maskable-512.png
+cp web/icons/Icon-512.png web/icons/Icon-maskable-512.png && \
+cp appIcon.png web/appicon.png && \
+sips -z 512 512 appIcon.png --out web/background.jpg -s format jpeg -s formatOptions 85
 ```
 
 ## Outputs
@@ -37,10 +39,12 @@ cp web/icons/Icon-512.png web/icons/Icon-maskable-512.png
 | `web/icons/Icon-512.png` | 512×512 |
 | `web/icons/Icon-maskable-192.png` | copy of 192 |
 | `web/icons/Icon-maskable-512.png` | copy of 512 |
+| `web/appicon.png` | copy of source |
+| `web/background.jpg` | 512×512 JPEG — splash background in `web/index.html` |
 
 ## After regenerating
 
-Run `flutter build web` so `build/web/` picks up the new assets. `web/manifest.json` and `web/index.html` already reference these paths.
+Run `flutter build web` so `build/web/` picks up the new assets. `web/index.html` uses `background.jpg` as the body background until Flutter loads; `web/manifest.json` references the PWA icon paths.
 
 ## Requirements
 
