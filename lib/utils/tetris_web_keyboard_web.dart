@@ -12,7 +12,6 @@ void installTetrisWebKeyboardFix({void Function(String key)? onGameKey}) {
   _onGameKey = onGameKey;
 
   _keydownListener = ((Event event) {
-    // Only 'keydown' is registered; the target always delivers KeyboardEvent.
     final keyboardEvent = event as KeyboardEvent;
     if (keyboardEvent.repeat) return;
 
