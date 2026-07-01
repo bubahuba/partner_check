@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_shader_fx/flutter_shader_fx.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../utils/plasma_motion.dart';
 import 'session_plasma_painter.dart';
@@ -25,8 +25,9 @@ class SessionPlasmaBackground extends StatefulWidget {
       _SessionPlasmaBackgroundState();
 }
 
-class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground> {
-  EffectController? _effectController;
+class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground>
+    with SingleTickerProviderStateMixin {
+  late Ticker _ticker;
   Object? _painterRef;
 
   SessionPlasmaPainter get _activePainter {
@@ -40,7 +41,7 @@ class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground> {
   @override
   void initState() {
     super.initState();
-    _initEffectController();
+    _ticker = createTicker((_) => _markDirty())..start();
     _createPainter();
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadShader());
   }
@@ -48,7 +49,6 @@ class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground> {
   @override
   void reassemble() {
     super.reassemble();
-    _initEffectController();
     _createPainter();
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadShader());
   }
@@ -62,15 +62,6 @@ class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground> {
       _createPainter();
       _loadShader();
     }
-  }
-
-  void _initEffectController() {
-    _effectController?.removeListener(_markDirty);
-    _effectController?.stopPeriodicUpdates();
-    _effectController?.dispose();
-    _effectController = EffectController(autoDispose: false);
-    _effectController!.addListener(_markDirty);
-    _effectController!.startPeriodicUpdates(frequency: 16, callback: (_) {});
   }
 
   void _createPainter() {
@@ -96,10 +87,7 @@ class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground> {
 
   @override
   void dispose() {
-    _effectController?.removeListener(_markDirty);
-    _effectController?.stopPeriodicUpdates();
-    _effectController?.dispose();
-    _effectController = null;
+    _ticker.dispose();
     if (_painterRef is SessionPlasmaPainter) {
       (_painterRef as SessionPlasmaPainter).disposeShader();
     }
@@ -112,10 +100,7 @@ class _SessionPlasmaBackgroundState extends State<SessionPlasmaBackground> {
     final painter = _activePainter;
 
     return ListenableBuilder(
-      listenable: Listenable.merge([
-        _effectController!,
-        widget.motionController.listenable,
-      ]),
+      listenable: widget.motionController.listenable,
       builder: (context, _) {
         return SessionShaderTouchSurface(
           size: widget.size,

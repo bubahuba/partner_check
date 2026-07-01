@@ -163,14 +163,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_shader_fx:
-    dependency: "direct main"
-    description:
-      name: flutter_shader_fx
-      sha256: "1a365acdee126899be46186ce1f6bf3726f30803f69016e9bc98e2fc0615707f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2"
   flutter_test:
     dependency: "direct dev"
     description: flutter
