@@ -20,7 +20,7 @@ WebDeepLink? parseWebDeepLink(Uri uri) {
   final feature = switch (featureName) {
     'tetris' => WebDeepLinkFeature.tetris,
     'plasma' || 'mandala' => WebDeepLinkFeature.plasma,
-    'lava' || 'glitch' => WebDeepLinkFeature.lava,
+    'lava' => WebDeepLinkFeature.lava,
     _ => null,
   };
   if (feature == null) {
