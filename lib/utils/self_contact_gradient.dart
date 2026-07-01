@@ -17,9 +17,14 @@ class SelfContactGradientPalette {
     required this.accent,
   });
 
-  static const Color defaultInner = Color(0xFF6366F1);
-  static const Color defaultOuter = Color(0xFFEC4899);
-  static const Color defaultAccent = Color(0xFF3B82F6);
+  /// Left pane in [appIcon.png]: phone base `#456789`, overlay strip `#987654`.
+  static const Color defaultInner = Color(0xFF456789);
+  static const Color defaultOuter = Color(0xFF987654);
+  /// Blend of [defaultInner] and [defaultOuter] (same rule as [fromColorValue]).
+  static const Color defaultAccent = Color(0xFF6F6E6E);
+
+  /// Right pane base in [appIcon.png] (`#123456`) for dual-color fallbacks.
+  static const Color defaultPane2Base = Color(0xFF123456);
 
   static const SelfContactGradientPalette defaults = SelfContactGradientPalette(
     inner: defaultInner,

@@ -53,11 +53,10 @@ void showAddContactMenu(
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
-    builder: (context) => Container(
-      decoration: const BoxDecoration(
-        color: Colors.black87,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+    builder: (context) => Material(
+      color: Colors.black87,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      clipBehavior: Clip.antiAlias,
       child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,

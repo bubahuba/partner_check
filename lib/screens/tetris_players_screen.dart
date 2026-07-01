@@ -60,7 +60,7 @@ class _TetrisPlayersScreenState extends State<TetrisPlayersScreen> {
         color1:
             widget.backgroundColor1 ?? SelfContactGradientPalette.defaultInner,
         color2:
-            widget.backgroundColor2 ?? SelfContactGradientPalette.defaultOuter,
+            widget.backgroundColor2 ?? SelfContactGradientPalette.defaultPane2Base,
         child: Padding(
           padding: EdgeInsets.only(
             top: MediaQuery.paddingOf(context).top + kToolbarHeight,
