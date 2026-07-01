@@ -1,6 +1,8 @@
-import 'dart:html' as html;
+import 'dart:js_interop';
 
-html.EventListener? _keydownListener;
+import 'package:web/web.dart';
+
+JSFunction? _keydownListener;
 void Function(String key)? _onGameKey;
 
 /// Stops the browser from consuming arrow keys before Flutter receives them.
@@ -9,31 +11,32 @@ void installTetrisWebKeyboardFix({void Function(String key)? onGameKey}) {
   uninstallTetrisWebKeyboardFix();
   _onGameKey = onGameKey;
 
-  _keydownListener = (html.Event event) {
-    if (event is! html.KeyboardEvent) return;
-    if (event.repeat ?? false) return;
+  _keydownListener = ((Event event) {
+    // Only 'keydown' is registered; the target always delivers KeyboardEvent.
+    final keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.repeat) return;
 
-    final key = event.key;
-    if (key == null) return;
+    final key = keyboardEvent.key;
+    if (key.isEmpty) return;
 
     switch (key) {
       case 'ArrowUp':
       case 'ArrowDown':
       case 'ArrowLeft':
       case 'ArrowRight':
-        event.preventDefault();
+        keyboardEvent.preventDefault();
         if (key == 'ArrowUp') {
           _onGameKey?.call(key);
         }
     }
-  };
+  }).toJS;
 
-  html.window.addEventListener('keydown', _keydownListener!, true);
+  window.addEventListener('keydown', _keydownListener, true.toJS);
 }
 
 void uninstallTetrisWebKeyboardFix() {
   if (_keydownListener == null) return;
-  html.window.removeEventListener('keydown', _keydownListener!, true);
+  window.removeEventListener('keydown', _keydownListener, true.toJS);
   _keydownListener = null;
   _onGameKey = null;
 }
