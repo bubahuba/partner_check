@@ -246,6 +246,10 @@
   "@tetrisIconDescription": {
     "description": "Description for the Tetris icon on the about screen"
   },
+  "plasmaIconDescription": "Watch plasma in your colors",
+  "@plasmaIconDescription": {
+    "description": "Description for the plasma icon on the about screen"
+  },
   "tetrisLinkCopied": "Link copied",
   "@tetrisLinkCopied": {
     "description": "Snackbar after copying a shared Tetris link"
@@ -375,6 +379,42 @@
   "tetrisNewRecordCelebration": "New high score! {weeks} weeks!",
   "@tetrisNewRecordCelebration": {
     "description": "Celebratory headline on the Tetris game-over overlay when the player sets a new record"
+  },
+  "plasmaNeedTwoContacts": "Select two contacts to open plasma",
+  "@plasmaNeedTwoContacts": {
+    "description": "Snackbar when the plasma screen is opened without two valid contacts selected"
+  },
+  "plasmaTitle": "{name1} · {name2}",
+  "@plasmaTitle": {
+    "description": "Title for the plasma screen showing the two contact names",
+    "placeholders": {
+      "name1": {
+        "type": "String"
+      },
+      "name2": {
+        "type": "String"
+      }
+    }
+  },
+  "lavaIconDescription": "Watch lava in your colors",
+  "@lavaIconDescription": {
+    "description": "Description for the lava icon on the about screen"
+  },
+  "lavaNeedTwoContacts": "Select two contacts to open lava",
+  "@lavaNeedTwoContacts": {
+    "description": "Snackbar when the lava screen is opened without two valid contacts selected"
+  },
+  "lavaTitle": "{name1} · {name2}",
+  "@lavaTitle": {
+    "description": "Title for the lava screen showing the two contact names",
+    "placeholders": {
+      "name1": {
+        "type": "String"
+      },
+      "name2": {
+        "type": "String"
+      }
+    }
   }
 }
 

@@ -15,6 +15,14 @@ List<Color> tetrisPieceColorsFromSession(TetrisSession session) {
   ];
 }
 
+/// Base contact colors only — for UI that needs raw hex without reversed overlay.
+(Color, Color) sessionBaseColorsFromSession(TetrisSession session) {
+  return (
+    ColorUtils.colorFromValue(session.contact1Color),
+    ColorUtils.colorFromValue(session.contact2Color),
+  );
+}
+
 /// Picks two distinct random colors from [pool] for the animated background.
 (Color, Color) pickRandomTetrisBackgroundPair(
   List<Color> pool, {

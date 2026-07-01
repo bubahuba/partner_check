@@ -30,6 +30,38 @@ void main() {
     );
   });
 
+  test('buildPlasmaShareUrl includes feature lang and colors', () {
+    final url = buildPlasmaShareUrl(
+      languageCode: 'sk',
+      color1: 0x123456,
+      color2: 0xABCDEF,
+    );
+
+    final uri = Uri.parse(url);
+    expect(uri.queryParameters['feature'], 'plasma');
+    expect(uri.queryParameters['lang'], 'sk');
+    expect(
+      decodeTetrisColors(uri.queryParameters['colors']!),
+      (0x123456, 0xABCDEF),
+    );
+  });
+
+  test('buildLavaShareUrl includes feature lang and colors', () {
+    final url = buildLavaShareUrl(
+      languageCode: 'en',
+      color1: 0x123456,
+      color2: 0xABCDEF,
+    );
+
+    final uri = Uri.parse(url);
+    expect(uri.queryParameters['feature'], 'lava');
+    expect(uri.queryParameters['lang'], 'en');
+    expect(
+      decodeTetrisColors(uri.queryParameters['colors']!),
+      (0x123456, 0xABCDEF),
+    );
+  });
+
   test('decodeTetrisColors rejects invalid input', () {
     expect(decodeTetrisColors(''), isNull);
     expect(decodeTetrisColors('not-valid'), isNull);

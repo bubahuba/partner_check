@@ -81,5 +81,11 @@
   "tetrisPause": "Pauza",
   "tetrisResume": "Pokračovať",
   "tetrisStartNewGame": "Nová hra",
-  "tetrisNewRecordCelebration": "Nový rekord! {weeks} týždňov!"
+  "tetrisNewRecordCelebration": "Nový rekord! {weeks} týždňov!",
+  "plasmaIconDescription": "Sledujte plazmu vo svojich farbách",
+  "plasmaNeedTwoContacts": "Vyberte dva kontakty pre plazmu",
+  "plasmaTitle": "{name1} · {name2}",
+  "lavaIconDescription": "Sledujte láva efekt vo svojich farbách",
+  "lavaNeedTwoContacts": "Vyberte dva kontakty pre lávu",
+  "lavaTitle": "{name1} · {name2}"
 }

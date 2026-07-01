@@ -25,6 +25,8 @@ import '../services/pro_subscription_service.dart';
 import 'package:provider/provider.dart';
 import 'about_screen.dart';
 import 'tetris_screen.dart';
+import 'lava_screen.dart';
+import 'plasma_screen.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({super.key});
@@ -38,7 +40,7 @@ class ContactsPageState extends State<ContactsPage>
   List<StoredContact> _contacts = [];
   late final ScrollController _scrollController1;
   late final ScrollController _scrollController2;
-  bool _isHudVisible = true; // Show HUD by default
+  bool _isHudVisible = false;
   double _overlayHeight = 0.2; // Initial height: 20%
   int _currentPage1 = 0;
   int _currentPage2 = 0;
@@ -2291,7 +2293,9 @@ class ContactsPageState extends State<ContactsPage>
   }
 
   void _applyEmptyContactsState() {
-    _isHudVisible = true;
+    if (_contacts.isEmpty) {
+      _isHudVisible = true;
+    }
     _currentPage1 = 0;
     _currentPage2 = 0;
     _currentPage1All = 0;
@@ -2323,7 +2327,7 @@ class ContactsPageState extends State<ContactsPage>
     _scrollPanesToEmptyStart();
   }
 
-  bool get _shouldShowHud => _isHudVisible || _displayedContacts.isEmpty;
+  bool get _shouldShowHud => _isHudVisible || _contacts.isEmpty;
 
   TetrisSession? _currentTetrisSession() {
     final displayedContacts = _displayedContacts;
@@ -2370,7 +2374,6 @@ class ContactsPageState extends State<ContactsPage>
 
   void _openTetris() {
     _updateCurrentPagesFromScrollControllers();
-    _suppressNextHudToggle = true;
     final session = _currentTetrisSession();
     if (session == null) {
       showAppSnackBar(
@@ -2382,6 +2385,40 @@ class ContactsPageState extends State<ContactsPage>
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => TetrisScreen(session: session),
+      ),
+    );
+  }
+
+  void _openLava() {
+    _updateCurrentPagesFromScrollControllers();
+    final session = _currentTetrisSession();
+    if (session == null) {
+      showAppSnackBar(
+        context,
+        AppLocalizations.of(context)!.lavaNeedTwoContacts,
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => LavaScreen(session: session),
+      ),
+    );
+  }
+
+  void _openPlasma() {
+    _updateCurrentPagesFromScrollControllers();
+    final session = _currentTetrisSession();
+    if (session == null) {
+      showAppSnackBar(
+        context,
+        AppLocalizations.of(context)!.plasmaNeedTwoContacts,
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => PlasmaScreen(session: session),
       ),
     );
   }
@@ -2564,7 +2601,7 @@ class ContactsPageState extends State<ContactsPage>
           flashAnimationController: flashAnimationController,
           showSelfContactFlash: showSelfContactFlash,
           selfContactFlashController: _selfContactHighlightController,
-          onTap: _toggleHudVisibility,
+          onTap: () {},
           onVerticalDragUpdate: (delta) => _updateOverlayHeight(delta, height),
           onEdit: _isHudVisible ? () => _editContact(contact) : null,
           onToggleFavorite: () => _toggleFavorite(contact.name),
@@ -2720,28 +2757,32 @@ class ContactsPageState extends State<ContactsPage>
                   ),
                 ],
               ),
-              if (_shouldShowHud)
-                ContactsHud(
-                  favoritesMode: _favoritesMode,
-                  onSettings: () {
-                    _updateCurrentPagesFromScrollControllers();
-                    _saveScrollPositions();
-                    _saveCurrentScrollPositions();
-                    setState(() {
-                      _showSettings = true;
-                    });
-                  },
-                  onToggleFavorites: _toggleFavoritesMode,
-                  onAbout: () {
-                    _updateCurrentPagesFromScrollControllers();
-                    _saveScrollPositions();
-                    _saveCurrentScrollPositions();
-                    setState(() {
-                      _showAbout = true;
-                    });
-                  },
-                  onTetris: _openTetris,
-                ),
+              ContactsHud(
+                expanded: _shouldShowHud,
+                allowCollapse: _contacts.isNotEmpty,
+                onToggle: _toggleHudVisibility,
+                favoritesMode: _favoritesMode,
+                onSettings: () {
+                  _updateCurrentPagesFromScrollControllers();
+                  _saveScrollPositions();
+                  _saveCurrentScrollPositions();
+                  setState(() {
+                    _showSettings = true;
+                  });
+                },
+                onToggleFavorites: _toggleFavoritesMode,
+                onAbout: () {
+                  _updateCurrentPagesFromScrollControllers();
+                  _saveScrollPositions();
+                  _saveCurrentScrollPositions();
+                  setState(() {
+                    _showAbout = true;
+                  });
+                },
+                onTetris: _openTetris,
+                onPlasma: _openPlasma,
+                onLava: _openLava,
+              ),
               if (_showSettings)
                 Positioned.fill(
                   child: Builder(

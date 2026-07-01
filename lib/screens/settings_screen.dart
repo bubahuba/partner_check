@@ -14,6 +14,7 @@ import '../utils/pro_gate.dart';
 import '../utils/snackbar_utils.dart';
 import '../utils/self_contact_gradient.dart';
 import '../services/pro_subscription_service.dart';
+import '../widgets/icons/back_icon.dart';
 import '../widgets/self_contact_animated_background.dart';
 import '../widgets/contact_input_dialog.dart';
 import 'package:provider/provider.dart';
@@ -1060,10 +1061,7 @@ class SettingsScreenState extends State<SettingsScreen>
                   child: Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        color: Colors.white,
-                      ),
+                      icon: const BackIcon(),
                       onPressed: _handleClose,
                       style: IconButton.styleFrom(
                         backgroundColor: Colors.transparent,

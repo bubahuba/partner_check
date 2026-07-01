@@ -560,21 +560,9 @@ class _TetrisScreenState extends State<TetrisScreen> {
                                 ),
                               ),
                             ),
-                            DecoratedBox(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.transparent,
-                                    Colors.black.withValues(alpha: 0.55),
-                                  ],
-                                ),
-                              ),
-                              child: SafeArea(
-                                top: false,
-                                child: controls,
-                              ),
+                            SafeArea(
+                              top: false,
+                              child: controls,
                             ),
                           ],
                         ),
@@ -710,22 +698,18 @@ class _TetrisControlButton extends StatelessWidget {
       onTapUp: (_) => onTapUp(),
       onTapCancel: onTapUp,
       onTap: onTap,
-      child: AnimatedContainer(
+      child: AnimatedScale(
         duration: const Duration(milliseconds: 80),
         curve: Curves.easeOut,
-        decoration: BoxDecoration(
-          color: highlighted
-              ? Colors.white.withValues(alpha: 0.28)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: highlighted
-                ? Colors.white.withValues(alpha: 0.45)
-                : Colors.transparent,
+        scale: highlighted ? 1.08 : 1.0,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Icon(
+            icon,
+            color: Colors.white.withValues(alpha: highlighted ? 1 : 0.72),
+            size: 32,
           ),
         ),
-        padding: const EdgeInsets.all(12),
-        child: Icon(icon, color: Colors.white, size: 32),
       ),
     );
   }

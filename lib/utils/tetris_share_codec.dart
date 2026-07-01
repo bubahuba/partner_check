@@ -44,9 +44,49 @@ String buildTetrisShareUrl({
   required int color1,
   required int color2,
 }) {
+  return _buildFeatureShareUrl(
+    feature: 'tetris',
+    languageCode: languageCode,
+    color1: color1,
+    color2: color2,
+  );
+}
+
+String buildPlasmaShareUrl({
+  required String languageCode,
+  required int color1,
+  required int color2,
+}) {
+  return _buildFeatureShareUrl(
+    feature: 'plasma',
+    languageCode: languageCode,
+    color1: color1,
+    color2: color2,
+  );
+}
+
+String buildLavaShareUrl({
+  required String languageCode,
+  required int color1,
+  required int color2,
+}) {
+  return _buildFeatureShareUrl(
+    feature: 'lava',
+    languageCode: languageCode,
+    color1: color1,
+    color2: color2,
+  );
+}
+
+String _buildFeatureShareUrl({
+  required String feature,
+  required String languageCode,
+  required int color1,
+  required int color2,
+}) {
   final uri = Uri.parse(tetrisShareBaseUrl).replace(
     queryParameters: {
-      'feature': 'tetris',
+      'feature': feature,
       'lang': languageCode,
       'colors': encodeTetrisColors(color1, color2),
     },

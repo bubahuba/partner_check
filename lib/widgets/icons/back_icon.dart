@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Back arrow for closing panels and screens.
+/// Chevron back for closing panels and screens.
 class BackIcon extends StatelessWidget {
   final Color color;
   final double size;
@@ -13,6 +13,6 @@ class BackIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Icon(Icons.arrow_back, color: color, size: size);
+    return Icon(Icons.chevron_left, color: color, size: size);
   }
 }

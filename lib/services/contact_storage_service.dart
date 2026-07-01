@@ -69,7 +69,7 @@ class ContactStorageService {
   /// Load HUD visibility state
   Future<bool> loadHudVisible() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_hudVisibleKey) ?? true;
+    return prefs.getBool(_hudVisibleKey) ?? false;
   }
 
   /// Save HUD visibility state

@@ -81,5 +81,11 @@
   "tetrisPause": "Pause",
   "tetrisResume": "Resume",
   "tetrisStartNewGame": "Start new game",
-  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!",
+  "plasmaIconDescription": "あなたの色のプラズマを見る",
+  "plasmaNeedTwoContacts": "Select two contacts to open plasma",
+  "plasmaTitle": "{name1} · {name2}",
+  "lavaIconDescription": "あなたの色の溶岩を見る",
+  "lavaNeedTwoContacts": "Select two contacts to open lava",
+  "lavaTitle": "{name1} · {name2}"
 }

@@ -8,3 +8,4 @@ bool get supportsDeviceContacts =>
     Platform.isAndroid || Platform.isIOS || Platform.isMacOS;
 bool get autoDetectsSelfContact => Platform.isAndroid;
 bool get needsSelfContactPickPrompt => Platform.isIOS;
+bool get supportsPlasmaMotionSensors => Platform.isAndroid || Platform.isIOS;

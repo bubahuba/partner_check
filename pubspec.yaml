@@ -20,6 +20,9 @@ dependencies:
   confetti: ^0.8.0
   web: ^1.1.1
   share_plus: ^13.2.0
+  flutter_shader_fx: ^0.0.2
+  sensors_plus: ^6.1.1
+  bokeh_lava_gradient: ^1.0.9
 
 dev_dependencies:
   flutter_test:
@@ -29,5 +32,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  shaders:
+    - shaders/plasma_session.frag
   assets:
     - assets/app_icon.png

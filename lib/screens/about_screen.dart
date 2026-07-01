@@ -6,6 +6,8 @@ import '../widgets/icons/back_icon.dart';
 import '../widgets/icons/chart_icon.dart';
 import '../widgets/icons/favorites_icon.dart';
 import '../widgets/icons/tetris_icon.dart';
+import '../widgets/icons/lava_icon.dart';
+import '../widgets/icons/plasma_icon.dart';
 import '../widgets/icons/touch_app_icon.dart';
 import '../widgets/icons/trash_icon.dart';
 import '../widgets/self_contact_animated_background.dart';
@@ -205,6 +207,18 @@ class AboutScreenState extends State<AboutScreen>
                                       _AboutIconRow(
                                         icon: const TetrisIcon(),
                                         text: l10n.tetrisIconDescription,
+                                        style: descriptionStyle,
+                                      ),
+                                      SizedBox(height: spacing),
+                                      _AboutIconRow(
+                                        icon: const PlasmaIcon(),
+                                        text: l10n.plasmaIconDescription,
+                                        style: descriptionStyle,
+                                      ),
+                                      SizedBox(height: spacing),
+                                      _AboutIconRow(
+                                        icon: const LavaIcon(),
+                                        text: l10n.lavaIconDescription,
                                         style: descriptionStyle,
                                       ),
                                       SizedBox(height: spacing),

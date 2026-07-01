@@ -193,6 +193,9 @@ class AppLocalizations {
   String get tetrisIconDescription =>
       _localizedValues[locale.languageCode]?['tetrisIconDescription'] ??
       'Play Tetris with your colors';
+  String get plasmaIconDescription =>
+      _localizedValues[locale.languageCode]?['plasmaIconDescription'] ??
+      'Watch plasma in your colors';
   String get tetrisLinkCopied =>
       _localizedValues[locale.languageCode]?['tetrisLinkCopied'] ??
       'Link copied';
@@ -265,6 +268,26 @@ class AppLocalizations {
   String get tetrisNeedTwoContacts =>
       _localizedValues[locale.languageCode]?['tetrisNeedTwoContacts'] ??
       'Select two contacts to play Tetris';
+  String get plasmaNeedTwoContacts =>
+      _localizedValues[locale.languageCode]?['plasmaNeedTwoContacts'] ??
+      'Select two contacts to open plasma';
+  String plasmaTitle(String name1, String name2) =>
+      (_localizedValues[locale.languageCode]?['plasmaTitle'] ??
+              '{name1} · {name2}')
+          .replaceAll('{name1}', name1)
+          .replaceAll('{name2}', name2);
+
+  String get lavaIconDescription =>
+      _localizedValues[locale.languageCode]?['lavaIconDescription'] ??
+      'Watch lava in your colors';
+  String get lavaNeedTwoContacts =>
+      _localizedValues[locale.languageCode]?['lavaNeedTwoContacts'] ??
+      'Select two contacts to open lava';
+  String lavaTitle(String name1, String name2) =>
+      (_localizedValues[locale.languageCode]?['lavaTitle'] ??
+              '{name1} · {name2}')
+          .replaceAll('{name1}', name1)
+          .replaceAll('{name2}', name2);
   String tetrisWeeks(int weeks) =>
       (_localizedValues[locale.languageCode]?['tetrisWeeks'] ??
               'Weeks: {weeks}')
@@ -346,6 +369,7 @@ class AppLocalizations {
       'chartIconDescription': 'Reorder contacts by match count',
       'trashIconDescription': 'Delete contact',
       'tetrisIconDescription': 'Play Tetris with your colors',
+      'plasmaIconDescription': 'Watch plasma in your colors',
       'tetrisLinkCopied': 'Link copied',
       'deleteAllContacts': 'Delete all contacts',
       'deleteAllContactsConfirm':
@@ -374,6 +398,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': 'Forecast for {weeks} weeks',
       'tetrisNewRecord': 'New record: {weeks} weeks!',
       'tetrisNeedTwoContacts': 'Select two contacts to play Tetris',
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Watch a lava in your colors',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': 'Weeks: {weeks}',
       'tetrisPlayersTitle': 'Hall of fame',
       'tetrisNoRecords': 'No records yet',
@@ -440,6 +469,7 @@ class AppLocalizations {
       'chartIconDescription': 'إعادة ترتيب جهات الاتصال حسب عدد التطابقات',
       'trashIconDescription': 'حذف جهة الاتصال',
       'tetrisIconDescription': "العب Tetris بألوانك",
+      'plasmaIconDescription': 'شاهد بلازما بألوانك',
       'tetrisLinkCopied': "تم نسخ الرابط",
       'deleteAllContacts': 'حذف جميع جهات الاتصال',
       'deleteAllContactsConfirm':
@@ -469,6 +499,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'شاهد تأثير الحمم بألوانك',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "قاعة المشاهير",
       'tetrisNoRecords': "No records yet",
@@ -535,6 +570,7 @@ class AppLocalizations {
       'chartIconDescription': 'סדר מחדש אנשי קשר לפי מספר ההתאמות',
       'trashIconDescription': 'מחק איש קשר',
       'tetrisIconDescription': "שחקו טטריס עם הצבעים שלכם",
+      'plasmaIconDescription': 'צפו בפלזמה בצבעים שלכם',
       'tetrisLinkCopied': "הקישור הועתק",
       'deleteAllContacts': 'מחק את כל אנשי הקשר',
       'deleteAllContactsConfirm':
@@ -563,6 +599,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'צפו בלבה בצבעים שלכם',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "היכל התהילה",
       'tetrisNoRecords': "No records yet",
@@ -631,6 +672,7 @@ class AppLocalizations {
       'chartIconDescription': 'Seřadit kontakty podle počtu shod',
       'trashIconDescription': 'Smazat kontakt',
       'tetrisIconDescription': "Hrajte Tetris se svými barvami",
+      'plasmaIconDescription': 'Sledujte plazmu ve svých barvách',
       'tetrisLinkCopied': "Odkaz zkopírován",
       'deleteAllContacts': 'Smazat všechny kontakty',
       'deleteAllContactsConfirm':
@@ -660,6 +702,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Prognóza na {weeks} týdnů",
       'tetrisNewRecord': "Nový rekord: {weeks} týdnů!",
       'tetrisNeedTwoContacts': "Vyberte dva kontakty pro hru Tetris",
+      'plasmaNeedTwoContacts': 'Vyberte dva kontakty pro plazmu',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Sledujte láva efekt ve svých barvách',
+      'lavaNeedTwoContacts': 'Vyberte dva kontakty pro lávu',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Týdny: {weeks}",
       'tetrisPlayersTitle': "Síň slávy",
       'tetrisNoRecords': "Zatím žádné záznamy",
@@ -726,6 +773,7 @@ class AppLocalizations {
       'chartIconDescription': 'Zoradiť kontakty podľa počtu zhôd',
       'trashIconDescription': 'Vymazať kontakt',
       'tetrisIconDescription': "Hrajte Tetris so svojimi farbami",
+      'plasmaIconDescription': 'Sledujte plazmu vo svojich farbách',
       'tetrisLinkCopied': "Odkaz skopírovaný",
       'deleteAllContacts': 'Vymazať všetky kontakty',
       'deleteAllContactsConfirm':
@@ -755,6 +803,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Prognóza na {weeks} týždňov",
       'tetrisNewRecord': "Nový rekord: {weeks} týždňov!",
       'tetrisNeedTwoContacts': "Vyberte dva kontakty na hranie Tetrisu",
+      'plasmaNeedTwoContacts': 'Vyberte dva kontakty pre plazmu',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Sledujte láva efekt vo svojich farbách',
+      'lavaNeedTwoContacts': 'Vyberte dva kontakty pre lávu',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Týždne: {weeks}",
       'tetrisPlayersTitle': "Sieň slávy",
       'tetrisNoRecords': "Zatiaľ žiadne záznamy",
@@ -818,6 +871,7 @@ class AppLocalizations {
       'chartIconDescription': '按匹配数重新排序联系人',
       'trashIconDescription': '删除联系人',
       'tetrisIconDescription': "用你的颜色玩俄罗斯方块",
+      'plasmaIconDescription': '用你的颜色观看等离子效果',
       'tetrisLinkCopied': "链接已复制",
       'deleteAllContacts': '删除所有联系人',
       'deleteAllContactsConfirm': '您确定要删除所有联系人吗？此操作无法撤销。',
@@ -842,6 +896,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': '用你的颜色观看熔岩效果',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "名人堂",
       'tetrisNoRecords': "No records yet",
@@ -906,6 +965,7 @@ class AppLocalizations {
       'chartIconDescription': '一致数で連絡先を並べ替え',
       'trashIconDescription': '連絡先を削除',
       'tetrisIconDescription': "あなたの色でテトリスをプレイ",
+      'plasmaIconDescription': 'あなたの色のプラズマを見る',
       'tetrisLinkCopied': "リンクをコピーしました",
       'deleteAllContacts': 'すべての連絡先を削除',
       'deleteAllContactsConfirm': 'すべての連絡先を削除してもよろしいですか？この操作は元に戻せません。',
@@ -932,6 +992,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'あなたの色の溶岩を見る',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "殿堂",
       'tetrisNoRecords': "No records yet",
@@ -1000,6 +1065,7 @@ class AppLocalizations {
       'chartIconDescription': 'Contacten sorteren op aantal matches',
       'trashIconDescription': 'Contact verwijderen',
       'tetrisIconDescription': "Speel Tetris met je kleuren",
+      'plasmaIconDescription': 'Bekijk plasma in jouw kleuren',
       'tetrisLinkCopied': "Link gekopieerd",
       'deleteAllContacts': 'Alle contacten verwijderen',
       'deleteAllContactsConfirm':
@@ -1030,6 +1096,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Bekijk lava in jouw kleuren',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Eregalerij",
       'tetrisNoRecords': "No records yet",
@@ -1098,6 +1169,7 @@ class AppLocalizations {
           'Kontakte nach Anzahl der Übereinstimmungen sortieren',
       'trashIconDescription': 'Kontakt löschen',
       'tetrisIconDescription': "Spiele Tetris mit deinen Farben",
+      'plasmaIconDescription': 'Plasma in deinen Farben ansehen',
       'tetrisLinkCopied': "Link kopiert",
       'deleteAllContacts': 'Alle Kontakte löschen',
       'deleteAllContactsConfirm':
@@ -1129,6 +1201,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Lava in deinen Farben ansehen',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Ruhmeshalle",
       'tetrisNoRecords': "No records yet",
@@ -1198,6 +1275,7 @@ class AppLocalizations {
       'chartIconDescription': 'Reordenar contactos por número de coincidencias',
       'trashIconDescription': 'Eliminar contacto',
       'tetrisIconDescription': "Juega Tetris con tus colores",
+      'plasmaIconDescription': 'Mira plasma con tus colores',
       'tetrisLinkCopied': "Enlace copiado",
       'deleteAllContacts': 'Eliminar todos los contactos',
       'deleteAllContactsConfirm':
@@ -1229,6 +1307,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Mira un efecto lava con tus colores',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Salón de la fama",
       'tetrisNoRecords': "No records yet",
@@ -1299,6 +1382,7 @@ class AppLocalizations {
           'Réorganiser les contacts par nombre de correspondances',
       'trashIconDescription': 'Supprimer le contact',
       'tetrisIconDescription': "Jouez à Tetris avec vos couleurs",
+      'plasmaIconDescription': 'Regardez le plasma avec vos couleurs',
       'tetrisLinkCopied': "Lien copié",
       'deleteAllContacts': 'Supprimer tous les contacts',
       'deleteAllContactsConfirm':
@@ -1330,6 +1414,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Regardez la lave avec vos couleurs',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Temple de la renommée",
       'tetrisNoRecords': "No records yet",
@@ -1397,6 +1486,7 @@ class AppLocalizations {
           'मेल की संख्या के अनुसार संपर्कों को क्रमबद्ध करें',
       'trashIconDescription': 'संपर्क हटाएँ',
       'tetrisIconDescription': "अपने रंगों के साथ टेट्रिस खेलें",
+      'plasmaIconDescription': 'अपने रंगों में प्लाज़्मा देखें',
       'tetrisLinkCopied': "लिंक कॉपी हो गया",
       'deleteAllContacts': 'सभी संपर्क हटाएँ',
       'deleteAllContactsConfirm':
@@ -1427,6 +1517,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'अपने रंगों में लावा देखें',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "हॉल ऑफ फेम",
       'tetrisNoRecords': "No records yet",
@@ -1494,6 +1589,7 @@ class AppLocalizations {
       'chartIconDescription': 'Riordina contatti per numero di corrispondenze',
       'trashIconDescription': 'Elimina contatto',
       'tetrisIconDescription': "Gioca a Tetris con i tuoi colori",
+      'plasmaIconDescription': 'Guarda il plasma con i tuoi colori',
       'tetrisLinkCopied': "Link copiato",
       'deleteAllContacts': 'Elimina tutti i contatti',
       'deleteAllContactsConfirm':
@@ -1525,6 +1621,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Guarda un effetto lava con i tuoi colori',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Sala della fama",
       'tetrisNoRecords': "No records yet",
@@ -1592,6 +1693,7 @@ class AppLocalizations {
       'chartIconDescription': 'Przeładuj kontakty według liczby dopasowań',
       'trashIconDescription': 'Usuń kontakt',
       'tetrisIconDescription': "Graj w Tetris swoimi kolorami",
+      'plasmaIconDescription': 'Oglądaj plazmę w swoich kolorach',
       'tetrisLinkCopied': "Link skopiowany",
       'deleteAllContacts': 'Usuń wszystkie kontakty',
       'deleteAllContactsConfirm':
@@ -1622,6 +1724,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Oglądaj efekt lawy w swoich kolorach',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Galeria sław",
       'tetrisNoRecords': "No records yet",
@@ -1690,6 +1797,7 @@ class AppLocalizations {
           'Kapcsolatok újrarendezése egyezések száma szerint',
       'trashIconDescription': 'Kapcsolat törlése',
       'tetrisIconDescription': "Játssz Tetrist a színeiddel",
+      'plasmaIconDescription': 'Nézz plazmát a színeiddel',
       'tetrisLinkCopied': "Link másolva",
       'deleteAllContacts': 'Összes kapcsolat törlése',
       'deleteAllContactsConfirm':
@@ -1721,6 +1829,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Nézz lava effektet a színeiddel',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Hírességek csarnoka",
       'tetrisNoRecords': "No records yet",
@@ -1789,6 +1902,7 @@ class AppLocalizations {
           'Переупорядочить контакты по количеству совпадений',
       'trashIconDescription': 'Удалить контакт',
       'tetrisIconDescription': "Играйте в Tetris своими цветами",
+      'plasmaIconDescription': 'Смотрите плазму в ваших цветах',
       'tetrisLinkCopied': "Ссылка скопирована",
       'deleteAllContacts': 'Удалить все контакты',
       'deleteAllContactsConfirm':
@@ -1819,6 +1933,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Смотрите эффект лавы в ваших цветах',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Зал славы",
       'tetrisNoRecords': "No records yet",
@@ -1888,6 +2007,7 @@ class AppLocalizations {
           'Reordenar contatos por número de correspondências',
       'trashIconDescription': 'Excluir contato',
       'tetrisIconDescription': "Jogue Tetris com as suas cores",
+      'plasmaIconDescription': 'Veja plasma com as suas cores',
       'tetrisLinkCopied': "Link copiado",
       'deleteAllContacts': 'Excluir todos os contatos',
       'deleteAllContactsConfirm':
@@ -1919,6 +2039,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Veja um efeito lava com as suas cores',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Hall da fama",
       'tetrisNoRecords': "No records yet",
@@ -1986,6 +2111,7 @@ class AppLocalizations {
       'chartIconDescription': 'Перевпорядкувати контакти за кількістю збігів',
       'trashIconDescription': 'Видалити контакт',
       'tetrisIconDescription': "Грайте в Tetris своїми кольорами",
+      'plasmaIconDescription': 'Дивіться плазму у ваших кольорах',
       'tetrisLinkCopied': "Посилання скопійовано",
       'deleteAllContacts': 'Видалити всі контакти',
       'deleteAllContactsConfirm':
@@ -2016,6 +2142,11 @@ class AppLocalizations {
       'tetrisForecastWeeks': "Forecast for {weeks} weeks",
       'tetrisNewRecord': "New record: {weeks} weeks!",
       'tetrisNeedTwoContacts': "Select two contacts to play Tetris",
+      'plasmaNeedTwoContacts': 'Select two contacts to open plasma',
+      'plasmaTitle': '{name1} · {name2}',
+      'lavaIconDescription': 'Дивіться лаву у ваших кольорах',
+      'lavaNeedTwoContacts': 'Select two contacts to open lava',
+      'lavaTitle': '{name1} · {name2}',
       'tetrisWeeks': "Weeks: {weeks}",
       'tetrisPlayersTitle': "Зал слави",
       'tetrisNoRecords': "No records yet",

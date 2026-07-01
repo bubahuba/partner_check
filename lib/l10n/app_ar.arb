@@ -81,5 +81,11 @@
   "tetrisPause": "Pause",
   "tetrisResume": "Resume",
   "tetrisStartNewGame": "Start new game",
-  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!"
+  "tetrisNewRecordCelebration": "New high score! {weeks} weeks!",
+  "plasmaIconDescription": "شاهد بلازما بألوانك",
+  "plasmaNeedTwoContacts": "Select two contacts to open plasma",
+  "plasmaTitle": "{name1} · {name2}",
+  "lavaIconDescription": "شاهد تأثير الحمم بألوانك",
+  "lavaNeedTwoContacts": "Select two contacts to open lava",
+  "lavaTitle": "{name1} · {name2}"
 }

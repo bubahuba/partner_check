@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../services/contact_storage_service.dart';
 import '../utils/web_deep_link.dart';
 import 'contacts_page.dart';
+import 'lava_screen.dart';
+import 'plasma_screen.dart';
 import 'settings_screen.dart';
 import 'tetris_screen.dart';
 
@@ -57,11 +59,23 @@ class InitialScreenState extends State<InitialScreen> {
 
     final webDeepLink = _webDeepLink;
     if (webDeepLink != null) {
-      return TetrisScreen(
-        session: webDeepLink.session,
-        isSharedLaunch: true,
-        onClose: _closeWebDeepLink,
-      );
+      return switch (webDeepLink.feature) {
+        WebDeepLinkFeature.tetris => TetrisScreen(
+            session: webDeepLink.session,
+            isSharedLaunch: true,
+            onClose: _closeWebDeepLink,
+          ),
+        WebDeepLinkFeature.plasma => PlasmaScreen(
+            session: webDeepLink.session,
+            isSharedLaunch: true,
+            onClose: _closeWebDeepLink,
+          ),
+        WebDeepLinkFeature.lava => LavaScreen(
+            session: webDeepLink.session,
+            isSharedLaunch: true,
+            onClose: _closeWebDeepLink,
+          ),
+      };
     }
 
     if (_hasContacts!) {
