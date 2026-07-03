@@ -8,6 +8,7 @@ class ContactStorageService {
   static const String _favoritesKey = 'favorite_contacts';
   static const String _vibrationsKey = 'vibrations_enabled';
   static const String _hudVisibleKey = 'hud_visible';
+  static const String _hudExpandedKey = 'hud_expanded';
   static const String _scrollPos1AllKey = 'scroll_pos_1_all';
   static const String _scrollPos2AllKey = 'scroll_pos_2_all';
   static const String _scrollPos1FavoritesKey = 'scroll_pos_1_favorites';
@@ -76,6 +77,18 @@ class ContactStorageService {
   Future<void> saveHudVisible(bool visible) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_hudVisibleKey, visible);
+  }
+
+  /// Load HUD expand/collapse state (chevron toggle).
+  Future<bool> loadHudExpanded() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_hudExpandedKey) ?? true;
+  }
+
+  /// Save HUD expand/collapse state (chevron toggle).
+  Future<void> saveHudExpanded(bool expanded) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_hudExpandedKey, expanded);
   }
 
   /// Load scroll positions

@@ -41,6 +41,7 @@ class ContactsPageState extends State<ContactsPage>
   late final ScrollController _scrollController1;
   late final ScrollController _scrollController2;
   bool _isHudVisible = false;
+  bool _isHudExpanded = true;
   double _overlayHeight = 0.2; // Initial height: 20%
   int _currentPage1 = 0;
   int _currentPage2 = 0;
@@ -600,6 +601,7 @@ class ContactsPageState extends State<ContactsPage>
     _currentPage1Favorites = positions.page1Favorites;
     _currentPage2Favorites = positions.page2Favorites;
     _isHudVisible = await _storageService.loadHudVisible();
+    _isHudExpanded = await _storageService.loadHudExpanded();
     _vibrationsEnabled = await _storageService.loadVibrationsEnabled();
     _shouldPromptSelfContactPick =
         await _storageService.loadPendingSelfContactPick();
@@ -1406,6 +1408,10 @@ class ContactsPageState extends State<ContactsPage>
 
   Future<void> _saveHudState() async {
     await _storageService.saveHudVisible(_isHudVisible);
+  }
+
+  Future<void> _saveHudExpandedState() async {
+    await _storageService.saveHudExpanded(_isHudExpanded);
   }
 
   Future<void> _saveFavorites() async {
@@ -2327,7 +2333,14 @@ class ContactsPageState extends State<ContactsPage>
     _scrollPanesToEmptyStart();
   }
 
-  bool get _shouldShowHud => _isHudVisible || _contacts.isEmpty;
+  bool get _shouldShowHudWidget => _isHudVisible || _contacts.isEmpty;
+
+  void _toggleHudExpanded() {
+    setState(() {
+      _isHudExpanded = !_isHudExpanded;
+    });
+    _saveHudExpandedState();
+  }
 
   TetrisSession? _currentTetrisSession() {
     final displayedContacts = _displayedContacts;
@@ -2757,32 +2770,33 @@ class ContactsPageState extends State<ContactsPage>
                   ),
                 ],
               ),
-              ContactsHud(
-                expanded: _shouldShowHud,
-                allowCollapse: _contacts.isNotEmpty,
-                onToggle: _toggleHudVisibility,
-                favoritesMode: _favoritesMode,
-                onSettings: () {
-                  _updateCurrentPagesFromScrollControllers();
-                  _saveScrollPositions();
-                  _saveCurrentScrollPositions();
-                  setState(() {
-                    _showSettings = true;
-                  });
-                },
-                onToggleFavorites: _toggleFavoritesMode,
-                onAbout: () {
-                  _updateCurrentPagesFromScrollControllers();
-                  _saveScrollPositions();
-                  _saveCurrentScrollPositions();
-                  setState(() {
-                    _showAbout = true;
-                  });
-                },
-                onTetris: _openTetris,
-                onPlasma: _openPlasma,
-                onLava: _openLava,
-              ),
+              if (_shouldShowHudWidget)
+                ContactsHud(
+                  expanded: _isHudExpanded,
+                  allowCollapse: _contacts.isNotEmpty,
+                  onToggle: _toggleHudExpanded,
+                  favoritesMode: _favoritesMode,
+                  onSettings: () {
+                    _updateCurrentPagesFromScrollControllers();
+                    _saveScrollPositions();
+                    _saveCurrentScrollPositions();
+                    setState(() {
+                      _showSettings = true;
+                    });
+                  },
+                  onToggleFavorites: _toggleFavoritesMode,
+                  onAbout: () {
+                    _updateCurrentPagesFromScrollControllers();
+                    _saveScrollPositions();
+                    _saveCurrentScrollPositions();
+                    setState(() {
+                      _showAbout = true;
+                    });
+                  },
+                  onTetris: _openTetris,
+                  onPlasma: _openPlasma,
+                  onLava: _openLava,
+                ),
               if (_showSettings)
                 Positioned.fill(
                   child: Builder(
